@@ -10,7 +10,7 @@
 2. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
 
 ### Setup
-1. Create a `.env.local` file and configure the values which are in the `.env` file
+1. Create a `.env.local` file and configure the values which are in the `.env.example` file
 2. To build fresh images
    ```bash
    docker compose build --no-cache
