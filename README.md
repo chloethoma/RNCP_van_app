@@ -38,9 +38,9 @@
    - Go to the "Connection" tab and configure the following details:
      - Hostname: `postgres` (Docker will resolve the container's IP by its name)
      - Port: `5432`
-     - Maintenance Database: `$POSTGRES_DB` (from `.env`)
+     - Maintenance Database: `$POSTGRES_DATABASE` (from `.env`)
      - Username: `$POSTGRES_USER` (from `.env`)
-     - Password: `$POSTGRES_PW` (from `.env`)
+     - Password: `$POSTGRES_PASSWORD` (from `.env`)
 
 ---
 
