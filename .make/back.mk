@@ -29,8 +29,3 @@ sf: ## List all Symfony commands or pass the parameter "c=" to run a given comma
 
 cc: c=c:c ## Clear the cache
 cc: sf
-
-# —— Postgres
-psql: ## Commande "psql" : ouvre une session terminal pour accéder à la base de données PostgreSQL
-	@echo "Connexion à la base de données PostgreSQL..."
-	@$(DB_CONT) psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
