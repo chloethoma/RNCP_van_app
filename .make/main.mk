@@ -5,7 +5,7 @@ DOCKER_COMP = docker compose
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
-DB_CONT = $(DOCKER_COMP) exec postgres
+DB_CONT = $(DOCKER_COMP) exec database
 FRONT_CONT= $(DOCKER_COMP) exec frontend
 
 # Executables
@@ -22,3 +22,4 @@ include .make/info.mk
 include .make/docker.mk
 include .make/back.mk
 include .make/front.mk
+include .make/db.mk
