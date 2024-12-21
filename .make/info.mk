@@ -12,6 +12,7 @@ help: ## Shows this help message
 	@$(call print_summary,Global Docker command,.make/docker.mk)
 	@$(call print_summary,Backend command,.make/back.mk)
 	@$(call print_summary,Frontend command,.make/front.mk)
+	@$(call print_summary,PostgreSQL command,.make/db.mk)
 
 list: ## Shows the list of all running images (not only the docker-compose ones)
 	@docker container ls --format 'table {{.ID}}\t{{.Image}}\t{{.Size}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}'
