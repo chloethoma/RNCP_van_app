@@ -1,4 +1,4 @@
-# RNCP_van_app
+# VANSCAPE PROJECT
 
 ## Getting Started
 
@@ -11,21 +11,13 @@
 
 ### Setup
 1. Create a `.env` file and configure the values which are in the `.env.example` file
-2. To build fresh images
+2. To build fresh images and start the containers 
    ```bash
-   make build
+   make all
    ```
-3. To create and start the containers
+You can check all the make commands with :
    ```bash
-   make up
-   ```
-4. To start the containers
-   ```bash
-   make start
-   ```
-5. To stop the Docker containers
-   ```bash
-   make stop
+   make
    ```
 
 ---
@@ -35,17 +27,6 @@
    
 2. Log in with the credentials defined in the `.env` file (email and password).
 
-3. Add the PostgreSQL database to pgAdmin:
-
-   - Right-click "Servers" in the top-left corner and select "Create" -> "Server...".
-   - Name your connection.
-   - Go to the "Connection" tab and configure the following details:
-     - Hostname: `postgres` (Docker will resolve the container's IP by its name)
-     - Port: `5432`
-     - Maintenance Database: `$POSTGRES_DB` (from `.env`)
-     - Username: `$POSTGRES_USER` (from `.env`)
-     - Password: `$POSTGRES_PW` (from `.env`)
-
 ---
 
 ### Backend Setup
@@ -54,13 +35,30 @@
    
 2. Accept the auto-generated TLS certificate if prompted. For help, see this [StackOverflow answer](https://stackoverflow.com/a/15076602/1352334).
 
+3. Database creation and migrations : 
+   * Check the connection to the database ("OK" is return if the connection is working) :
+      ```bash
+      make connection
+      ```
+   * Database creation :
+      ```bash
+      ## Open a terminal session in php container
+      make php-sh
+
+      ## Create database
+      php bin/console doctrine:database:create
+      ```
+   * After the creation, you need to execute the migrations files. This command need to be execute each time you need to update your database :
+      ```bash
+      php bin/console doctrine:migrations:migrate
+      ```
 ---
 
 ### Frontend Setup
 
 1. To enable hot-reloading during development, run:
    ```bash
-   docker compose up --watch
+   make watch
    ```
 
 2. Open [http://localhost:5173](http://localhost:5173) in your browser.
