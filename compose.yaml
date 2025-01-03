@@ -90,5 +90,6 @@ volumes:
     pgadmin:
     caddy_data:
     caddy_config:
+    node_modules:
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
