@@ -28,3 +28,8 @@ services:
 #     ports:
 #       - "5432"
 # ###< doctrine/doctrine-bundle ###
+
+  frontend:
+    volumes: 
+      - ./frontend:/app
+    command: sh -c "npm install && npm run dev"
