@@ -2,23 +2,32 @@
 
 namespace App\Controller;
 
+use App\DTO\Feature\SpotFeatureCollectionOutput;
 use App\Service\Manager\SpotManager;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-class SpotController extends AbstractController
+class SpotController extends ApiController
 {
     public function __construct(
+        LoggerInterface $logger,
         protected SpotManager $manager
-    ) {}
+    ) {
+        parent::__construct($logger);
+    }
 
     #[Route('/spots', name: 'read_spots', methods: ['GET'], format: 'json')]
-    public function readSpotFeatureCollection(): Response
+    public function readSpotFeatureCollection(): JsonResponse
     {
-        $spotCollection = $this->manager->getSpotsFeatureCollection();
+        try {
+            $spotCollection = $this->manager->getSpotsFeatureCollection();
 
-        return $this->json($spotCollection);
+            $response = $this->serveOkResponse($spotCollection);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, SpotFeatureCollectionOutput::class);
+        }
+        return $response;
     }
 
     // #[Route('/spots', name: 'create_spot', methods: ['POST'])]
