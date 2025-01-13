@@ -1,20 +1,20 @@
 ## —— Backend Command ————————————————————————————————————————————————————————————————
 
-# —— General
+# —— Back Docker
 php-sh: ## Connect to the FrankenPHP container
 	@$(PHP_CONT) sh
 
 php-bash: ## Connect to the FrankenPHP container via bash so up and down arrows go to previous commands
 	@$(PHP_CONT) bash
 
-test: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
+tests: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
 	@$(eval c ?=)
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
 
-test-unit: ## Start unit tests with phpunit
+tests-unit: ## Start unit tests with phpunit
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit --testsuite unit
 
-test-integration: ## Start integration tests with phpunit
+tests-integration: ## Start integration tests with phpunit
 	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit --testsuite integration
 
 cs-fix: ## Runs php-cs to fix Symfony Code Standards issues
@@ -22,7 +22,7 @@ cs-fix: ## Runs php-cs to fix Symfony Code Standards issues
 	${PHP_CONT} vendor/bin/php-cs-fixer fix tests --rules=@Symfony
 
 phpstan: ## Runs PHPStan Analysis
-	${PHP_CONT} vendor/bin/phpstan analyse src tests
+	${PHP_CONT} vendor/bin/phpstan analyse src
 
 # —— Composer
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'

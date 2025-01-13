@@ -12,7 +12,7 @@ class SpotController extends ApiController
 {
     public function __construct(
         LoggerInterface $logger,
-        protected SpotManager $manager
+        protected SpotManager $manager,
     ) {
         parent::__construct($logger);
     }
@@ -22,11 +22,12 @@ class SpotController extends ApiController
     {
         try {
             $spotCollection = $this->manager->getSpotsFeatureCollection();
-
+            dump('coucou');
             $response = $this->serveOkResponse($spotCollection);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, SpotFeatureCollectionOutput::class);
         }
+
         return $response;
     }
 

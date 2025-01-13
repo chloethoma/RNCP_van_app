@@ -34,19 +34,19 @@ class ApiController extends AbstractController
         //         $exception->getDetails()
         //     );
         // } else {
-            $this->logException(__METHOD__, $exception);
-            $response = $this->serveServerErrorResponse('Oops ! Something went wrong.', $forTarget);
+        $this->logException(__METHOD__, $exception);
+        $response = $this->serveServerErrorResponse('Oops ! Something went wrong.', $forTarget);
         // }
 
         return $response;
     }
 
-    public function serveOkResponse($content, array $headers = []): JsonResponse
+    public function serveOkResponse(object $content, array $headers = []): JsonResponse
     {
         return $this->json($content, Response::HTTP_OK, $headers);
     }
 
-    public function serveCreatedResponse($content, string $location): JsonResponse
+    public function serveCreatedResponse(object $content, string $location): JsonResponse
     {
         $headers = ['Location' => $location];
 

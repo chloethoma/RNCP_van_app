@@ -1,5 +1,8 @@
 ## —— Target the local dev environment ————————————————————————————————————————————————————————————————
 
+# Project names for dev and test
+PN_DISPLAY = VanScape
+
 # Executables (local)
 DOCKER_COMP = docker compose
 
@@ -12,6 +15,7 @@ FRONT_CONT= $(DOCKER_COMP) exec frontend
 PHP      = $(PHP_CONT) php
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
+NPM      = $(FRONT_CONT) npm
 
 # Misc
 .DEFAULT_GOAL = help
