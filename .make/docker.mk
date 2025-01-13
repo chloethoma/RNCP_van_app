@@ -19,6 +19,3 @@ stop: ## Stop Dockers containers
 
 down: ## Stop ans remove the docker containers
 	@$(DOCKER_COMP) down --remove-orphans
-
-watch: ## Watch containers
-	@$(DOCKER_COMP) up --watch

@@ -1,6 +1,6 @@
 ## —— Frontend Command ————————————————————————————————————————————————————————————————
 
-# —— Front Docker
+# —— General
 front-sh: ## Connect to the FrankenPHP container
 	@$(FRONT_CONT) sh
 
