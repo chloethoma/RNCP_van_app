@@ -27,6 +27,13 @@ class Spot
         return $this->id;
     }
 
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getLatitude(): float
     {
         return $this->latitude;

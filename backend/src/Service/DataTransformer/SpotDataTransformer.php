@@ -12,7 +12,8 @@ class SpotDataTransformer
 {
     public function __construct(
         protected Validator $validator,
-    ) {}
+    ) {
+    }
 
     public function transformToFeatureCollection(array $spotsEntities): SpotFeatureCollectionOutput
     {
@@ -27,7 +28,7 @@ class SpotDataTransformer
             $properties = new SpotPropertiesOutput($spotEntity->getId());
 
             $features[] = new SpotFeatureOutput($geometry, $properties);
-        };
+        }
 
         $spotFeatureCollection = new SpotFeatureCollectionOutput($features);
 
