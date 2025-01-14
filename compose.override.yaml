@@ -8,8 +8,7 @@ services:
       - ./backend:/app
       - ./backend/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./backend/frankenphp/conf.d/20-app.dev.ini:/usr/local/etc/php/app.conf.d/20-app.dev.ini:ro
-      # If you develop on Mac or Windows you can remove the vendor/ directory
-      #  from the bind-mount for better performance by enabling the next line:
+      # If you develop on Mac or Windows you can remove the vendor/ directory from the bind-mount for better performance by enabling the next line:
       #- /app/vendor
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
@@ -20,8 +19,18 @@ services:
       - host.docker.internal:host-gateway
     tty: true
 
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+    ports:
+      - "5050:80"
+    depends_on: 
+      - database
+    volumes:
+      - pgadmin:/var/lib/pgadmin
 
 # ###> doctrine/doctrine-bundle ###
 #   database:
@@ -33,3 +42,7 @@ services:
     volumes: 
       - ./frontend:/app
     command: sh -c "npm install && npm run dev"
+  
+volumes:
+    pgadmin:
+
