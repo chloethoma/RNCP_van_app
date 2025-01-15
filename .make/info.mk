@@ -17,7 +17,3 @@ help: ## Shows this help message
 list: ## Shows the list of all running images (not only the docker-compose ones)
 	@docker container ls --format 'table {{.ID}}\t{{.Image}}\t{{.Size}}\t{{.Status}}\t{{.Ports}}\t{{.Names}}'
 	@echo
-
-# A debugger, ne fonctionne pas
-# logs: ## Show live logs 
-# 	@$(DOCKER_COMP) logs --tail=0 --follow

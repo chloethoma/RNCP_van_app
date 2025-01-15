@@ -22,7 +22,7 @@ services:
 ###< doctrine/doctrine-bundle ###
 
   php:
-    container_name: van_backend
+    container_name: php
     build: backend/
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
@@ -63,7 +63,7 @@ services:
 ###< symfony/mercure-bundle ###
   
   frontend:
-    container_name: van_frontend
+    container_name: frontend
     build: frontend/
     depends_on:
       - php
@@ -76,6 +76,5 @@ volumes:
   ###< doctrine/doctrine-bundle ###
     caddy_data:
     caddy_config:
-    node_modules:
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###

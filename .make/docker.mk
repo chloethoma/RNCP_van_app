@@ -2,10 +2,9 @@
 
 all: build up ## Build fresh images, create and start the containers
 
-build: ## Builds the Docker images
-	@$(DOCKER_COMP) build --pull --no-cache
-# @echo "Build fresh images for van_app project..."
-# @$(DOCKER_COMP) build --no-cache
+build: ## Builds the Docker images, pass the parameter "c=" to precise service to build, example: make build c="frontend"
+	@$(eval c ?=)
+	@$(DOCKER_COMP) build $(c) --pull --no-cache
 
 up: ## Create and start the docker hub in detached mode (no logs)
 	@$(DOCKER_COMP) up --detach

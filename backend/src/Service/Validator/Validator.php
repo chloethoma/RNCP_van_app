@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class Validator
 {
     public function __construct(
-        protected readonly ValidatorInterface $validator
+        protected readonly ValidatorInterface $validator,
     ) {
     }
 
