@@ -19,24 +19,6 @@ You can check all the make commands available with :
    ```bash
    make
    ```
-
----
-
-### PgAdmin
-1. Open [http://localhost:5050](http://localhost:5050) in your web browser.
-   
-2. Log in with the credentials defined in the `.env` file (email and password).
-
-After logging, you can add your database to pgAdmin. 
-1. Right-click "Servers" in the top-left corner and select "Create" -> "Server..."
-2. Name your connection
-3. Change to the "Connection" tab and add the connection details:
-- Hostname: "postgres" (this would normally be your IP address of the postgres database - however, docker can resolve this container ip by its name)
-- Port: "5432"
-- Maintenance Database: $POSTGRES_DB (see .env)
-- Username: $POSTGRES_USER (see .env)
-- Password: $POSTGRES_PW (see .env)
-
 ---
 
 ### Backend
@@ -81,6 +63,6 @@ $ docker compose cp php:/data/caddy/pki/authorities/local/root.crt %TEMP%/root.c
 1. Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 --- 
-Pour plus d'informations :  
+For more informations :  
 - [Docker base setup for PostgreSQL & pgAdmin (awesome-compose)](https://github.com/docker/awesome-compose/tree/master/postgresql-pgadmin)  
 - [Docker base setup for Symfony (dunglas)](https://github.com/dunglas/symfony-docker)  

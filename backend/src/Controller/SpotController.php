@@ -22,7 +22,7 @@ class SpotController extends ApiController
     {
         try {
             $spotCollection = $this->manager->getSpotsFeatureCollection();
-            dump('coucou');
+
             $response = $this->serveOkResponse($spotCollection);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, SpotFeatureCollectionOutput::class);
