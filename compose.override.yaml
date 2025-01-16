@@ -1,9 +1,13 @@
 # Development environment override
 services:
+  database:
+    env_file: .env.local
+
   php:
     build:
-      context: ./backend
+      dockerfile: .docker/php.Dockerfile
       target: frankenphp_dev
+    env_file: .env.local
     volumes:
       - ./backend:/app
       - ./backend/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -19,30 +23,8 @@ services:
       - host.docker.internal:host-gateway
     tty: true
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
-    ports:
-      - "5050:80"
-    depends_on: 
-      - database
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-
-# ###> doctrine/doctrine-bundle ###
-#   database:
-#     ports:
-#       - "5432"
-# ###< doctrine/doctrine-bundle ###
-
   frontend:
+    env_file: .env.local
     volumes: 
       - ./frontend:/app
     command: sh -c "npm install && npm run dev"
-  
-volumes:
-    pgadmin:
-

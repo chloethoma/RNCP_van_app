@@ -1,4 +1,4 @@
 # Makefile for dev and test environments
-include .env
+include .env.local
 include .make/main.mk
 
