@@ -1,6 +1,6 @@
 ## —— Backend Command ————————————————————————————————————————————————————————————————
 
-# —— Back Docker
+# —— General
 php-sh: ## Connect to the FrankenPHP container
 	@$(PHP_CONT) sh
 
@@ -23,6 +23,9 @@ cs-fix: ## Runs php-cs to fix Symfony Code Standards issues
 
 phpstan: ## Runs PHPStan Analysis
 	${PHP_CONT} vendor/bin/phpstan analyse src
+
+logs: ## Display logs
+	${PHP_CONT} tail -f /app/var/log/dev.log
 
 # —— Composer
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'

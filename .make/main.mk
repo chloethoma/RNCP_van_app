@@ -4,7 +4,7 @@
 PN_DISPLAY = VanScape
 
 # Executables (local)
-DOCKER_COMP = docker compose
+DOCKER_COMP = docker compose --env-file .env.local
 
 # Docker containers
 PHP_CONT = $(DOCKER_COMP) exec php
