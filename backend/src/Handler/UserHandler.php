@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Handler;
+
+use App\DTO\User\UserDTO;
+use App\Entity\User;
+use App\Service\DataTransformer\UserDataTransformer;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+
+class UserHandler
+{
+    public function __construct(
+        protected EntityManagerInterface $em,
+        protected UserDataTransformer $transformer,
+    ) {
+    }
+
+    public function createUser(UserDTO $dto): UserDTO
+    {
+        // Check if user already exists
+        $userRepository = $this->em->getRepository(User::class);
+        if ($userRepository->findOneBy(['email' => $dto->email])) {
+            throw new ConflictHttpException('User already exists with this email');
+        }
+
+        if ($userRepository->findOneBy(['pseudo' => $dto->pseudo])) {
+            throw new ConflictHttpException('This pseudo already exists');
+        }
+
+        $userEntity = $this->transformer->mapDTOToEntity($dto);
+
+        $this->em->persist($userEntity);
+        $this->em->flush();
+
+        $userDto = $this->transformer->mapEntityToDTO($userEntity);
+
+        return $userDto;
+    }
+}

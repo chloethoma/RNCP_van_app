@@ -4,7 +4,7 @@ namespace App\DTO\Feature;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpotPropertiesOutput
+class SpotProperties
 {
     #[Assert\Type('int')]
     #[Assert\NotNull()]

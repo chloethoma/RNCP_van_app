@@ -4,7 +4,7 @@ namespace App\DTO\Feature;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpotFeatureCollectionOutput
+class SpotFeatureCollection
 {
     public const TYPE = 'FeatureCollection';
 
@@ -13,10 +13,10 @@ class SpotFeatureCollectionOutput
 
     #[Assert\Valid]
     #[Assert\All([
-        new Assert\Type(SpotFeatureOutput::class),
+        new Assert\Type(SpotFeature::class),
     ])]
     /**
-     * @var SpotFeatureOutput[]
+     * @var SpotFeature[]
      */
     public array $features = [];
 

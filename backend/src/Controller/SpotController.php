@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\DTO\Feature\SpotFeatureCollectionOutput;
-use App\Service\Manager\SpotManager;
+use App\DTO\Feature\SpotFeatureCollection;
+use App\Handler\SpotHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -12,7 +12,7 @@ class SpotController extends ApiController
 {
     public function __construct(
         LoggerInterface $logger,
-        protected SpotManager $manager,
+        protected SpotHandler $spotHandler,
     ) {
         parent::__construct($logger);
     }
@@ -21,11 +21,11 @@ class SpotController extends ApiController
     public function readSpotFeatureCollection(): JsonResponse
     {
         try {
-            $spotCollection = $this->manager->getSpotsFeatureCollection();
+            $spotCollection = $this->spotHandler->getSpotsFeatureCollection();
 
             $response = $this->serveOkResponse($spotCollection);
         } catch (\Throwable $e) {
-            $response = $this->handleException($e, SpotFeatureCollectionOutput::class);
+            $response = $this->handleException($e, SpotFeatureCollection::class);
         }
 
         return $response;

@@ -2,10 +2,10 @@
 
 namespace App\Service\DataTransformer;
 
-use App\DTO\Feature\SpotFeatureCollectionOutput;
-use App\DTO\Feature\SpotFeatureOutput;
-use App\DTO\Feature\SpotGeometryOutput;
-use App\DTO\Feature\SpotPropertiesOutput;
+use App\DTO\Feature\SpotFeature;
+use App\DTO\Feature\SpotFeatureCollection;
+use App\DTO\Feature\SpotGeometry;
+use App\DTO\Feature\SpotProperties;
 use App\Service\Validator\Validator;
 
 class SpotDataTransformer
@@ -15,24 +15,24 @@ class SpotDataTransformer
     ) {
     }
 
-    public function transformToFeatureCollection(array $spotsEntities): SpotFeatureCollectionOutput
+    public function transformToFeatureCollection(array $spotsEntities): SpotFeatureCollection
     {
         $features = [];
 
         foreach ($spotsEntities as $spotEntity) {
-            $geometry = new SpotGeometryOutput(
+            $geometry = new SpotGeometry(
                 $spotEntity->getLongitude(),
                 $spotEntity->getLatitude()
             );
 
-            $properties = new SpotPropertiesOutput($spotEntity->getId());
+            $properties = new SpotProperties($spotEntity->getId());
 
-            $features[] = new SpotFeatureOutput($geometry, $properties);
+            $features[] = new SpotFeature($geometry, $properties);
         }
 
-        $spotFeatureCollection = new SpotFeatureCollectionOutput($features);
+        $spotFeatureCollection = new SpotFeatureCollection($features);
 
-        $this->validator->validate($spotFeatureCollection, SpotFeatureCollectionOutput::class);
+        $this->validator->validate($spotFeatureCollection, SpotFeatureCollection::class);
 
         return $spotFeatureCollection;
     }

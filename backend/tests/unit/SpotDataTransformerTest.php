@@ -2,11 +2,11 @@
 
 namespace App\Tests\Service;
 
-use App\DTO\Feature\SpotFeatureCollectionOutput;
+use App\DTO\Feature\SpotFeatureCollection;
 use App\Entity\Spot;
-use App\Output\SpotFeatureOutput;
-use App\Output\SpotGeometryOutput;
-use App\Output\SpotPropertiesOutput;
+use App\Output\SpotFeature;
+use App\Output\SpotGeometry;
+use App\Output\SpotProperties;
 use App\Service\DataTransformer\SpotDataTransformer;
 use App\Service\Validator\Validator;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +20,8 @@ class SpotDataTransformerTest extends TestCase
         $validatorMock->expects($this->once())
             ->method('validate')
             ->with(
-                $this->isInstanceOf(SpotFeatureCollectionOutput::class),
-                SpotFeatureCollectionOutput::class
+                $this->isInstanceOf(SpotFeatureCollection::class),
+                SpotFeatureCollection::class
             );
 
         // Création d'entités Spot simulées
@@ -45,13 +45,13 @@ class SpotDataTransformerTest extends TestCase
         $result = $transformer->transformToFeatureCollection($spotsEntities);
 
         // Assertions
-        $this->assertInstanceOf(SpotFeatureCollectionOutput::class, $result);
+        $this->assertInstanceOf(SpotFeatureCollection::class, $result);
         $this->assertCount(2, $result->features);
 
         // $feature1 = $result->features[0];
-        // $this->assertInstanceOf(SpotFeatureOutput::class, $feature1);
-        // $this->assertInstanceOf(SpotGeometryOutput::class, $feature1->getGeometry());
-        // $this->assertInstanceOf(SpotPropertiesOutput::class, $feature1->getProperties());
+        // $this->assertInstanceOf(SpotFeature::class, $feature1);
+        // $this->assertInstanceOf(SpotGeometry::class, $feature1->getGeometry());
+        // $this->assertInstanceOf(SpotProperties::class, $feature1->getProperties());
         // $this->assertEquals(2.3522, $feature1->getGeometry()->getLongitude());
         // $this->assertEquals(48.8566, $feature1->getGeometry()->getLatitude());
         // $this->assertEquals(1, $feature1->getProperties()->getId());
