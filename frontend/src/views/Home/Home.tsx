@@ -1,24 +1,29 @@
 import { useRef, useEffect, useState } from "react";
-import mapboxgl from "mapbox-gl";
-
+import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import "./Home.css";
+import { Feature } from "../../types/feature";
+import {fetchSpots} from "../../services/api/apiRequests";
 
-import "./UserMap.css";
+const INITIAL_CENTER: LngLatLike = [2.20966, 46.2323];
+const INITIAL_ZOOM: number = 5.8;
+const MAPBOX_TOKEN: string = import.meta.env.VITE_MAPBOX_TOKEN;
 
-const INITIAL_CENTER = [2.20966, 46.2323];
-const INITIAL_ZOOM = 5.8;
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+function Home() {
+  const mapRef = useRef<Map>();
+  const mapContainerRef = useRef<HTMLElement | string>();
 
-function UserMap({onLogOut}) {
-  const mapRef = useRef();
-  const mapContainerRef = useRef();
-
-  const [center, setCenter] = useState(INITIAL_CENTER);
-  const [zoom, setZoom] = useState(INITIAL_ZOOM);
-  const [spots, setSpots] = useState([]);
+  const [center, setCenter] = useState<LngLatLike>(INITIAL_CENTER);
+  const [zoom, setZoom] = useState<number>(INITIAL_ZOOM);
+  const [spots, setSpots] = useState<Feature[]>([]);
 
   // Initialize the map
   useEffect(() => {
+    if (!mapContainerRef.current) {
+      console.error("Le conteneur de la carte n'est pas défini.");
+      return;
+    }
+
     mapboxgl.accessToken = MAPBOX_TOKEN;
     mapRef.current = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -27,6 +32,7 @@ function UserMap({onLogOut}) {
     });
 
     mapRef.current.on("move", () => {
+      if (!mapRef.current) return;
       // get the current center coordinates and zoom level from the map
       const mapCenter = mapRef.current.getCenter();
       const mapZoom = mapRef.current.getZoom();
@@ -37,24 +43,24 @@ function UserMap({onLogOut}) {
     });
 
     return () => {
-      mapRef.current.remove();
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
     };
   }, []);
 
-
   // Fetch spots from API
   useEffect(() => {
-    const fetchSpots = async () => {
+    const loadSpots = async () => {
       try {
-        const response = await fetch("https://localhost/spots");
-        const data = await response.json();
-        setSpots(data.features);
+        const spots = await fetchSpots();
+        setSpots(spots);
       } catch (error) {
-        console.error("Failed to fetch spots:", error);
+        console.error("Failed to load spots:", error);
       }
     };
 
-    fetchSpots();
+    loadSpots();
   }, []);
 
   // Display the spots on map
@@ -69,7 +75,6 @@ function UserMap({onLogOut}) {
     }
   }, [spots]);
 
-
   const handleButtonClick = () => {
     mapRef.current.flyTo({
       center: INITIAL_CENTER,
@@ -77,9 +82,9 @@ function UserMap({onLogOut}) {
     });
   };
 
-  const handleLogOut = () => {
-    onLogOut(false);
-  }
+  // const handleLogOut = () => {
+  //   onLogOut(false);
+  // }
 
   return (
     <>
@@ -92,13 +97,9 @@ function UserMap({onLogOut}) {
         Reset
       </button>
 
-      <button className="deconnection-button" onClick={handleLogOut}>
-        Déconnexion
-      </button>
-
       <div id="map-container" ref={mapContainerRef} />
     </>
   );
 }
 
-export default UserMap;
+export default Home;
