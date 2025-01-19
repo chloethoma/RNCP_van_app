@@ -28,3 +28,7 @@ phpstan.neon
 .phpunit.result.cache
 /coverage/
 ###< phpunit/phpunit ###
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###

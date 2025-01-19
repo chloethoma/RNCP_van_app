@@ -21,7 +21,7 @@ class RegistrationController extends ApiController
         parent::__construct($logger);
     }
 
-    #[Route('/api/register', name: 'api_register', methods: ['POST'], format: 'json')]
+    #[Route('/register', name: 'register', methods: ['POST'], format: 'json')]
     public function createUser(
         #[MapRequestPayload(validationGroups: ['create'], serializationContext: ['groups' => ['create']])] UserDTO $dto,
     ): JsonResponse {

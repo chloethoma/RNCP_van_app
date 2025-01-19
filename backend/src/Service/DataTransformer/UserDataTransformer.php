@@ -4,14 +4,14 @@ namespace App\Service\DataTransformer;
 
 use App\DTO\User\UserDTO;
 use App\Entity\User;
+use App\Service\Security\PasswordHasher;
 use App\Service\Validator\Validator;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserDataTransformer
 {
     public function __construct(
         protected Validator $validator,
-        protected UserPasswordHasherInterface $passwordHasher,
+        protected PasswordHasher $passwordHasher,
     ) {
     }
 
@@ -19,13 +19,11 @@ class UserDataTransformer
     {
         $user = new User();
         $user->setEmail($dto->email);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $dto->password));
         $user->setPseudo($dto->pseudo);
         $user->setEmailVerified(false);
         $user->setCreatedAt(new \DateTimeImmutable());
         $user->setUpdatedAt(new \DateTime());
-
-        $hashedPassword = $this->passwordHasher->hashPassword($user, $dto->password);
-        $user->setPassword($hashedPassword);
 
         // Valider l'entité
         // $errors = $validator->validate($user);
