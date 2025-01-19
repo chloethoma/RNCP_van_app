@@ -17,7 +17,7 @@ class SpotController extends ApiController
         parent::__construct($logger);
     }
 
-    #[Route('/spots', name: 'read_spots', methods: ['GET'], format: 'json')]
+    #[Route('api/spots', name: 'read_spots', methods: ['GET'], format: 'json')]
     public function readSpotFeatureCollection(): JsonResponse
     {
         try {

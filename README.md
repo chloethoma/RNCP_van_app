@@ -47,6 +47,15 @@ After logging, you can add your database to pgAdmin.
       ```bash
       make connection
       ```
+   * Install dependancies
+      ```bash
+      ## Open a terminal session in php container
+      make php-sh
+
+      ## Install
+      composer install
+      ```
+
    * Database creation :
       ```bash
       ## Open a terminal session in php container

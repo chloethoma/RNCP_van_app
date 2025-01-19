@@ -30,10 +30,15 @@ class UserDTO
         #[Assert\NotBlank(groups: ['read', 'create'])]
         public readonly string $pseudo,
 
+        #[Assert\NotNull(groups: ['read'])]
+        #[Assert\DateTime(groups: ['read'])]
         public readonly ?\DateTimeImmutable $created_at,
 
+        #[Assert\NotNull(groups: ['read'])]
+        #[Assert\DateTime(groups: ['read'])]
         public readonly ?\DateTime $updated_at,
 
+        #[Assert\NotBlank(allowNull: true, groups: ['read', 'create'])]
         public readonly ?string $picture,
     ) {
     }
