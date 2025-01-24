@@ -17,7 +17,7 @@ services:
   php:
     container_name: php
     build: 
-      dockerfile: .docker/php.Dockerfile
+      context: backend/
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
     environment:
@@ -54,7 +54,7 @@ services:
   frontend:
     container_name: frontend
     build: 
-      dockerfile: .docker/frontend.Dockerfile
+      context: frontend/
     depends_on:
       - php
     ports:

@@ -21,6 +21,22 @@ You can check all the make commands available with :
    ```
 ---
 
+### PgAdmin
+1. Open [http://localhost:5050](http://localhost:5050) in your web browser.
+
+2. Log in with the credentials defined in the `.env.local` file (email and password).
+
+After logging, you can add your database to pgAdmin. 
+1. Right-click "Servers" in the top-left corner and select "Create" -> "Server..."
+2. Name your connection
+3. Change to the "Connection" tab and add the connection details:
+- Hostname: "database"
+- Port: "5432"
+- Maintenance Database: $POSTGRES_DB (see .env.local)
+- Username: $POSTGRES_USER (see .env.local)
+- Password: $POSTGRES_PASSWORD (see .env.local)
+---
+
 ### Backend
 1. Open [https://localhost](https://localhost) in your browser.
    

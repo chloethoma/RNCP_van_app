@@ -3,9 +3,22 @@ services:
   database:
     env_file: .env.local
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on: 
+      - database
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+
   php:
     build:
-      dockerfile: .docker/php.Dockerfile
+      context: backend/
       target: frankenphp_dev
     env_file: .env.local
     volumes:
@@ -28,3 +41,6 @@ services:
     volumes: 
       - ./frontend:/app
     command: sh -c "npm install && npm run dev"
+
+volumes:
+  pgadmin:
