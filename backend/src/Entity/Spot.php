@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\SpotRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SpotRepository::class)]
@@ -19,8 +22,26 @@ class Spot
     #[ORM\Column]
     private float $longitude;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\Column]
+    private ?bool $is_favorite = null;
+
+    #[ORM\ManyToOne(inversedBy: 'spots')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $owner = null;
+
+    /**
+     * @var Collection<int, SpotPicture>
+     */
+    #[ORM\OneToMany(targetEntity: SpotPicture::class, mappedBy: 'spot', orphanRemoval: true)]
+    private Collection $spotPictures;
+
+    public function __construct()
+    {
+        $this->spotPictures = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -66,6 +87,60 @@ class Spot
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function isFavorite(): ?bool
+    {
+        return $this->is_favorite;
+    }
+
+    public function setIsFavorite(bool $is_favorite): static
+    {
+        $this->is_favorite = $is_favorite;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SpotPicture>
+     */
+    public function getSpotPictures(): Collection
+    {
+        return $this->spotPictures;
+    }
+
+    public function addSpotPicture(SpotPicture $spotPicture): static
+    {
+        if (!$this->spotPictures->contains($spotPicture)) {
+            $this->spotPictures->add($spotPicture);
+            $spotPicture->setSpot($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSpotPicture(SpotPicture $spotPicture): static
+    {
+        if ($this->spotPictures->removeElement($spotPicture)) {
+            // set the owning side to null (unless already changed)
+            if ($spotPicture->getSpot() === $this) {
+                $spotPicture->setSpot(null);
+            }
+        }
 
         return $this;
     }

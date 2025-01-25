@@ -4,7 +4,7 @@ namespace App\DTO\Feature;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpotFeatureOutput
+class SpotFeature
 {
     public const TYPE = 'Feature';
 
@@ -12,16 +12,16 @@ class SpotFeatureOutput
     public string $type = self::TYPE;
 
     #[Assert\Valid]
-    #[Assert\Type(SpotGeometryOutput::class)]
-    public SpotGeometryOutput $geometry;
+    #[Assert\Type(SpotGeometry::class)]
+    public SpotGeometry $geometry;
 
     #[Assert\Valid]
-    #[Assert\Type(SpotPropertiesOutput::class)]
-    public SpotPropertiesOutput $properties;
+    #[Assert\Type(SpotProperties::class)]
+    public SpotProperties $properties;
 
     public function __construct(
-        SpotGeometryOutput $geometry,
-        SpotPropertiesOutput $properties,
+        SpotGeometry $geometry,
+        SpotProperties $properties,
     ) {
         $this->geometry = $geometry;
         $this->properties = $properties;

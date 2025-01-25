@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\Exceptions\Validation\InvalidReceivedDataException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,30 +28,33 @@ class ApiController extends AbstractController
 
     protected function handleException(\Throwable $exception, string $forTarget): JsonResponse
     {
-        // if ($exception instanceof ) {
-        //     $response = $this->serveInvalidRequestResponse(
-        //         $exception->getMessage(),
-        //         $forTarget,
-        //         $exception->getDetails()
-        //     );
-        // } else {
-        $this->logException(__METHOD__, $exception);
-        $response = $this->serveServerErrorResponse('Oops ! Something went wrong.', $forTarget);
-        // }
+        if ($exception instanceof InvalidReceivedDataException) {
+            $response = $this->serveInvalidRequestResponse(
+                $exception->getMessage(),
+                $forTarget,
+                $exception->getDetails()
+            );
+        } else {
+            $this->logException(__METHOD__, $exception);
+            $response = $this->serveServerErrorResponse('Oops ! Something went wrong.', $forTarget);
+        }
 
         return $response;
     }
 
-    public function serveOkResponse(object $content, array $headers = []): JsonResponse
+    public function serveOkResponse(object $content, array $headers = [], array $groups = []): JsonResponse
     {
-        return $this->json($content, Response::HTTP_OK, $headers);
+        $context = $this->buildContext($groups);
+
+        return $this->json($content, Response::HTTP_OK, $headers, $context);
     }
 
-    public function serveCreatedResponse(object $content, string $location): JsonResponse
+    public function serveCreatedResponse(object $content, string $location, array $groups = []): JsonResponse
     {
         $headers = ['Location' => $location];
+        $context = $this->buildContext($groups);
 
-        return $this->json($content, Response::HTTP_CREATED, $headers);
+        return $this->json($content, Response::HTTP_CREATED, $headers, $context);
     }
 
     public function serveNoContentResponse(): JsonResponse
@@ -127,5 +131,10 @@ class ApiController extends AbstractController
             ],
             Response::HTTP_UNAUTHORIZED
         );
+    }
+
+    private function buildContext(?array $groups = null): array
+    {
+        return $groups ? ['groups' => $groups] : [];
     }
 }
