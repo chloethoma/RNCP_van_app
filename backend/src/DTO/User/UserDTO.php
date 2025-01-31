@@ -40,6 +40,10 @@ class UserDTO
 
         #[Assert\NotBlank(allowNull: true, groups: ['read', 'create'])]
         public readonly ?string $picture,
+
+        #[Groups(['read'])]
+        #[Assert\NotBlank(allowNull: true, groups: ['read'])]
+        public readonly ?string $token,
     ) {
     }
 }
