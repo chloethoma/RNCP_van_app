@@ -48,7 +48,7 @@ const fetchRequest = async <T>({method, url, headers, data}: FetchRequest): Prom
     });
     return response.data;
   } catch (error) {
-    console.error(`API request failed: ${error.message}`);
+    console.error(`API request failed: ${error.response.data.error.message}`);
     throw error;
   }
 };
