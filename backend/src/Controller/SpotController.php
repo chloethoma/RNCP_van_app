@@ -2,14 +2,22 @@
 
 namespace App\Controller;
 
-use App\DTO\Feature\SpotFeatureCollection;
+use App\DTO\Feature\SpotFeatureCollectionDTO;
+use App\DTO\Spot\SpotDTO;
 use App\Handler\SpotHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 class SpotController extends ApiController
 {
+    private const TARGET = 'Spot Controller';
+    private const LOCATION = '/api/spots/%d';
+    private const NOT_FOUND_ERROR_MESSAGE = 'User not found';
+
     public function __construct(
         LoggerInterface $logger,
         protected SpotHandler $spotHandler,
@@ -17,36 +25,68 @@ class SpotController extends ApiController
         parent::__construct($logger);
     }
 
-    #[Route('api/spots', name: 'read_spots', methods: ['GET'], format: 'json')]
-    public function readSpotFeatureCollection(): JsonResponse
-    {
+    #[Route(
+        path: 'api/spots',
+        name: 'create_spot',
+        methods: ['POST']
+    )]
+    public function createSpot(
+        #[MapRequestPayload(validationGroups: ['create'], serializationContext: ['groups' => 'create'])] SpotDTO $dto,
+    ): JsonResponse {
         try {
-            $spotCollection = $this->spotHandler->getSpotsFeatureCollection();
+            $newSpot = $this->spotHandler->handleCreate($dto);
 
-            $response = $this->serveOkResponse($spotCollection);
+            $location = sprintf(
+                self::LOCATION,
+                $newSpot->id
+            );
+
+            $response = $this->serveCreatedResponse($newSpot, $location, groups: ['read']);
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
-            $response = $this->handleException($e, SpotFeatureCollection::class);
+            $response = $this->handleException($e, self::TARGET);
         }
 
         return $response;
     }
 
-    // #[Route('/spots', name: 'create_spot', methods: ['POST'])]
-    // public function createTest(Request $request): JsonResponse
-    // {
-    //     $param = json_decode($request->getContent(), true);
+    #[Route(
+        path: 'api/spots',
+        name: 'read_spots',
+        methods: ['GET'],
+        format: 'json'
+    )]
+    public function getSpots(): JsonResponse
+    {
+        try {
+            $spotCollection = $this->spotHandler->handleGetFeatureCollection();
 
-    //     $test = new Spot();
-    //     $test->setLatitude($param['latitude']);
-    //     $test->setLongitude($param['longitude']);
-    //     $test->setDescription($param['description']);
+            $response = $this->serveOkResponse($spotCollection);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, SpotFeatureCollectionDTO::class);
+        }
 
-    //     $this->em->persist($test);
-    //     $this->em->flush();
+        return $response;
+    }
 
-    //     return $this->json([
-    //         "message" => sprintf('New entry save ! id n°%d', $test->getId()),
-    //         "id" => $test->getId()
-    //     ]);
-    // }
+    #[Route(
+        path: 'api/spots/{spotId}',
+        name: 'read_spot_by_id',
+        methods: ['GET'],
+        requirements: ['spotId' => Requirement::DIGITS],
+        format: 'json'
+    )]
+    public function getSpot(int $spotId): JsonResponse
+    {
+        try {
+            $spot = $this->spotHandler->handleGet($spotId);
+
+            $response = $this->serveOkResponse($spot, groups:['read']);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, SpotFeatureCollectionDTO::class);
+        }
+
+        return $response;
+    }
 }

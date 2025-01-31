@@ -2,10 +2,8 @@
 
 namespace App\Service\DataTransformer;
 
-use App\DTO\Feature\SpotFeature;
-use App\DTO\Feature\SpotFeatureCollection;
-use App\DTO\Feature\SpotGeometry;
-use App\DTO\Feature\SpotProperties;
+use App\DTO\Spot\SpotDTO;
+use App\Entity\Spot;
 use App\Service\Validator\Validator;
 
 class SpotDataTransformer
@@ -15,25 +13,27 @@ class SpotDataTransformer
     ) {
     }
 
-    public function transformToFeatureCollection(array $spotsEntities): SpotFeatureCollection
+    public function mapDTOtoEntity(SpotDTO $dto): Spot
     {
-        $features = [];
+        $spot = new Spot();
 
-        foreach ($spotsEntities as $spotEntity) {
-            $geometry = new SpotGeometry(
-                $spotEntity->getLongitude(),
-                $spotEntity->getLatitude()
-            );
+        $spot->setLatitude($dto->latitude);
+        $spot->setLongitude($dto->longitude);
+        $spot->setDescription($dto->description);
+        $spot->setIsFavorite($dto->isFavorite);
 
-            $properties = new SpotProperties($spotEntity->getId());
+        return $spot;
+    }
 
-            $features[] = new SpotFeature($geometry, $properties);
-        }
-
-        $spotFeatureCollection = new SpotFeatureCollection($features);
-
-        $this->validator->validate($spotFeatureCollection, SpotFeatureCollection::class);
-
-        return $spotFeatureCollection;
+    public function mapEntityToDTO(Spot $entity): SpotDTO
+    {
+        return new SpotDTO(
+            id: $entity->getId(),
+            latitude: $entity->getLatitude(),
+            longitude: $entity->getLongitude(),
+            description: $entity->getDescription(),
+            isFavorite: $entity->isFavorite(),
+            userId: $entity->getOwner()->getId()
+        );
     }
 }

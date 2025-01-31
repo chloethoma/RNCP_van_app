@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SpotRepository::class)]
 class Spot
@@ -14,22 +15,28 @@ class Spot
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read'])]
     private int $id;
 
     #[ORM\Column]
+    #[Groups(['read'])]
     private float $latitude;
 
     #[ORM\Column]
+    #[Groups(['read'])]
     private float $longitude;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['read'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?bool $is_favorite = null;
+    #[Groups(['read'])]
+    private ?bool $isFavorite = null;
 
     #[ORM\ManyToOne(inversedBy: 'spots')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read'])]
     private ?User $owner = null;
 
     /**
@@ -93,12 +100,12 @@ class Spot
 
     public function isFavorite(): ?bool
     {
-        return $this->is_favorite;
+        return $this->isFavorite;
     }
 
-    public function setIsFavorite(bool $is_favorite): static
+    public function setIsFavorite(bool $isFavorite): static
     {
-        $this->is_favorite = $is_favorite;
+        $this->isFavorite = $isFavorite;
 
         return $this;
     }

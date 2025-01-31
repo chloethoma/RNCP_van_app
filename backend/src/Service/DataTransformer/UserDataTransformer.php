@@ -6,6 +6,7 @@ use App\DTO\User\UserDTO;
 use App\Entity\User;
 use App\Service\Security\PasswordHasher;
 use App\Service\Validator\Validator;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser;
 
 class UserDataTransformer
 {
@@ -33,18 +34,26 @@ class UserDataTransformer
         return $user;
     }
 
-    public function mapEntityToDTO(User $user): UserDTO
+    public function mapEntityToDTO(User $entity): UserDTO
     {
         return new UserDTO(
-            id: $user->getId(),
-            email: $user->getEmail(),
-            email_verified: $user->isEmailVerified(),
-            password: $user->getPassword(),
-            pseudo: $user->getPseudo(),
-            created_at: $user->getCreatedAt(),
-            updated_at: $user->getUpdatedAt(),
-            picture: $user->getPicture(),
-            token: $user->getToken()
+            id: $entity->getId(),
+            email: $entity->getEmail(),
+            emailVerified: $entity->isEmailVerified(),
+            password: $entity->getPassword(),
+            pseudo: $entity->getPseudo(),
+            createdAt: $entity->getCreatedAt(),
+            updatedAt: $entity->getUpdatedAt(),
+            picture: $entity->getPicture(),
+            token: $entity->getToken()
         );
+    }
+
+    public function mapJWTUserToUser(JWTUser $jwtEntity): User
+    {
+        $user = new User();
+        $user->setId((int) $jwtEntity->getUserIdentifier());
+
+        return $user;
     }
 }
