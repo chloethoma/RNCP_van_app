@@ -43,7 +43,8 @@ class UserDataTransformer
             pseudo: $user->getPseudo(),
             created_at: $user->getCreatedAt(),
             updated_at: $user->getUpdatedAt(),
-            picture: $user->getPicture()
+            picture: $user->getPicture(),
+            token: $user->getToken()
         );
     }
 }

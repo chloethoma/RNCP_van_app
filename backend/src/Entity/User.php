@@ -53,6 +53,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Spot::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $spots;
 
+    private ?string $token = null;
+
     public function __construct()
     {
         $this->spots = new ArrayCollection();
@@ -196,6 +198,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPicture(?string $picture): static
     {
         $this->picture = $picture;
+
+        return $this;
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token)
+    {
+        $this->token = $token;
 
         return $this;
     }
