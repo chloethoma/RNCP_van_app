@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\DataTransformer;
+namespace App\DataTransformer;
 
 use App\DTO\Feature\SpotFeatureCollectionDTO;
 use App\DTO\Feature\SpotFeatureDTO;

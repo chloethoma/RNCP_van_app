@@ -24,7 +24,7 @@ class UserDTO
         #[Groups(['create'])]
         #[Assert\NotBlank(groups: ['create'])]
         #[Assert\Length(min: 8, groups: ['create'])]
-        public readonly string $password,
+        public readonly ?string $password,
 
         #[Groups(['read', 'create'])]
         #[Assert\NotBlank(groups: ['read', 'create'])]
