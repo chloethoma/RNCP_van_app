@@ -9,7 +9,6 @@ class JWTCreationSubscriber implements EventSubscriberInterface
 {
     // Customize data in generated JWT
     public function onLexikJwtAuthenticationOnJwtCreated(JWTCreatedEvent $event): void
-
     {
         $data = $event->getData();
         $data['email'] = $event->getUser()->getUserIdentifier();
@@ -22,5 +21,4 @@ class JWTCreationSubscriber implements EventSubscriberInterface
             'lexik_jwt_authentication.on_jwt_created' => 'onLexikJwtAuthenticationOnJwtCreated',
         ];
     }
-
 }

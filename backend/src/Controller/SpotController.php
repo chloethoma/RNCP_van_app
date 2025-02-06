@@ -10,12 +10,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 class SpotController extends ApiController
 {
     private const TARGET = 'Spot Controller';
-    private const LOCATION = '/api/spots/%d';
     private const NOT_FOUND_ERROR_MESSAGE = 'User not found';
 
     public function __construct(
@@ -32,16 +32,16 @@ class SpotController extends ApiController
     )]
     public function createSpot(
         #[MapRequestPayload(validationGroups: ['create'], serializationContext: ['groups' => 'create'])] SpotDTO $dto,
+        UrlGeneratorInterface $urlGenerator,
     ): JsonResponse {
         try {
             $newSpot = $this->spotHandler->handleCreate($dto);
 
-            $location = sprintf(
-                self::LOCATION,
-                $newSpot->id
+            $response = $this->serveCreatedResponse(
+                $newSpot,
+                $urlGenerator->generate('read_spot', ['spotId' => $newSpot->id]),
+                groups: ['read']
             );
-
-            $response = $this->serveCreatedResponse($newSpot, $location, groups: ['read']);
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
@@ -72,7 +72,7 @@ class SpotController extends ApiController
 
     #[Route(
         path: 'api/spots/{spotId}',
-        name: 'read_spot_by_id',
+        name: 'read_spot',
         methods: ['GET'],
         requirements: ['spotId' => Requirement::DIGITS],
         format: 'json'
@@ -82,7 +82,7 @@ class SpotController extends ApiController
         try {
             $spot = $this->spotHandler->handleGet($spotId);
 
-            $response = $this->serveOkResponse($spot, groups:['read']);
+            $response = $this->serveOkResponse($spot, groups: ['read']);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, SpotFeatureCollectionDTO::class);
         }

@@ -27,6 +27,7 @@ class RegistrationController extends ApiController
     ): JsonResponse {
         try {
             $newUser = $this->userHandler->handleCreate($dto);
+
             $response = $this->serveCreatedResponse($newUser, self::TARGET, groups: ['read']);
         } catch (HttpException $e) {
             $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);

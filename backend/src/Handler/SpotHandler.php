@@ -2,12 +2,12 @@
 
 namespace App\Handler;
 
+use App\DataTransformer\FeatureDataTransformer;
+use App\DataTransformer\SpotDataTransformer;
 use App\DTO\Feature\SpotFeatureCollectionDTO;
 use App\DTO\Spot\SpotDTO;
 use App\Entity\Spot;
 use App\Repository\SpotRepository;
-use App\Service\DataTransformer\FeatureDataTransformer;
-use App\Service\DataTransformer\SpotDataTransformer;
 use App\Service\Manager\SpotManager;
 use App\Service\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,6 +23,7 @@ class SpotHandler
         protected FeatureDataTransformer $featureTransformer,
         protected UserManager $userManager,
         protected Security $security,
+        protected SpotRepository $spotRepository,
     ) {
     }
 
@@ -32,8 +33,7 @@ class SpotHandler
 
         $spot = $this->spotManager->initSpotOwner($spot);
 
-        $this->em->persist($spot);
-        $this->em->flush();
+        $spot = $this->spotRepository->createSpot($spot);
 
         return $this->spotTransformer->mapEntityToDTO($spot);
     }
