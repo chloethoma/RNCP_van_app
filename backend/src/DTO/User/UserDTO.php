@@ -19,7 +19,7 @@ class UserDTO
 
         #[Groups(['read'])]
         #[Assert\Type('bool', groups: ['read'])]
-        public readonly ?bool $email_verified,
+        public readonly ?bool $emailVerified,
 
         #[Groups(['create'])]
         #[Assert\NotBlank(groups: ['create'])]
@@ -32,11 +32,11 @@ class UserDTO
 
         #[Assert\NotNull(groups: ['read'])]
         #[Assert\DateTime(groups: ['read'])]
-        public readonly ?\DateTimeImmutable $created_at,
+        public readonly ?\DateTimeImmutable $createdAt,
 
         #[Assert\NotNull(groups: ['read'])]
         #[Assert\DateTime(groups: ['read'])]
-        public readonly ?\DateTime $updated_at,
+        public readonly ?\DateTime $updatedAt,
 
         #[Assert\NotBlank(allowNull: true, groups: ['read', 'create'])]
         public readonly ?string $picture,

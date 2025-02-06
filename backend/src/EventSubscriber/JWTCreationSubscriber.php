@@ -5,9 +5,11 @@ namespace App\EventSubscriber;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class JWTSubscriber implements EventSubscriberInterface
+class JWTCreationSubscriber implements EventSubscriberInterface
 {
+    // Customize data in generated JWT
     public function onLexikJwtAuthenticationOnJwtCreated(JWTCreatedEvent $event): void
+
     {
         $data = $event->getData();
         $data['email'] = $event->getUser()->getUserIdentifier();
@@ -20,4 +22,5 @@ class JWTSubscriber implements EventSubscriberInterface
             'lexik_jwt_authentication.on_jwt_created' => 'onLexikJwtAuthenticationOnJwtCreated',
         ];
     }
+
 }

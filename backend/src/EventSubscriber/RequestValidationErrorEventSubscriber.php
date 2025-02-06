@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Exceptions\Validation;
+namespace App\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

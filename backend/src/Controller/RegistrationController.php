@@ -26,7 +26,7 @@ class RegistrationController extends ApiController
         #[MapRequestPayload(validationGroups: ['create'], serializationContext: ['groups' => ['create']])] UserDTO $dto,
     ): JsonResponse {
         try {
-            $newUser = $this->userHandler->createUser($dto);
+            $newUser = $this->userHandler->handleCreate($dto);
             $response = $this->serveCreatedResponse($newUser, self::TARGET, groups: ['read']);
         } catch (HttpException $e) {
             $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
