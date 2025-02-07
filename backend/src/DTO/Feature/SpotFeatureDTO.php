@@ -2,28 +2,25 @@
 
 namespace App\DTO\Feature;
 
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SpotFeatureDTO
 {
     public const TYPE = 'Feature';
 
-    #[Assert\IdenticalTo(self::TYPE)]
-    public string $type = self::TYPE;
-
-    #[Assert\Valid]
-    #[Assert\Type(SpotGeometryDTO::class)]
-    public SpotGeometryDTO $geometry;
-
-    #[Assert\Valid]
-    #[Assert\Type(SpotPropertiesDTO::class)]
-    public SpotPropertiesDTO $properties;
-
     public function __construct(
-        SpotGeometryDTO $geometry,
-        SpotPropertiesDTO $properties,
+        #[Groups(['read'])]
+        #[Assert\Valid(groups: ['read'])]
+        public SpotGeometryDTO $geometry,
+
+        #[Groups(['read'])]
+        #[Assert\Valid(groups: ['read'])]
+        public SpotPropertiesDTO $properties,
+
+        #[Groups(['read'])]
+        #[Assert\IdenticalTo(value: self::TYPE, groups: ['read'])]
+        public ?string $type = self::TYPE,
     ) {
-        $this->geometry = $geometry;
-        $this->properties = $properties;
     }
 }

@@ -2,16 +2,15 @@
 
 namespace App\DTO\Feature;
 
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SpotPropertiesDTO
 {
-    #[Assert\Type('int')]
-    #[Assert\NotNull()]
-    public int $id;
-
-    public function __construct(int $id)
-    {
-        $this->id = $id;
+    public function __construct(
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
+        public int $id,
+    ) {
     }
 }

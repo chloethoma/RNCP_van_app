@@ -6,12 +6,12 @@ use App\DataTransformer\FeatureDataTransformer;
 use App\DataTransformer\SpotDataTransformer;
 use App\DTO\Feature\SpotFeatureCollectionDTO;
 use App\DTO\Spot\SpotDTO;
-use App\Entity\Spot;
 use App\Repository\SpotRepository;
 use App\Service\Manager\SpotManager;
 use App\Service\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SpotHandler
 {
@@ -22,8 +22,6 @@ class SpotHandler
         protected SpotManager $spotManager,
         protected FeatureDataTransformer $featureTransformer,
         protected UserManager $userManager,
-        protected Security $security,
-        protected SpotRepository $spotRepository,
     ) {
     }
 
@@ -33,30 +31,34 @@ class SpotHandler
 
         $spot = $this->spotManager->initSpotOwner($spot);
 
-        $spot = $this->spotRepository->createSpot($spot);
+        $spot = $this->repository->createSpot($spot);
+
+        return $this->spotTransformer->mapEntityToDTO($spot);
+    }
+
+    public function handleGet(int $spotId): SpotDTO
+    {
+        $userId = $this->userManager->getUserIdFromToken();
+
+        $spot = $this->repository->getSpotById($spotId);
+
+        if (!$spot) {
+            throw new NotFoundHttpException();
+        }
+
+        if ($spot->getOwner()->getId() !== $userId) {
+            throw new AccessDeniedHttpException();
+        }
 
         return $this->spotTransformer->mapEntityToDTO($spot);
     }
 
     public function handleGetFeatureCollection(): SpotFeatureCollectionDTO
     {
-        $userId = $this->security->getUser()->getUserIdentifier();
+        $userId = $this->userManager->getUserIdFromToken();
 
-        $spots = $this->em->getRepository(Spot::class)->findBy(['owner' => $userId]);
+        $spotCollection = $this->repository->getSpotCollection($userId);
 
-        return $this->featureTransformer->mapEntityToDTO($spots);
-    }
-
-    public function handleGet(int $id): SpotDTO
-    {
-        $test = $this->security->getUser()->getUserIdentifier();
-
-        $spot = $this->em->getRepository(Spot::class)->findOneBy(['id' => $id]);
-
-        // Ajouter une erreur
-
-        // TODO : ajouter la vérification de l'identité du user !
-
-        return $this->spotTransformer->mapEntityToDTO($spot);
+        return $this->featureTransformer->mapEntityListToDTOList($spotCollection);
     }
 }
