@@ -5,6 +5,7 @@ namespace App\Service\Manager;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -16,6 +17,7 @@ class UserManager
         protected TokenStorageInterface $tokenStorageInterface,
         protected UserPasswordHasherInterface $passwordHasher,
         protected UserRepository $userRepository,
+        protected Security $security,
     ) {
         $this->jwtManager = $jwtManager;
         $this->tokenStorageInterface = $tokenStorageInterface;
@@ -47,5 +49,10 @@ class UserManager
         $user->setToken($token);
 
         return $user;
+    }
+
+    public function getUserIdFromToken(): int
+    {
+        return (int) $this->security->getUser()->getUserIdentifier();
     }
 }
