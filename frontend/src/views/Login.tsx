@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate} from "react-router";
-import { loginUser } from "../../services/api/apiRequests";
-import FormHeader from "../../components/form/Header";
-import FormButton from "../../components/form/Button";
-import FormInput from "../../components/form/Input";
-import Form from "../../components/form/Form";
+import { loginUser } from "../services/api/apiRequests";
+import FormHeader from "../components/form/Header";
+import FormButton from "../components/form/Button";
+import FormInput from "../components/form/Input";
+import Form from "../components/form/Form";
 
 function Login() {
   const navigate = useNavigate();
@@ -20,8 +20,7 @@ function Login() {
       await loginUser(requestBody);
       navigate("/");
     } catch (error) {
-      console.log(error);
-      setErrorMessage(error.response.data.message);
+      setErrorMessage(error.response.data.error.message);
       setTimeout(() => setErrorMessage(""), 3000);
     }
   }

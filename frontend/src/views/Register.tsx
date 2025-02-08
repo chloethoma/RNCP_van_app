@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { registerUser } from "../../services/api/apiRequests";
-import FormHeader from "../../components/form/Header";
-import FormButton from "../../components/form/Button";
-import FormInput from "../../components/form/Input";
-import Form from "../../components/form/Form";
+import { registerUser } from "../services/api/apiRequests";
+import FormHeader from "../components/form/Header";
+import FormButton from "../components/form/Button";
+import FormInput from "../components/form/Input";
+import Form from "../components/form/Form";
 
 function Register() {
   const navigate = useNavigate();

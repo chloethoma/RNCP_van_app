@@ -8,10 +8,10 @@ function FormHeader({ title, text, pathRedirection, textLink }) {
         <img src={Logo} alt="Logo" className="w-9/12"/>
       </div>
       <div className="flex flex-col items-center mb-2">
-        <h2 className="text-2xl font-default font-semibold text-dark text-center sm:text-2xl">
+        <h2 className="text-2xl font-default font-semibold text-dark-grey text-center sm:text-2xl">
           {title}
         </h2>
-        <p className="text-xs mt-1 px-4">
+        <p className="text-xs text-dark-grey mt-1 px-4">
           {text}{" "}
           <Link
             to={pathRedirection}

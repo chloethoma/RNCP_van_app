@@ -1,5 +1,6 @@
 import fetchRequest from "./apiClient";
 import { Feature, FeatureCollection } from "../../types/feature";
+import { Spot } from "../../types/spot";
 
 interface LoginCredentials {
   email: string;
@@ -29,6 +30,15 @@ export const fetchSpots = async (): Promise<Feature[]> => {
   return response.features;
 };
 
+export const fetchSpotById = async (spotId : number): Promise<Spot> => {
+  const response = await fetchRequest<Spot>({
+    method: 'get',
+    url: `api/spots/${spotId}`
+  })
+
+  return response;
+}
+
 export const loginUser = async (
   credentials: LoginCredentials
 ): Promise<LoginResponse> => {
@@ -52,6 +62,8 @@ export const registerUser = async (
   localStorage.setItem("access_token", response.token);
   return response;
 };
+
+
 
 // export const createSpot = async (spotData: Partial<Feature>): Promise<Feature> => {
 //   return await fetchRequest<Feature>("post", "/api/spots", spotData);
