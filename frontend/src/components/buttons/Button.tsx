@@ -1,5 +1,5 @@
 interface ButtonProps {
-    onClick: () => void;
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
     children: React.ReactNode;
     color?: keyof typeof COLORS;
     size?: keyof typeof SIZES;
@@ -8,12 +8,12 @@ interface ButtonProps {
 const COLORS = {
     "dark-green": "bg-dark-green hover:bg-dark-green-hover",
     "red": "bg-red hover:bg-red-hover",
-  };
+  } as const;
 
   const SIZES = {
     "default": "p-3",
     "small": "p-1"
-  }
+  } as const;
   
   function Button({ onClick, children, color = "dark-green", size = "default" }: ButtonProps) {
     return (

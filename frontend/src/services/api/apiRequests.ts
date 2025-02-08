@@ -21,6 +21,8 @@ interface RegistrationResponse {
   token: string;
 }
 
+type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">
+
 export const fetchSpots = async (): Promise<Feature[]> => {
   const response = await fetchRequest<FeatureCollection>({
     method: "get",
@@ -61,9 +63,15 @@ export const registerUser = async (
   return response;
 };
 
-// export const createSpot = async (spotData: Partial<Feature>): Promise<Feature> => {
-//   return await fetchRequest<Feature>("post", "/api/spots", spotData);
-// };
+export const createSpot = async (spotData: SpotFormData): Promise<Spot> => {
+  const response = await fetchRequest<Spot>({
+    method:"post",
+    url:"/api/spots",
+    data: spotData
+  })
+
+  return response;
+};
 
 // export const deleteSpot = async (spotId: string): Promise<void> => {
 //   return await fetchRequest<void>("delete", `/api/spots/${spotId}`);

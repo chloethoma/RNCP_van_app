@@ -4,6 +4,7 @@ import { loginUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
 import { AxiosError } from "axios";
 import Logo from "../assets/logo_transparent.svg";
+import ErrorMessage from "../components/ErrorMessage";
 
 interface FormInputProps {
   label: string;
@@ -18,7 +19,7 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -42,12 +43,12 @@ function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-light-green">
       <div className="w-full max-w-sm p-8 pt-0 rounded-lg sm:p-8">
+
         {errorMessage && (
-          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded-md shadow-lg">
-            {errorMessage}
-          </div>
+          <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
         )}
 
+        {/* Header */}
         <div className="flex flex-col items-center mb-2">
           <img src={Logo} alt="Logo" className="w-9/12" />
         </div>
@@ -66,6 +67,7 @@ function Login() {
           </p>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleLogin}>
           <Input
             label={"Email"}
@@ -105,6 +107,5 @@ function Input({ label, onChange, ...inputProps }: FormInputProps) {
     </div>
   );
 }
-
 
 export default Login;

@@ -7,47 +7,35 @@ import AppLayout from "../../components/AppLayout";
 import Community from "../../views/Community";
 import Profile from "../../views/Profile";
 import Settings from "../../views/Settings";
+import NewSpotDetails from "../../views/newSpot/NewSpotDetails";
+import Spot from "../../views/SpotDetails";
+import NewSpotLocation from "../../views/newSpot/NewSpotLocation";
 
 function Routing() {
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      <Route element={<AppLayout />}>
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/community"
-          element={
-            <PrivateRoute>
-              <Community />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <PrivateRoute>
-              <Settings />
-            </PrivateRoute>
-          }
-        />
+      {/* Private routes with layout*/}
+      <Route
+        element={
+          <PrivateRoute>
+            <AppLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route path="/" element={<Home />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/spot/add-location" element={<NewSpotLocation />} />
+        <Route path="/spot/add-details" element={<NewSpotDetails />} />
+        <Route path="/spot/:spotId" element={<Spot />} />
       </Route>
+
+      {/* Route 404 */}
       <Route path="*" element={<Login />} />
     </Routes>
   );
