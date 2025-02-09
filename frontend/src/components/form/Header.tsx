@@ -1,7 +1,14 @@
 import { Link } from "react-router";
 import Logo from "../../assets/logo_transparent.svg";
 
-function FormHeader({ title, text, pathRedirection, textLink }) {
+interface FormHeaderProps {
+  title: string,
+  text: string,
+  pathRedirection: string,
+  textLink: string
+}
+
+function FormHeader({ title, text, pathRedirection, textLink }: FormHeaderProps) {
   return (
     <>
       <div className="flex flex-col items-center mb-2">

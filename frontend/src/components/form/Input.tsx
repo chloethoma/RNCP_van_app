@@ -1,10 +1,16 @@
 import { useId } from "react";
 
-/**
- * @param {string} label 
- * @returns 
- */
-function FormInput({ label, type, placeHolder, value, onChange }) {
+interface FormInputProps {
+  label: string;
+  type: "email" | "password" | "text";
+  placeHolder: string;
+  value: string;
+  onChange: (value: string) => void;
+}
+
+
+
+function FormInput({ label, onChange, ...inputProps }: FormInputProps) {
   const id = useId();
   return (
     <div className="mt-3">
@@ -13,11 +19,9 @@ function FormInput({ label, type, placeHolder, value, onChange }) {
       </label>
 
       <input
-        type={type}
         id={id}
         className="mt-1 block w-full px-3 py-2 bg-light-grey border border-light-grey rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-dark-green focus:border-transparent sm:text-sm"
-        placeholder={placeHolder}
-        value={value}
+        {...inputProps}
         onChange={(e) => onChange(e.target.value)}
       />
     </div>

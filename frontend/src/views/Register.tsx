@@ -5,6 +5,7 @@ import FormHeader from "../components/form/Header";
 import FormButton from "../components/form/Button";
 import FormInput from "../components/form/Input";
 import Form from "../components/form/Form";
+import { AxiosError } from "axios";
 
 function Register() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ function Register() {
   const [passwordError, setPasswordError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleRegistration(e) {
+  async function handleRegistration(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (password !== confirmedPassword) {
@@ -31,8 +32,12 @@ function Register() {
       await registerUser(requestBody);
       navigate("/");
     } catch (error) {
-      console.log(error);
-      setErrorMessage(error.response.data.error.message);
+      if (error instanceof AxiosError) {
+        setErrorMessage(error.response?.data?.error?.message || "Échec de l'inscription.");
+      } else {
+        setErrorMessage("Une erreur inconnue est survenue.");
+        console.error("Erreur inconnue :", error);
+      }
       setTimeout(() => setErrorMessage(""), 3000);
     }
   }
@@ -83,7 +88,7 @@ function Register() {
           {passwordError && (
             <p className="text-red-500 text-xs mt-1">{passwordError}</p>
           )}
-          <FormButton value={"M'inscrire"} />
+          <FormButton>M'inscrire</FormButton>
         </Form>
       </div>
     </div>
