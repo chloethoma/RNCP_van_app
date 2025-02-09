@@ -30,18 +30,16 @@ export const fetchSpots = async (): Promise<Feature[]> => {
   return response.features;
 };
 
-export const fetchSpotById = async (spotId : number): Promise<Spot> => {
+export const fetchSpotById = async (spotId: number): Promise<Spot> => {
   const response = await fetchRequest<Spot>({
-    method: 'get',
-    url: `api/spots/${spotId}`
-  })
+    method: "get",
+    url: `api/spots/${spotId}`,
+  });
 
   return response;
-}
+};
 
-export const loginUser = async (
-  credentials: LoginCredentials
-): Promise<LoginResponse> => {
+export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
   const response = await fetchRequest<LoginResponse>({
     method: "post",
     url: "/api/login",
@@ -49,7 +47,7 @@ export const loginUser = async (
   });
   localStorage.setItem("access_token", response.token);
   return response;
-};
+}
 
 export const registerUser = async (
   credentials: RegistrationCredentials
@@ -62,8 +60,6 @@ export const registerUser = async (
   localStorage.setItem("access_token", response.token);
   return response;
 };
-
-
 
 // export const createSpot = async (spotData: Partial<Feature>): Promise<Feature> => {
 //   return await fetchRequest<Feature>("post", "/api/spots", spotData);
