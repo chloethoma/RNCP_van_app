@@ -27,38 +27,65 @@ class SpotHandler
 
     public function handleCreate(SpotDTO $dto): SpotDTO
     {
-        $spot = $this->spotTransformer->mapDTOtoEntity($dto);
+        $this->spotTransformer->setDTO($dto);
+        $spot = $this->spotTransformer->mapDTOtoEntity();
 
         $spot = $this->spotManager->initSpotOwner($spot);
 
-        $spot = $this->repository->createSpot($spot);
+        $spot = $this->repository->create($spot);
 
-        return $this->spotTransformer->mapEntityToDTO($spot);
+        $this->spotTransformer->setEntity($spot);
+        return $this->spotTransformer->mapEntityToDTO();
     }
 
     public function handleGet(int $spotId): SpotDTO
     {
-        $userId = $this->userManager->getUserIdFromToken();
+        $spot = $this->repository->findById($spotId);
 
-        $spot = $this->repository->getSpotById($spotId);
-
-        if (!$spot) {
-            throw new NotFoundHttpException();
-        }
-
-        if ($spot->getOwner()->getId() !== $userId) {
+        if (!$this->spotManager->checkAccess($spot)) {
             throw new AccessDeniedHttpException();
         }
 
-        return $this->spotTransformer->mapEntityToDTO($spot);
+        $this->spotTransformer->setEntity($spot);
+        return $this->spotTransformer->mapEntityToDTO();
+    }
+
+    public function handleUpdate(SpotDTO $dto, int $spotId): SpotDTO
+    {
+        $spot = $this->repository->findById($spotId);
+
+        if (!$this->spotManager->checkAccess($spot)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $this->spotTransformer->setEntity($spot);
+        $this->spotTransformer->setDTO($dto);
+        $spot = $this->spotTransformer->mapDTOtoEntity();
+
+        $newSpot = $this->repository->update($spot);
+
+        $this->spotTransformer->setEntity($newSpot);
+        return $this->spotTransformer->mapEntityToDTO();
+    }
+
+    public function handleDelete(int $spotId): void
+    {
+        $spot = $this->repository->findById($spotId);
+
+        if (!$this->spotManager->checkAccess($spot)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        $this->repository->delete($spot);
     }
 
     public function handleGetFeatureCollection(): SpotFeatureCollectionDTO
     {
         $userId = $this->userManager->getUserIdFromToken();
 
-        $spotCollection = $this->repository->getSpotCollection($userId);
+        $spotCollection = $this->repository->findCollection($userId);
 
-        return $this->featureTransformer->mapEntityListToDTOList($spotCollection);
+        $this->featureTransformer->setEntityList($spotCollection);
+        return $this->featureTransformer->mapEntityListToDTOList();
     }
 }

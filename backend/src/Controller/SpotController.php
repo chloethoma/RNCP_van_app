@@ -18,11 +18,11 @@ class SpotController extends ApiController
     private const TARGET = 'Spot Controller';
     private const USER_NOT_FOUND_ERROR_MESSAGE = 'User not found';
     private const SPOT_NOT_FOUND_ERROR_MESSAGE = 'Spot not found';
-    private const ACCESS_DENIED_ERROR_MESSAGE = 'Access denied for this spot';
+    private const ACCESS_DENIED_ERROR_MESSAGE = 'You are not authorized to perform this action';
 
     public function __construct(
         LoggerInterface $logger,
-        protected SpotHandler $spotHandler,
+        protected SpotHandler $handler,
     ) {
         parent::__construct($logger);
     }
@@ -37,7 +37,7 @@ class SpotController extends ApiController
         UrlGeneratorInterface $urlGenerator,
     ): JsonResponse {
         try {
-            $newSpot = $this->spotHandler->handleCreate($dto);
+            $newSpot = $this->handler->handleCreate($dto);
 
             $response = $this->serveCreatedResponse(
                 $newSpot,
@@ -55,16 +55,18 @@ class SpotController extends ApiController
 
     #[Route(
         path: 'api/spots',
-        name: 'read_spots',
+        name: 'read_all_spots',
         methods: ['GET'],
         format: 'json'
     )]
     public function getSpots(): JsonResponse
     {
         try {
-            $spotList = $this->spotHandler->handleGetFeatureCollection();
+            $spotList = $this->handler->handleGetFeatureCollection();
 
             $response = $this->serveOkResponse($spotList);
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -82,7 +84,7 @@ class SpotController extends ApiController
     public function getSpot(int $spotId): JsonResponse
     {
         try {
-            $spot = $this->spotHandler->handleGet($spotId);
+            $spot = $this->handler->handleGet($spotId);
 
             $response = $this->serveOkResponse($spot, groups: ['read']);
         } catch (NotFoundHttpException $e) {
@@ -95,4 +97,56 @@ class SpotController extends ApiController
 
         return $response;
     }
+
+    #[Route(
+        path:'api/spots/{spotId}',
+        name: 'edit_spot',
+        methods: ['PUT'],
+        requirements: ['spotId' => Requirement::DIGITS],
+        format: 'json'
+    )]
+    public function updateSpot(
+        #[MapRequestPayload(validationGroups: ['update'], serializationContext: ['groups' => 'update'])] SpotDTO $dto,
+        int $spotId
+    ): JsonResponse
+    {
+        try {
+            $spot = $this->handler->handleUpdate($dto, $spotId);
+
+            $response = $this->serveOkResponse($spot, groups:['read']);
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (AccessDeniedHttpException $e) {
+            $response = $this-> serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
+    #[Route(
+        path:'api/spots/{spotId}',
+        name:'delete_spot',
+        methods:['DELETE'],
+        requirements: ['spotId' => Requirement::DIGITS],
+        format: 'json'
+    )]
+    public function deleteSpot(int $spotId): JsonResponse
+    {
+        try {
+            $this->handler->handleDelete($spotId);
+
+            $response = $this->serveNoContentResponse();
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (AccessDeniedHttpException $e) {
+            $response = $this-> serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
 }

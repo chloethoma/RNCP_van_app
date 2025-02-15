@@ -8,32 +8,49 @@ use App\Service\Validator\Validator;
 
 class SpotDataTransformer
 {
+    private ?Spot $entity = null;
+    private SpotDTO $dto;
+
     public function __construct(
         protected Validator $validator,
     ) {
     }
 
-    public function mapDTOtoEntity(SpotDTO $dto): Spot
+    public function setEntity(Spot $entity): void
+    {
+        $this->entity = $entity;
+    }
+
+    public function setDTO(SpotDTO $dto): void
+    {
+        $this->dto = $dto;
+    }
+
+    public function mapDTOtoEntity(): Spot
     {
         $spot = new Spot();
 
-        $spot->setLatitude($dto->latitude);
-        $spot->setLongitude($dto->longitude);
-        $spot->setDescription($dto->description);
-        $spot->setIsFavorite($dto->isFavorite);
+        if (null !== $this->entity) {
+            $spot = $this->entity;
+        }
+
+        $spot->setLatitude($this->dto->latitude);
+        $spot->setLongitude($this->dto->longitude);
+        $spot->setDescription($this->dto->description);
+        $spot->setIsFavorite($this->dto->isFavorite);
 
         return $spot;
     }
 
-    public function mapEntityToDTO(Spot $entity): SpotDTO
+    public function mapEntityToDTO(): SpotDTO
     {
         return new SpotDTO(
-            id: $entity->getId(),
-            latitude: $entity->getLatitude(),
-            longitude: $entity->getLongitude(),
-            description: $entity->getDescription(),
-            isFavorite: $entity->isFavorite(),
-            userId: $entity->getOwner()->getId()
+            id: $this->entity->getId(),
+            latitude: $this->entity->getLatitude(),
+            longitude: $this->entity->getLongitude(),
+            description: $this->entity->getDescription(),
+            isFavorite: $this->entity->isFavorite(),
+            userId: $this->entity->getOwner()->getId()
         );
     }
 }
