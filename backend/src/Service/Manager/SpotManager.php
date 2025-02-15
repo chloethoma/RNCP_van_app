@@ -24,7 +24,7 @@ class SpotManager
 
     public function initSpotOwner(Spot $spot): Spot
     {
-        $userId = $this->security->getUser()->getUserIdentifier();
+        $userId = $this->getOwner();
 
         $userRepository = $this->em->getRepository(User::class);
         $owner = $userRepository->find($userId);
@@ -36,5 +36,19 @@ class SpotManager
         $spot->setOwner($owner);
 
         return $spot;
+    }
+
+    public function checkAccess(Spot $spot): bool
+    {
+        if ($spot->getOwner()->getId() !== $this->getOwner()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getOwner(): int
+    {
+        return (int) $this->security->getUser()->getUserIdentifier();
     }
 }

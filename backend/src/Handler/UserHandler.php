@@ -18,7 +18,8 @@ class UserHandler
 
     public function handleCreate(UserDTO $dto): UserDTO
     {
-        $user = $this->transformer->mapDTOToEntity($dto);
+        $this->transformer->setDTO($dto);
+        $user = $this->transformer->mapDTOToEntity();
 
         $this->manager->checkIfUserAlreadyExists($user);
 
@@ -27,6 +28,7 @@ class UserHandler
 
         $user = $this->manager->createToken($user);
 
-        return $this->transformer->mapEntityToDTO($user);
+        $this->transformer->setEntity($user);
+        return $this->transformer->mapEntityToDTO();
     }
 }

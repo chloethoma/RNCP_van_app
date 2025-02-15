@@ -21,15 +21,15 @@ class SpotDTO
         public readonly float $longitude,
 
         #[Groups(['read', 'create', 'update'])]
-        #[Assert\NotNull(groups: ['read', 'create', 'update'])]
+        #[Assert\NotBlank(groups: ['read', 'create', 'update'])]
         public readonly ?string $description,
 
         #[Groups(['read', 'create', 'update'])]
         #[Assert\Type(type: 'boolean', groups: ['read', 'create', 'update'])]
         public readonly bool $isFavorite = false,
 
-        #[Groups(['read'])]
-        #[Assert\NotNull(groups: ['read'])]
+        #[Groups(['read', 'update'])]
+        #[Assert\NotNull(groups: ['read', 'update'])]
         public readonly ?int $userId = null,
     ) {
     }

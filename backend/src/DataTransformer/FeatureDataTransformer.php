@@ -11,22 +11,35 @@ use App\Service\Validator\Validator;
 
 class FeatureDataTransformer
 {
+    private SpotCollection $entityList;
+    private SpotFeatureCollectionDTO $dtoList;
+
     public function __construct(
         protected Validator $validator,
     ) {
     }
 
-    public function mapEntityListToDTOList(SpotCollection $spotCollection): SpotFeatureCollectionDTO
+    public function setEntityList(SpotCollection $entityList): void
+    {
+        $this->entityList = $entityList;
+    }
+
+    public function setDTOList(SpotFeatureCollectionDTO $dtoList): void
+    {
+        $this->dtoList = $dtoList;
+    }
+
+    public function mapEntityListToDTOList(): SpotFeatureCollectionDTO
     {
         $featureList = [];
 
-        foreach ($spotCollection as $spot) {
+        foreach ($this->entityList as $entity) {
             $geometry = new SpotGeometryDTO(
-                coordinates: [$spot->getLongitude(), $spot->getLatitude()]
+                coordinates: [$entity->getLongitude(), $entity->getLatitude()]
             );
 
             $properties = new SpotPropertiesDTO(
-                id: $spot->getId()
+                id: $entity->getId()
             );
 
             $feature = new SpotFeatureDTO(
