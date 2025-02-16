@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -32,15 +31,18 @@ class UserManager
         return $user;
     }
 
-    public function checkIfUserAlreadyExists(User $user): void
+    public function isEmailAlreadyTaken(User $user): bool
     {
-        if ($this->userRepository->findOneByEmail($user)) {
-            throw new ConflictHttpException('User already exists with this email');
-        }
+        $existingUser = $this->userRepository->findByEmail($user);
 
-        if ($this->userRepository->findOneByPseudo($user)) {
-            throw new ConflictHttpException('This pseudo already exists');
-        }
+        return null !== $existingUser && $existingUser->getId() !== $user->getId();
+    }
+
+    public function isPseudoAlreadyTaken(User $user): bool
+    {
+        $existingUser = $this->userRepository->findByPseudo($user);
+
+        return null !== $existingUser && $existingUser->getId() !== $user->getId();
     }
 
     public function createToken(User $user): User
@@ -52,6 +54,20 @@ class UserManager
     }
 
     public function getUserIdFromToken(): int
+    {
+        return (int) $this->security->getUser()->getUserIdentifier();
+    }
+
+    public function checkAccess(User $user): bool
+    {
+        if ($user->getId() !== $this->getOwner()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getOwner(): int
     {
         return (int) $this->security->getUser()->getUserIdentifier();
     }

@@ -45,7 +45,7 @@ class SpotRepository extends ServiceEntityRepository
     public function findCollection(int $userId): SpotCollection
     {
         $spotList = $this->findBy(['owner' => $userId]);
-        
+
         if (!$spotList) {
             throw new NotFoundHttpException();
         }

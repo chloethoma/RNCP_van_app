@@ -11,7 +11,6 @@ use App\Service\Manager\SpotManager;
 use App\Service\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SpotHandler
 {
@@ -35,6 +34,7 @@ class SpotHandler
         $spot = $this->repository->create($spot);
 
         $this->spotTransformer->setEntity($spot);
+
         return $this->spotTransformer->mapEntityToDTO();
     }
 
@@ -47,6 +47,7 @@ class SpotHandler
         }
 
         $this->spotTransformer->setEntity($spot);
+
         return $this->spotTransformer->mapEntityToDTO();
     }
 
@@ -65,6 +66,7 @@ class SpotHandler
         $newSpot = $this->repository->update($spot);
 
         $this->spotTransformer->setEntity($newSpot);
+
         return $this->spotTransformer->mapEntityToDTO();
     }
 
@@ -86,6 +88,7 @@ class SpotHandler
         $spotCollection = $this->repository->findCollection($userId);
 
         $this->featureTransformer->setEntityList($spotCollection);
+
         return $this->featureTransformer->mapEntityListToDTOList();
     }
 }
