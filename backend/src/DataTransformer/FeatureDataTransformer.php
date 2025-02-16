@@ -12,7 +12,6 @@ use App\Service\Validator\Validator;
 class FeatureDataTransformer
 {
     private SpotCollection $entityList;
-    private SpotFeatureCollectionDTO $dtoList;
 
     public function __construct(
         protected Validator $validator,
@@ -22,11 +21,6 @@ class FeatureDataTransformer
     public function setEntityList(SpotCollection $entityList): void
     {
         $this->entityList = $entityList;
-    }
-
-    public function setDTOList(SpotFeatureCollectionDTO $dtoList): void
-    {
-        $this->dtoList = $dtoList;
     }
 
     public function mapEntityListToDTOList(): SpotFeatureCollectionDTO

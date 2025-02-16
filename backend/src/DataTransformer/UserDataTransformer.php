@@ -8,14 +8,14 @@ use App\Service\Validator\Validator;
 
 class UserDataTransformer
 {
-    private User $entity;
+    private ?User $entity = null;
     private UserDTO $dto;
 
     public function __construct(
         protected Validator $validator,
     ) {
     }
-    
+
     public function setEntity(User $entity): void
     {
         $this->entity = $entity;
@@ -29,10 +29,20 @@ class UserDataTransformer
     public function mapDTOToEntity(): User
     {
         $user = new User();
+
+        if (null !== $this->entity) {
+            // case update
+            $user = $this->entity;
+            $user->setEmailVerified($this->dto->emailVerified);
+        } else {
+            // case create
+            $user->setEmailVerified(false);
+            $user->setCreatedAt(new \DateTimeImmutable());
+        }
+
         $user->setEmail($this->dto->email);
         $user->setPseudo($this->dto->pseudo);
-        $user->setEmailVerified(false);
-        $user->setCreatedAt(new \DateTimeImmutable());
+        $user->setPicture($this->dto->picture);
         $user->setUpdatedAt(new \DateTime());
 
         return $user;

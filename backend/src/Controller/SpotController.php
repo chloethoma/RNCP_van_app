@@ -99,7 +99,7 @@ class SpotController extends ApiController
     }
 
     #[Route(
-        path:'api/spots/{spotId}',
+        path: 'api/spots/{spotId}',
         name: 'edit_spot',
         methods: ['PUT'],
         requirements: ['spotId' => Requirement::DIGITS],
@@ -107,17 +107,16 @@ class SpotController extends ApiController
     )]
     public function updateSpot(
         #[MapRequestPayload(validationGroups: ['update'], serializationContext: ['groups' => 'update'])] SpotDTO $dto,
-        int $spotId
-    ): JsonResponse
-    {
+        int $spotId,
+    ): JsonResponse {
         try {
             $spot = $this->handler->handleUpdate($dto, $spotId);
 
-            $response = $this->serveOkResponse($spot, groups:['read']);
+            $response = $this->serveOkResponse($spot, groups: ['read']);
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this-> serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -126,9 +125,9 @@ class SpotController extends ApiController
     }
 
     #[Route(
-        path:'api/spots/{spotId}',
-        name:'delete_spot',
-        methods:['DELETE'],
+        path: 'api/spots/{spotId}',
+        name: 'delete_spot',
+        methods: ['DELETE'],
         requirements: ['spotId' => Requirement::DIGITS],
         format: 'json'
     )]
@@ -141,12 +140,11 @@ class SpotController extends ApiController
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this-> serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
 
         return $response;
     }
-
 }
