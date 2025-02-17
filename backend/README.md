@@ -1,51 +1,173 @@
-# Symfony Docker
+# VANSCAPE BACK API
 
-A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework,
-with [FrankenPHP](https://frankenphp.dev) and [Caddy](https://caddyserver.com/) inside!
+## Introduction
 
-![CI](https://github.com/dunglas/symfony-docker/workflows/CI/badge.svg)
+This API is configure with Docker-based installer and runtime for the Symfony framework with FrankenPHP and Caddy inside. All informations are [here](docs/symfony-docker.md).
 
-## Getting Started
+For more informations : [Docker base setup for Symfony (dunglas)](https://github.com/dunglas/symfony-docker)  
 
-1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
-2. Run `docker compose build --no-cache` to build fresh images
-3. Run `docker compose up --pull always -d --wait` to set up and start a fresh Symfony project
-4. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
-5. Run `docker compose down --remove-orphans` to stop the Docker containers.
 
-## Features
+## Table of contents
+- [Guidelines](#guidelines)
+  - [Architecture](#architecture)
+  - [Principles](#principles)
+    -  [Separation of Concerns](#separation-of-concerns)
+    -  [Single Responsibility](#single-responsibility)
+  - [Layers and Responsibilities](#layers-and-responsibilities)
+    - [Controllers](#controllers)
+    - [Handlers](#handlers)
+    - [Data Transfer Objects (DTO)](#data-transfer-objects-dto)
+    - [Data Transformers](#data-transformers)
+    - [Entity](#entity)
+    - [Managers](#managers)
+    - [Repositories](#repositories)
+  - [Summary](#summary)
+  - [Folder architecture](#folder-architecture)
+  - [Testing](#testing)
 
-* Production, development and CI ready
-* Just 1 service by default
-* Blazing-fast performance thanks to [the worker mode of FrankenPHP](https://github.com/dunglas/frankenphp/blob/main/docs/worker.md) (automatically enabled in prod mode)
-* [Installation of extra Docker Compose services](docs/extra-services.md) with Symfony Flex
-* Automatic HTTPS (in dev and prod)
-* HTTP/3 and [Early Hints](https://symfony.com/blog/new-in-symfony-6-3-early-hints) support
-* Real-time messaging thanks to a built-in [Mercure hub](https://symfony.com/doc/current/mercure.html)
-* [Vulcain](https://vulcain.rocks) support
-* Native [XDebug](docs/xdebug.md) integration
-* Super-readable configuration
+## Guidelines
 
-**Enjoy!**
+This document outlines best practices and guidelines for structuring the code in this project to ensure a clean, maintainable, and scalable architecture. These guidelines leverage patterns like DTOs, Mappers, and Handlers to achieve separation of concerns.
 
-## Docs
+### Architecture
 
-1. [Options available](docs/options.md)
-2. [Using Symfony Docker with an existing project](docs/existing-project.md)
-3. [Support for extra services](docs/extra-services.md)
-4. [Deploying in production](docs/production.md)
-5. [Debugging with Xdebug](docs/xdebug.md)
-6. [TLS Certificates](docs/tls.md)
-7. [Using MySQL instead of PostgreSQL](docs/mysql.md)
-8. [Using Alpine Linux instead of Debian](docs/alpine.md)
-9. [Using a Makefile](docs/makefile.md)
-10. [Updating the template](docs/updating.md)
-11. [Troubleshooting](docs/troubleshooting.md)
+Here is a schematic representation of the architecture:
 
-## License
+![Architecture](docs/architecture.jpg)
 
-Symfony Docker is available under the MIT License.
 
-## Credits
+### Principles
 
-Created by [Kévin Dunglas](https://dunglas.dev), co-maintained by [Maxime Helias](https://twitter.com/maxhelias) and sponsored by [Les-Tilleuls.coop](https://les-tilleuls.coop).
+#### Separation of Concerns
+Each layer of the application should focus on a single responsibility:
+
+- Presentation Layer: 
+  * Controllers: Handle HTTP requests and delegate tasks to the application layer.
+- Application Layer:
+  * Handlers: Encapsulate use case logic.
+  * DTOs: Handle data structures for input/output.
+  * Data Transformers: Transform data between DTOs and Entities.
+- Domain Layer:
+  * Entities: Represent the core business model and enforce business rules.
+  * Managers: Encapsulate business logic for a specific domain.
+- Infrastructure Layer:
+  * Repositories: Handle data persistence and retrieval logic.
+
+#### Single Responsibility
+Each component (class, method, or function) should have a single reason to change. Avoid mixing responsibilities like validation, mapping, or persistence in one place.
+
+### Layers and responsibilities
+
+#### Controllers
+
+Controllers handle HTTP requests and delegate the logic to handlers. Input Validation errors will be handled automatically if you use `MapRequestPayload` or `MapQueryParameter` feature of Symfony.
+
+Guidelines :
+
+* Controller SHOULD extends from `ApiController`.
+* Controller SHOULD use `MapRequestPayload` OR `MapQueryParameter` with DTO, and use validationGroups and serializationContext to handle different cases (create, update...).
+* Controller MUST use Handler to delegate use case logic.
+* Controller MUST catch exceptions and serve corresponding response.
+* Controller MUST use DTO with serialization groups to serve data.
+
+#### Handlers
+Handlers encapsulate use case-specific business logic. They are responsible for:
+
+* Handling the input data.
+* Delegating the logic to the manager.
+* Returning the output data.
+
+Guidelines:
+
+* Handlers SHOULD be named after the use case they handle.
+* Handlers MUST use dataTransformers to convert DTOs to Entities and vice versa.
+* Handlers MUST use repositories to handle data access and persistence.
+* Handlers MUST delegate the logic to managers.
+* Handlers MUST return DTOs.
+
+#### Data Transfer Objects (DTO)
+
+DTOs handle structured data for communication between users and application layer. They should include the minimum required fields for the operation.
+
+Guidelines:
+
+* Properties MUST be `readonly` and public to ensure immutability.
+* Properties MUST be declared inside of the constructor.
+* DTOs SHOULD NOT contain any business logic or methods.
+* Validation constraints SHOULD be used to enforce data integrity.
+* Validation constraints SHOULD be used with groups to separate validation rules for different scenarios like create, update.
+* DTOs SHOULD use serializer groups to control which properties are serialized in different scenarios.
+* All group names SHOULD be descriptive and match the use case (`create`, `read`, `update`).
+
+#### Data Transformers
+
+DataTransformers convert data between DTOs and Entities. This ensures a clear separation of concerns and keeps mapping logic reusable.
+
+Guidelines:
+
+* Use `setEntity`and `setDTO` methods to set the Entity and DTOs.
+
+#### Entity
+Entities are the core business models. Every business rule should be written using Entities (like Spot, User).
+
+Guidelines :
+
+* Entities SHOULD represent the models in the way that is the best for business rules manipulation and can be significantly different with DTOs.
+
+> Collection of entities can also be implemented. This is useful  for type hinting and storing specific filtering or sorting logic functions. If you need it make sure your collection extends form `ArrayObject`.
+
+#### Managers
+
+Managers encapsulate the business logic for a specific domain.
+They use Entities to enforce business rules and handle complex operations.
+
+Guidelines :
+* Managers MUST only contain business logic.
+* Managers MUST use Entities to enforce business rules.
+* Managers SHOULD be named after the domain they handle.
+
+#### Repositories
+
+Repositories handle data access and persistence. They abstract the underlying data storage mechanism, providing a clean API for the rest of the application to interact with the data layer.
+
+Guidelines:
+
+* Repositories SHOULD encapsulate all data access logic.
+* Repositories SHOULD use Registry to communicate with database.
+* Repositories SHOULD provide methods for common data operations like `find`, `create`, `update`, and `delete` or more complex operations.
+* Repositories SHOULD handle data mapping and transformation between external records and domain entities.
+
+### Summary
+
+| Component | Responsibility |
+| --------- | --------- |
+| Controller | Handles HTTP requests and delegates logic. |
+| Handler | Contains use case-specific business logic. |
+| DTO | Validates and Structures user data. |
+| Data Transformer | Transforms data between DTOs and Entities. |
+| Entity | Represent the core data models. |
+| Manager | Encapsulates business logic for a specific domain. |
+| Repositories | Handles data access and persistence. |
+
+Adhering to these guidelines ensures a clean, modular, and testable API architecture.
+
+### Folder Architecture
+
+```
++ src
+  |   + Controller
+  |   + DataTransformer
+  |   + DTO
+  |   + Entity
+  |   + EventListener
+  |   + EventSubscriber
+  |   + Handler
+  |   + Repository
+  |   + Exception
+  |   + Validator
+  |   + Manager
+```
+
+### Testing
+
+TODO
