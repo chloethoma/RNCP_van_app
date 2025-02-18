@@ -23,17 +23,21 @@ class UserDTO
 
         #[Groups(['read', 'create', 'update'])]
         #[Assert\NotBlank(groups: ['read', 'create', 'update'])]
+        #[Assert\Length(min: 3, max: 50, groups: ['read', 'create', 'update'])]
+        #[Assert\Regex(pattern: '/^[a-zA-Z0-9_]+$/', message: 'Only letters, numbers, and underscores are allowed', groups: ['read', 'create', 'update'])]
         public readonly string $pseudo,
 
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
-        #[Assert\DateTime(groups: ['read'])]
-        public readonly ?\DateTimeImmutable $createdAt,
+        #[Assert\Type(\DateTimeInterface::class, groups: ['read'])]
+        #[Assert\LessThanOrEqual('now', groups: ['read'])]
+        public readonly ?\DateTimeInterface $createdAt,
 
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
-        #[Assert\DateTime(groups: ['read'])]
-        public readonly ?\DateTime $updatedAt,
+        #[Assert\Type(\DateTime::class, groups: ['read'])]
+        #[Assert\GreaterThan(propertyPath: 'createdAt', groups: ['read'])]
+        public readonly ?\DateTimeInterface $updatedAt,
 
         #[Groups(['read', 'update'])]
         #[Assert\NotBlank(allowNull: true, groups: ['read', 'update'])]

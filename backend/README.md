@@ -106,6 +106,7 @@ DataTransformers convert data between DTOs and Entities. This ensures a clear se
 Guidelines:
 
 * Use `setEntity`and `setDTO` methods to set the Entity and DTOs.
+* Use `Validator` class to validate data when Entities are map in DTOs.
 
 #### Entity
 Entities are the core business models. Every business rule should be written using Entities (like Spot, User).
