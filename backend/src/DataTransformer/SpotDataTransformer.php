@@ -44,7 +44,7 @@ class SpotDataTransformer
 
     public function mapEntityToDTO(): SpotDTO
     {
-        return new SpotDTO(
+        $dto = new SpotDTO(
             id: $this->entity->getId(),
             latitude: $this->entity->getLatitude(),
             longitude: $this->entity->getLongitude(),
@@ -52,5 +52,9 @@ class SpotDataTransformer
             isFavorite: $this->entity->isFavorite(),
             userId: $this->entity->getOwner()->getId()
         );
+
+        $this->validator->validate($dto, SpotDTO::class, ['read']);
+
+        return $dto;
     }
 }

@@ -14,7 +14,7 @@ class SpotGeometryDTO
         #[Assert\Type(type: 'array', groups: ['read'])]
         #[Assert\Count(min: 2, max: 2, groups: ['read'])]
         #[Assert\All([
-            new Assert\Type(type: 'float', message: 'this must be float', groups: ['read']),
+            new Assert\Type(type: 'float', groups: ['read']),
         ])]
         public array $coordinates,
 

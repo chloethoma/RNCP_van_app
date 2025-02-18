@@ -50,7 +50,7 @@ class UserDataTransformer
 
     public function mapEntityToDTO(): UserDTO
     {
-        return new UserDTO(
+        $dto = new UserDTO(
             id: $this->entity->getId(),
             email: $this->entity->getEmail(),
             emailVerified: $this->entity->isEmailVerified(),
@@ -61,5 +61,9 @@ class UserDataTransformer
             picture: $this->entity->getPicture(),
             token: $this->entity->getToken()
         );
+
+        $this->validator->validate($dto, UserDTO::class, ['read']);
+
+        return $dto;
     }
 }

@@ -15,19 +15,19 @@ class Validator
     /**
      * @throws InvalidReceivedDataException
      */
-    public function validate(object $dto, string $class): void
+    public function validate(object $dto, string $class, array $groups = []): void
     {
-        $errors = $this->validateEngine($dto);
+        $errors = $this->validateEngine($dto, $groups);
         if (!empty($errors)) {
             throw (new InvalidReceivedDataException($class))->setDetails($errors);
         }
     }
 
-    private function validateEngine($dto): array
+    private function validateEngine($dto, array $groups): array
     {
         $errors = [];
 
-        $violations = $this->validator->validate($dto);
+        $violations = $this->validator->validate($dto, null, $groups);
         if ($violations->count() > 0) {
             foreach ($violations as $violation) {
                 $propertyPath = $violation->getPropertyPath();
