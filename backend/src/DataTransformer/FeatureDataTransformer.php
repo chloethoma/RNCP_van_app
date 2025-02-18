@@ -7,7 +7,7 @@ use App\DTO\Feature\SpotFeatureDTO;
 use App\DTO\Feature\SpotGeometryDTO;
 use App\DTO\Feature\SpotPropertiesDTO;
 use App\Entity\SpotCollection;
-use App\Service\Validator\Validator;
+use App\Validator\Validator;
 
 class FeatureDataTransformer
 {

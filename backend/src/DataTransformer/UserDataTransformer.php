@@ -4,7 +4,7 @@ namespace App\DataTransformer;
 
 use App\DTO\User\UserDTO;
 use App\Entity\User;
-use App\Service\Validator\Validator;
+use App\Validator\Validator;
 
 class UserDataTransformer
 {

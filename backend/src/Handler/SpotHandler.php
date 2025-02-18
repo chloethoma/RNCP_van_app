@@ -6,9 +6,9 @@ use App\DataTransformer\FeatureDataTransformer;
 use App\DataTransformer\SpotDataTransformer;
 use App\DTO\Feature\SpotFeatureCollectionDTO;
 use App\DTO\Spot\SpotDTO;
+use App\Manager\SpotManager;
+use App\Manager\UserManager;
 use App\Repository\SpotRepository;
-use App\Service\Manager\SpotManager;
-use App\Service\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 

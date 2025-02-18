@@ -4,7 +4,7 @@ namespace App\DataTransformer;
 
 use App\DTO\Spot\SpotDTO;
 use App\Entity\Spot;
-use App\Service\Validator\Validator;
+use App\Validator\Validator;
 
 class SpotDataTransformer
 {

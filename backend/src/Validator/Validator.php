@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\Validator;
+namespace App\Validator;
 
-use App\Service\Exceptions\Validation\InvalidReceivedDataException;
+use App\Exceptions\Validation\InvalidReceivedDataException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Validator
