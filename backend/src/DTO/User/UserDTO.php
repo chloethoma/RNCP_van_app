@@ -36,7 +36,7 @@ class UserDTO
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
         #[Assert\Type(\DateTime::class, groups: ['read'])]
-        #[Assert\GreaterThan(propertyPath: 'createdAt', groups: ['read'])]
+        #[Assert\GreaterThanOrEqual(propertyPath: 'createdAt', groups: ['read'])]
         public readonly ?\DateTimeInterface $updatedAt,
 
         #[Groups(['read', 'update'])]

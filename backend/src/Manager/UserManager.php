@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -62,13 +63,11 @@ class UserManager
         return (int) $this->security->getUser()->getUserIdentifier();
     }
 
-    public function checkAccess(User $user): bool
+    public function checkAccess(User $user): void
     {
         if ($user->getId() !== $this->getOwner()) {
-            return false;
+            throw new AccessDeniedHttpException();
         }
-
-        return true;
     }
 
     private function getOwner(): int

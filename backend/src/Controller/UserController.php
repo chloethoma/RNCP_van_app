@@ -93,4 +93,26 @@ class UserController extends ApiController
 
         return $response;
     }
+
+    #[Route(
+        path: '/api/user/{userId}',
+        name: 'delete_user',
+        methods: ['DELETE'],
+        format: 'json')]
+    public function deleteUser(int $userId): JsonResponse
+    {
+        try {
+            $this->handler->handleDelete($userId);
+
+            $response = $this->serveNoContentResponse();
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (AccessDeniedHttpException $e) {
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
 }

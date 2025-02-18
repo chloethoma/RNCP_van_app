@@ -5,21 +5,16 @@ namespace App\Manager;
 use App\Entity\Spot;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SpotManager
 {
     public function __construct(
-        protected JWTTokenManagerInterface $jwtManager,
-        protected TokenStorageInterface $tokenStorageInterface,
         protected EntityManagerInterface $em,
         protected Security $security,
     ) {
-        $this->jwtManager = $jwtManager;
-        $this->tokenStorageInterface = $tokenStorageInterface;
     }
 
     public function initSpotOwner(Spot $spot): Spot
@@ -38,13 +33,11 @@ class SpotManager
         return $spot;
     }
 
-    public function checkAccess(Spot $spot): bool
+    public function checkAccess(Spot $spot): void
     {
         if ($spot->getOwner()->getId() !== $this->getOwner()) {
-            return false;
+            throw new AccessDeniedHttpException();
         }
-
-        return true;
     }
 
     private function getOwner(): int

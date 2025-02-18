@@ -9,14 +9,11 @@ use App\DTO\Spot\SpotDTO;
 use App\Manager\SpotManager;
 use App\Manager\UserManager;
 use App\Repository\SpotRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SpotHandler
 {
     public function __construct(
         protected SpotRepository $repository,
-        protected EntityManagerInterface $em,
         protected SpotDataTransformer $spotTransformer,
         protected SpotManager $spotManager,
         protected FeatureDataTransformer $featureTransformer,
@@ -42,9 +39,7 @@ class SpotHandler
     {
         $spot = $this->repository->findById($spotId);
 
-        if (!$this->spotManager->checkAccess($spot)) {
-            throw new AccessDeniedHttpException();
-        }
+        $this->spotManager->checkAccess($spot);
 
         $this->spotTransformer->setEntity($spot);
 
@@ -55,9 +50,7 @@ class SpotHandler
     {
         $spot = $this->repository->findById($spotId);
 
-        if (!$this->spotManager->checkAccess($spot)) {
-            throw new AccessDeniedHttpException();
-        }
+        $this->spotManager->checkAccess($spot);
 
         $this->spotTransformer->setEntity($spot);
         $this->spotTransformer->setDTO($dto);
@@ -74,9 +67,7 @@ class SpotHandler
     {
         $spot = $this->repository->findById($spotId);
 
-        if (!$this->spotManager->checkAccess($spot)) {
-            throw new AccessDeniedHttpException();
-        }
+        $this->spotManager->checkAccess($spot);
 
         $this->repository->delete($spot);
     }
