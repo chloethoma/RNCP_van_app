@@ -69,4 +69,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $user;
     }
+
+    public function delete(User $user): void
+    {
+        $this->getEntityManager()->remove($user);
+        $this->getEntityManager()->flush();
+    }
 }

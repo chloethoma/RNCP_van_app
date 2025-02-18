@@ -6,7 +6,6 @@ use App\DataTransformer\UserDataTransformer;
 use App\DTO\User\UserDTO;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class UserHandler
 {
@@ -38,9 +37,7 @@ class UserHandler
     {
         $user = $this->repository->findByUserIdentifier($userId);
 
-        if (!$this->manager->checkAccess($user)) {
-            throw new AccessDeniedHttpException();
-        }
+        $this->manager->checkAccess($user);
 
         $this->transformer->setEntity($user);
 
@@ -51,9 +48,7 @@ class UserHandler
     {
         $user = $this->repository->findByUserIdentifier($userId);
 
-        if (!$this->manager->checkAccess($user)) {
-            throw new AccessDeniedHttpException();
-        }
+        $this->manager->checkAccess($user);
 
         $this->transformer->setEntity($user);
         $this->transformer->setDTO($dto);
@@ -66,5 +61,14 @@ class UserHandler
         $this->transformer->setEntity($newUser);
 
         return $this->transformer->mapEntityToDTO();
+    }
+
+    public function handleDelete(int $userId): void
+    {
+        $user = $this->repository->findByUserIdentifier($userId);
+
+        $this->manager->checkAccess($user);
+
+        $this->repository->delete($user);
     }
 }
