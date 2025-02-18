@@ -60,7 +60,7 @@ class UserController extends ApiController
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -84,7 +84,7 @@ class UserController extends ApiController
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (ConflictHttpException $e) {
             $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {

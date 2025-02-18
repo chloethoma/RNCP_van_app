@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Service\Manager;
+namespace App\Manager;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -31,18 +32,21 @@ class UserManager
         return $user;
     }
 
-    public function isEmailAlreadyTaken(User $user): bool
+    public function checkEmailOrPseudoAlreadyTaken(User $user): void
     {
-        $existingUser = $this->userRepository->findByEmail($user);
+        $errors = [];
 
-        return null !== $existingUser && $existingUser->getId() !== $user->getId();
-    }
+        if ($this->isEmailAlreadyTaken($user)) {
+            $errors[] = 'User already exists with this email';
+        }
 
-    public function isPseudoAlreadyTaken(User $user): bool
-    {
-        $existingUser = $this->userRepository->findByPseudo($user);
+        if ($this->isPseudoAlreadyTaken($user)) {
+            $errors[] = 'User already exists with this pseudo';
+        }
 
-        return null !== $existingUser && $existingUser->getId() !== $user->getId();
+        if (!empty($errors)) {
+            throw new ConflictHttpException(implode(' | ', $errors));
+        }
     }
 
     public function createToken(User $user): User
@@ -70,5 +74,19 @@ class UserManager
     private function getOwner(): int
     {
         return (int) $this->security->getUser()->getUserIdentifier();
+    }
+
+    private function isEmailAlreadyTaken(User $user): bool
+    {
+        $existingUser = $this->userRepository->findByEmail($user);
+
+        return null !== $existingUser && $existingUser->getId() !== $user->getId();
+    }
+
+    private function isPseudoAlreadyTaken(User $user): bool
+    {
+        $existingUser = $this->userRepository->findByPseudo($user);
+
+        return null !== $existingUser && $existingUser->getId() !== $user->getId();
     }
 }

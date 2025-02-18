@@ -90,7 +90,7 @@ class SpotController extends ApiController
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -116,7 +116,7 @@ class SpotController extends ApiController
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -140,7 +140,7 @@ class SpotController extends ApiController
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveUnauthorizedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }

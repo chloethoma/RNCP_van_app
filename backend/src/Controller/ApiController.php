@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Service\Exceptions\Validation\InvalidReceivedDataException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,18 +27,9 @@ class ApiController extends AbstractController
 
     protected function handleException(\Throwable $exception, string $forTarget): JsonResponse
     {
-        if ($exception instanceof InvalidReceivedDataException) {
-            $response = $this->serveInvalidRequestResponse(
-                $exception->getMessage(),
-                $forTarget,
-                $exception->getDetails()
-            );
-        } else {
-            $this->logException(__METHOD__, $exception);
-            $response = $this->serveServerErrorResponse('Oops ! Something went wrong.', $forTarget);
-        }
+        $this->logException(__METHOD__, $exception);
 
-        return $response;
+        return $this->serveServerErrorResponse('Oops ! Something went wrong.', $forTarget);
     }
 
     public function serveOkResponse(object $content, array $headers = [], array $groups = []): JsonResponse
@@ -73,21 +63,6 @@ class ApiController extends AbstractController
                 ],
             ],
             Response::HTTP_NOT_FOUND
-        );
-    }
-
-    public function serveInvalidRequestResponse(string $message, string $target, array $details): JsonResponse
-    {
-        return $this->json(
-            [
-                'error' => [
-                    'code' => 'InvalidRequest',
-                    'message' => $message,
-                    'target' => $target,
-                    'details' => $details,
-                ],
-            ],
-            Response::HTTP_BAD_REQUEST
         );
     }
 
@@ -130,6 +105,20 @@ class ApiController extends AbstractController
                 ],
             ],
             Response::HTTP_UNAUTHORIZED
+        );
+    }
+
+    public function serveAccessDeniedResponse(string $message, string $target): JsonResponse
+    {
+        return $this->json(
+            [
+                'error' => [
+                    'code' => 'AccessDenied',
+                    'message' => $message,
+                    'target' => $target,
+                ],
+            ],
+            Response::HTTP_FORBIDDEN
         );
     }
 

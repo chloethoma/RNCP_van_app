@@ -4,8 +4,10 @@ namespace App\Handler;
 
 use App\DataTransformer\UserDataTransformer;
 use App\DTO\User\UserDTO;
+use App\Exceptions\Client\EmailConflictException;
+use App\Exceptions\Client\PseudoConflictException;
+use App\Manager\UserManager;
 use App\Repository\UserRepository;
-use App\Service\Manager\UserManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
@@ -23,13 +25,14 @@ class UserHandler
         $this->transformer->setDTO($dto);
         $user = $this->transformer->mapDTOToEntity();
 
-        if ($this->manager->isEmailAlreadyTaken($user)) {
-            throw new ConflictHttpException('User already exists with this email');
-        }
+        // if ($this->manager->isEmailAlreadyTaken($user)) {
+        //     throw new EmailConflictException();
+        // }
 
-        if ($this->manager->isPseudoAlreadyTaken($user)) {
-            throw new ConflictHttpException('User already exists with this pseudo');
-        }
+        // if ($this->manager->isPseudoAlreadyTaken($user)) {
+        //     throw new PseudoConflictException();
+        // }
+        $this->manager->checkEmailOrPseudoAlreadyTaken($user);
 
         $user = $this->manager->hashPassword($user, $dto->password);
         $user = $this->repository->create($user);
@@ -66,13 +69,14 @@ class UserHandler
         $this->transformer->setDTO($dto);
         $user = $this->transformer->mapDTOToEntity();
 
-        if ($this->manager->isEmailAlreadyTaken($user)) {
-            throw new ConflictHttpException('User already exists with this email');
-        }
+        // if ($this->manager->isEmailAlreadyTaken($user)) {
+        //     throw new ConflictHttpException('User already exists with this email');
+        // }
 
-        if ($this->manager->isPseudoAlreadyTaken($user)) {
-            throw new ConflictHttpException('User already exists with this pseudo');
-        }
+        // if ($this->manager->isPseudoAlreadyTaken($user)) {
+        //     throw new ConflictHttpException('User already exists with this pseudo');
+        // }
+        $this->manager->checkEmailOrPseudoAlreadyTaken($user);
 
         $newUser = $this->repository->update($user);
 
