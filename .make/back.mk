@@ -9,7 +9,7 @@ php-bash: ## Connect to the FrankenPHP container via bash so up and down arrows 
 
 phpunit: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--group e2e --stop-on-failure"
 	@$(eval c ?=)
-	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c) 
 
 cs-fix: ## Runs php-cs to fix Symfony Code Standards issues
 	${PHP_CONT} vendor/bin/php-cs-fixer fix src --rules=@Symfony
