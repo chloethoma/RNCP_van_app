@@ -25,7 +25,7 @@ class ApiController extends AbstractController
         return $this;
     }
 
-    protected function handleException(\Throwable $exception, string $forTarget): JsonResponse
+    public function handleException(\Throwable $exception, string $forTarget): JsonResponse
     {
         $this->logException(__METHOD__, $exception);
 

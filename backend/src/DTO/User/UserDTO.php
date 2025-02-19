@@ -47,7 +47,7 @@ class UserDTO
         #[Assert\NotNull(groups: ['read'])]
         #[Assert\Type(\DateTimeInterface::class, groups: ['read'])]
         #[Assert\LessThanOrEqual('now', groups: ['read'])]
-        public readonly ?\DateTimeInterface $createdAt,
+        public readonly ?\DateTimeInterface $createdAt = null,
 
         #[OA\Property(
             description: 'Updated date of the account'
@@ -56,7 +56,7 @@ class UserDTO
         #[Assert\NotNull(groups: ['read'])]
         #[Assert\Type(\DateTime::class, groups: ['read'])]
         #[Assert\GreaterThanOrEqual(propertyPath: 'createdAt', groups: ['read'])]
-        public readonly ?\DateTimeInterface $updatedAt,
+        public readonly ?\DateTimeInterface $updatedAt = null,
 
         #[OA\Property(
             description: 'Choosen avatar for profil picture'
