@@ -8,10 +8,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SpotDTO
 {
     public function __construct(
-        #[Groups(['read'])]
-        #[Assert\NotNull(groups: ['read'])]
-        public readonly ?int $id,
-
         #[Groups(['read', 'create', 'update'])]
         #[Assert\NotNull(groups: ['read', 'create', 'update'])]
         #[Assert\Type(type: 'float', groups: ['read', 'create', 'update'])]
@@ -32,8 +28,12 @@ class SpotDTO
         #[Assert\Type(type: 'boolean', groups: ['read', 'create', 'update'])]
         public readonly bool $isFavorite = false,
 
-        #[Groups(['read', 'update'])]
-        #[Assert\NotNull(groups: ['read', 'update'])]
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
+        public readonly ?int $id = null,
+
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
         public readonly ?int $userId = null,
     ) {
     }
