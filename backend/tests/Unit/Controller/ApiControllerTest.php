@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\DTO\Spot\SpotDTO;
 use App\DTO\User\UserDTO;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -38,7 +37,7 @@ class ApiControllerTest extends KernelTestCase
         $details = [
             'code' => $exception->getCode(),
             'message' => $exception->getMessage(),
-            'trace' => $exception->getTrace()
+            'trace' => $exception->getTrace(),
         ];
 
         $this->loggerMock
@@ -55,7 +54,7 @@ class ApiControllerTest extends KernelTestCase
             'error' => [
                 'code' => 'ServerError',
                 'message' => 'Oops ! Something went wrong.',
-                'target' => 'User controller'
+                'target' => 'User controller',
             ],
         ];
 
@@ -122,7 +121,7 @@ class ApiControllerTest extends KernelTestCase
             'error' => [
                 'code' => 'NotFound',
                 'message' => 'User not found',
-                'target' => 'User controller'
+                'target' => 'User controller',
             ],
         ];
 
@@ -139,7 +138,7 @@ class ApiControllerTest extends KernelTestCase
             'error' => [
                 'code' => 'ServerError',
                 'message' => 'Oops ! Something went wrong.',
-                'target' => 'User controller'
+                'target' => 'User controller',
             ],
         ];
 
@@ -156,7 +155,7 @@ class ApiControllerTest extends KernelTestCase
             'error' => [
                 'code' => 'Conflict',
                 'message' => 'User already exists with this email',
-                'target' => 'User controller'
+                'target' => 'User controller',
             ],
         ];
 
@@ -173,7 +172,7 @@ class ApiControllerTest extends KernelTestCase
             'error' => [
                 'code' => 'Unauthorized',
                 'message' => 'Bad credentials',
-                'target' => 'User controller'
+                'target' => 'User controller',
             ],
         ];
 
@@ -190,7 +189,7 @@ class ApiControllerTest extends KernelTestCase
             'error' => [
                 'code' => 'AccessDenied',
                 'message' => 'Not allowed',
-                'target' => 'User controller'
+                'target' => 'User controller',
             ],
         ];
 

@@ -10,7 +10,6 @@ use App\DTO\Feature\SpotPropertiesDTO;
 use App\DTO\Spot\SpotDTO;
 use App\Handler\SpotHandler;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\TestDox;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -46,7 +45,7 @@ class SpotControllerTest extends KernelTestCase
         $spotDTO = new SpotDTO(
             latitude: 45.421539,
             longitude: 5.685141,
-            description: "test",
+            description: 'test',
             isFavorite: false,
         );
 
@@ -70,7 +69,7 @@ class SpotControllerTest extends KernelTestCase
         $spotDTO = new SpotDTO(
             latitude: 45.421539,
             longitude: 5.685141,
-            description: "test",
+            description: 'test',
             isFavorite: false,
         );
 
@@ -95,11 +94,11 @@ class SpotControllerTest extends KernelTestCase
     {
         return [
             'Not found Exception' => [new NotFoundHttpException(), 404],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
-    public function testGetSpots(): void 
+    public function testGetSpots(): void
     {
         $expectedDTO = $this->getFeatureCollectionDTO();
 
@@ -107,7 +106,7 @@ class SpotControllerTest extends KernelTestCase
             ->expects($this->once())
             ->method('handleGetFeatureCollection')
             ->willReturn($expectedDTO);
-        
+
         $response = $this->controller->getSpots();
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -137,11 +136,11 @@ class SpotControllerTest extends KernelTestCase
     {
         return [
             'Not found' => [new NotFoundHttpException(), 404],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
-    public function testGetSpot(): void 
+    public function testGetSpot(): void
     {
         $expectedDTO = $this->getSpotDTO();
 
@@ -150,7 +149,7 @@ class SpotControllerTest extends KernelTestCase
             ->method('handleGet')
             ->with(1)
             ->willReturn($expectedDTO);
-        
+
         $response = $this->controller->getSpot(1);
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -182,7 +181,7 @@ class SpotControllerTest extends KernelTestCase
         return [
             'Not found' => [new NotFoundHttpException(), 404],
             'AccessDenied' => [new AccessDeniedHttpException(), 403],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -191,7 +190,7 @@ class SpotControllerTest extends KernelTestCase
         $spotDTO = new SpotDTO(
             latitude: 45.421539,
             longitude: 5.685141,
-            description: "test",
+            description: 'test',
             isFavorite: false,
         );
 
@@ -215,7 +214,7 @@ class SpotControllerTest extends KernelTestCase
         $spotDTO = new SpotDTO(
             latitude: 45.421539,
             longitude: 5.685141,
-            description: "test",
+            description: 'test',
             isFavorite: false,
         );
 
@@ -241,7 +240,7 @@ class SpotControllerTest extends KernelTestCase
         return [
             'Not found Exception' => [new NotFoundHttpException(), 404],
             'AccessDenied' => [new AccessDeniedHttpException(), 403],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -251,7 +250,7 @@ class SpotControllerTest extends KernelTestCase
             ->expects($this->once())
             ->method('handleDelete')
             ->with(1);
-        
+
         $response = $this->controller->deleteSpot(1);
 
         $this->assertEquals(204, $response->getStatusCode());
@@ -266,7 +265,7 @@ class SpotControllerTest extends KernelTestCase
             ->method('handleDelete')
             ->with(1)
             ->willThrowException($exception);
-        
+
         $response = $this->controller->deleteSpot(1);
 
         $this->assertEquals($expectedStatusCode, $response->getStatusCode());
@@ -277,7 +276,7 @@ class SpotControllerTest extends KernelTestCase
         return [
             'Not found Exception' => [new NotFoundHttpException(), 404],
             'AccessDenied' => [new AccessDeniedHttpException(), 403],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -287,7 +286,7 @@ class SpotControllerTest extends KernelTestCase
             id: 1,
             latitude: 45.421539,
             longitude: 5.685141,
-            description: "test",
+            description: 'test',
             isFavorite: false,
             userId: 2
         );

@@ -30,7 +30,7 @@ class UserControllerTest extends KernelTestCase
         $this->serializer = self::getContainer()->get(SerializerInterface::class);
 
         $this->controller = new UserController(
-            $this->loggerMock, 
+            $this->loggerMock,
             $this->handlerMock,
         );
 
@@ -74,7 +74,7 @@ class UserControllerTest extends KernelTestCase
             ->method('handleCreate')
             ->with($userDTO)
             ->willThrowException($exception);
-        
+
         $response = $this->controller->createUser($userDTO);
 
         $this->assertEquals($expectedStatusCode, $response->getStatusCode());
@@ -84,7 +84,7 @@ class UserControllerTest extends KernelTestCase
     {
         return [
             'Conflict' => [new ConflictHttpException(), 409],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -124,7 +124,7 @@ class UserControllerTest extends KernelTestCase
         return [
             'Not found' => [new NotFoundHttpException(), 404],
             'AccessDenied' => [new AccessDeniedHttpException(), 403],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -133,7 +133,7 @@ class UserControllerTest extends KernelTestCase
         $userDTO = new UserDTO(
             email: 'test@gmail.com',
             pseudo: 'pseudo',
-            emailVerified: false, 
+            emailVerified: false,
             picture: null
         );
 
@@ -144,7 +144,7 @@ class UserControllerTest extends KernelTestCase
             ->method('handleUpdate')
             ->with(1, $userDTO)
             ->willReturn($expectedDTO);
-        
+
         $response = $this->controller->updateUser($userDTO, 1);
         $expectedResponse = $this->serializer->serialize($expectedDTO, 'json', ['groups' => ['read']]);
 
@@ -158,7 +158,7 @@ class UserControllerTest extends KernelTestCase
         $userDTO = new UserDTO(
             email: 'test@gmail.com',
             pseudo: 'pseudo',
-            emailVerified: false, 
+            emailVerified: false,
             picture: null
         );
 
@@ -167,7 +167,7 @@ class UserControllerTest extends KernelTestCase
             ->method('handleUpdate')
             ->with(1, $userDTO)
             ->willThrowException($exception);
-        
+
         $response = $this->controller->updateUser($userDTO, 1);
 
         $this->assertEquals($expectedStatusCode, $response->getStatusCode());
@@ -179,7 +179,7 @@ class UserControllerTest extends KernelTestCase
             'Not found' => [new NotFoundHttpException(), 404],
             'AccessDenied' => [new AccessDeniedHttpException(), 403],
             'Conflict' => [new ConflictHttpException(), 409],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -189,9 +189,9 @@ class UserControllerTest extends KernelTestCase
             ->expects($this->once())
             ->method('handleDelete')
             ->with(1);
-        
+
         $response = $this->controller->deleteUser(1);
-        
+
         $this->assertEquals(204, $response->getStatusCode());
         $this->assertEquals('null', $response->getContent());
     }
@@ -204,7 +204,7 @@ class UserControllerTest extends KernelTestCase
             ->method('handleDelete')
             ->with(1)
             ->willThrowException($exception);
-        
+
         $response = $this->controller->deleteUser(1);
 
         $this->assertEquals($expectedStatusCode, $response->getStatusCode());
@@ -215,7 +215,7 @@ class UserControllerTest extends KernelTestCase
         return [
             'Not found' => [new NotFoundHttpException(), 404],
             'AccessDenied' => [new AccessDeniedHttpException(), 403],
-            'Generic Exception' => [new \Exception, 500]
+            'Generic Exception' => [new \Exception(), 500],
         ];
     }
 
@@ -230,7 +230,7 @@ class UserControllerTest extends KernelTestCase
             createdAt: new \DateTime('2025-02-18T15:51:08+00:00'),
             updatedAt: new \DateTime('2025-02-18T15:53:42+00:00'),
             picture: null,
-            token: "jwt"
+            token: 'jwt'
         );
     }
 }

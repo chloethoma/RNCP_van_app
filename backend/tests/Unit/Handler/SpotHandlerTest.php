@@ -16,8 +16,6 @@ use App\Handler\SpotHandler;
 use App\Manager\SpotManager;
 use App\Manager\UserManager;
 use App\Repository\SpotRepository;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,8 +25,6 @@ class SpotHandlerTest extends KernelTestCase
     private SpotHandler $handler;
     private SpotDataTransformer $spotTransformer;
     private FeatureDataTransformer $featureTransformer;
-
-    private SpotRepository $spotRepository;
 
     private $repositoryMock;
     private $spotManagerMock;
@@ -296,14 +292,14 @@ class SpotHandlerTest extends KernelTestCase
     {
         $this->userManagerMock
             ->expects($this->once())
-            ->method('getUserIdFromToken')
+            ->method('getOwner')
             ->willReturn(1);
 
         $this->repositoryMock
             ->expects($this->once())
             ->method('findCollection')
             ->with(1)
-            ->willReturn($this->getSpotCollection());
+            ->willReturn($this->getSpotList());
 
         $featureOutputDTO = $this->handler->handleGetFeatureCollection();
 
@@ -316,7 +312,7 @@ class SpotHandlerTest extends KernelTestCase
     {
         $this->userManagerMock
             ->expects($this->once())
-            ->method('getUserIdFromToken')
+            ->method('getOwner')
             ->willReturn(1);
 
         $this->repositoryMock
@@ -324,7 +320,7 @@ class SpotHandlerTest extends KernelTestCase
             ->method('findCollection')
             ->with(1)
             ->willThrowException(new NotFoundHttpException());
-        
+
         $this->expectException(NotFoundHttpException::class);
 
         $this->handler->handleGetFeatureCollection();
@@ -346,7 +342,7 @@ class SpotHandlerTest extends KernelTestCase
         return $spot;
     }
 
-    private function getSpotCollection(): SpotCollection
+    private function getSpotList(): array
     {
         $owner = new User();
         $owner->setId(10);
@@ -367,11 +363,11 @@ class SpotHandlerTest extends KernelTestCase
         $spot2->setOwner($owner);
         $spot2->setId(2);
 
-        $spotCollection = new SpotCollection();
-        $spotCollection->append($spot1);
-        $spotCollection->append($spot2);
+        $spotList = [];
+        $spotList[] = $spot1;
+        $spotList[] = $spot2;
 
-        return $spotCollection;
+        return $spotList;
     }
 
     private function getFeatureCollectionDTO(): SpotFeatureCollectionDTO
