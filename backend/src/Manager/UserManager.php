@@ -58,11 +58,6 @@ class UserManager
         return $user;
     }
 
-    public function getUserIdFromToken(): int
-    {
-        return (int) $this->security->getUser()->getUserIdentifier();
-    }
-
     public function checkAccess(User $user): void
     {
         if ($user->getId() !== $this->getOwner()) {
@@ -70,21 +65,21 @@ class UserManager
         }
     }
 
-    private function getOwner(): int
+    public function getOwner(): int
     {
         return (int) $this->security->getUser()->getUserIdentifier();
     }
 
     private function isEmailAlreadyTaken(User $user): bool
     {
-        $existingUser = $this->userRepository->findByEmail($user);
+        $existingUser = $this->userRepository->findByEmail($user->getUserIdentifier());
 
         return null !== $existingUser && $existingUser->getId() !== $user->getId();
     }
 
     private function isPseudoAlreadyTaken(User $user): bool
     {
-        $existingUser = $this->userRepository->findByPseudo($user);
+        $existingUser = $this->userRepository->findByPseudo($user->getPseudo());
 
         return null !== $existingUser && $existingUser->getId() !== $user->getId();
     }

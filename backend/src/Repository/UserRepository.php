@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -34,45 +33,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function create(User $user): User
+    public function findByUserIdentifier(int $userId): ?User
     {
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
-
-        return $user;
+        return $this->findOneBy(['id' => $userId]);
     }
 
-    public function findByUserIdentifier(int $userId): User
+    public function findByEmail(string $email): ?User
     {
-        $user = $this->findOneBy(['id' => $userId]);
-
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
-
-        return $user;
+        return $this->findOneBy(['email' => $email]);
     }
 
-    public function findByEmail(User $user): ?User
+    public function findByPseudo(string $pseudo): ?User
     {
-        return $this->findOneBy(['email' => $user->getUserIdentifier()]);
-    }
-
-    public function findByPseudo(User $user): ?User
-    {
-        return $this->findOneBy(['pseudo' => $user->getPseudo()]);
-    }
-
-    public function update(User $user): User
-    {
-        $this->getEntityManager()->flush();
-
-        return $user;
-    }
-
-    public function delete(User $user): void
-    {
-        $this->getEntityManager()->remove($user);
-        $this->getEntityManager()->flush();
+        return $this->findOneBy(['pseudo' => $pseudo]);
     }
 }

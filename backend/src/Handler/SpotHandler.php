@@ -9,6 +9,8 @@ use App\DTO\Spot\SpotDTO;
 use App\Manager\SpotManager;
 use App\Manager\UserManager;
 use App\Repository\SpotRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SpotHandler
 {
@@ -18,6 +20,7 @@ class SpotHandler
         protected SpotManager $spotManager,
         protected FeatureDataTransformer $featureTransformer,
         protected UserManager $userManager,
+        protected EntityManagerInterface $em,
     ) {
     }
 
@@ -28,7 +31,8 @@ class SpotHandler
 
         $spot = $this->spotManager->initSpotOwner($spot);
 
-        $spot = $this->repository->create($spot);
+        $this->em->persist($spot);
+        $this->em->flush();
 
         $this->spotTransformer->setEntity($spot);
 
@@ -38,6 +42,10 @@ class SpotHandler
     public function handleGet(int $spotId): SpotDTO
     {
         $spot = $this->repository->findById($spotId);
+
+        if (!$spot) {
+            throw new NotFoundHttpException();
+        }
 
         $this->spotManager->checkAccess($spot);
 
@@ -50,15 +58,19 @@ class SpotHandler
     {
         $spot = $this->repository->findById($spotId);
 
+        if (!$spot) {
+            throw new NotFoundHttpException();
+        }
+
         $this->spotManager->checkAccess($spot);
 
         $this->spotTransformer->setEntity($spot);
         $this->spotTransformer->setDTO($dto);
-        $spot = $this->spotTransformer->mapDTOtoEntity();
+        $updatedSpot = $this->spotTransformer->mapDTOtoEntity();
 
-        $newSpot = $this->repository->update($spot);
+        $this->em->flush();
 
-        $this->spotTransformer->setEntity($newSpot);
+        $this->spotTransformer->setEntity($updatedSpot);
 
         return $this->spotTransformer->mapEntityToDTO();
     }
@@ -67,16 +79,23 @@ class SpotHandler
     {
         $spot = $this->repository->findById($spotId);
 
+        if (!$spot) {
+            throw new NotFoundHttpException();
+        }
+
         $this->spotManager->checkAccess($spot);
 
-        $this->repository->delete($spot);
+        $this->em->remove($spot);
+        $this->em->flush();
     }
 
     public function handleGetFeatureCollection(): SpotFeatureCollectionDTO
     {
-        $userId = $this->userManager->getUserIdFromToken();
+        $userId = $this->userManager->getOwner();
 
-        $spotCollection = $this->repository->findCollection($userId);
+        $spotList = $this->repository->findCollection($userId);
+
+        $spotCollection = $this->featureTransformer->transformArrayInObjectList($spotList);
 
         $this->featureTransformer->setEntityList($spotCollection);
 

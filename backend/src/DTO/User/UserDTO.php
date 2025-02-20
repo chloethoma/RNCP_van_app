@@ -47,9 +47,9 @@ class UserDTO
         #[Assert\NotBlank(allowNull: true, groups: ['read'])]
         public readonly ?string $token,
 
-        #[Groups(['create', 'update'])]
-        #[Assert\NotBlank(allowNull: true, groups: ['create', 'update'])]
-        #[Assert\Length(min: 8, groups: ['create', 'update'])]
+        #[Groups(['create'])]
+        #[Assert\NotBlank(allowNull: true, groups: ['create'])]
+        #[Assert\Length(min: 8, groups: ['create'])]
         public readonly ?string $password = null,
     ) {
     }
