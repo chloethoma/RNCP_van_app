@@ -21,7 +21,7 @@ const ERROR_MESSAGES = {
   SPOT_LOAD: "Erreur lors du chargement du spot.",
 };
 
-function NewSpotLocation() {
+function SpotAddLocation() {
   const mapRef = useRef<Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -36,10 +36,10 @@ function NewSpotLocation() {
     }
 
     const center = mapRef.current.getCenter();
-    if(!center) {
-        setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
-        return;
-    };
+    if (!center) {
+      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
+      return;
+    }
 
     navigate("/spot/add-details", {
       state: { longitude: center.lng, latitude: center.lat },
@@ -73,21 +73,20 @@ function NewSpotLocation() {
     <>
       <div ref={mapContainerRef} className="h-full w-full bg-light-grey" />
 
-      {errorMessage && (
-        <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
-      )}
+      <ErrorMessage
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
 
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
         <Pin size={40} className="text-red drop-shadow-lg" />
       </div>
       <div className="flex fixed bottom-28 left-1/2 transform -translate-x-1/2 z-10 gap-4">
-        <Button onClick={handleValidateLocation}>C'est ici !</Button>
-        <Button onClick={() => navigate(-1)} color="red">
-          Quitter
-        </Button>
+        <Button onClick={handleValidateLocation} label="C'est ici !"/>
+        <Button onClick={() => navigate(-1)} color="red" label="Quitter"/>
       </div>
     </>
   );
 }
 
-export default NewSpotLocation;
+export default SpotAddLocation;

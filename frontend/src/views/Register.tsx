@@ -2,7 +2,6 @@ import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { registerUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
-import { AxiosError } from "axios";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -39,24 +38,21 @@ function Register() {
       await registerUser(requestBody);
       navigate("/");
     } catch (error) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(
-          error.response?.data?.error?.message || "Échec de l'inscription."
-        );
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
       } else {
-        setErrorMessage("Une erreur inconnue est survenue.");
-        console.error("Erreur inconnue :", error);
+        setErrorMessage("Erreur lors de l'inscription");
       }
-      setTimeout(() => setErrorMessage(""), 3000);
     }
   }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-light-green">
       <div className="w-full max-w-sm p-8 pt-0 rounded-lg shadow-md sm:p-8">
-      {errorMessage && (
-          <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
-        )}
+        <ErrorMessage
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
 
         <div className="flex flex-col items-center mb-2">
           <img src={Logo} alt="Logo" className="w-9/12" />

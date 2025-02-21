@@ -33,12 +33,10 @@ export const fetchSpots = async (): Promise<Feature[]> => {
 };
 
 export const fetchSpotById = async (spotId: number): Promise<Spot> => {
-  const response = await fetchRequest<Spot>({
+  return await fetchRequest<Spot>({
     method: "get",
     url: `api/spots/${spotId}`,
   });
-
-  return response;
 };
 
 export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
@@ -47,7 +45,9 @@ export const loginUser = async (credentials: LoginCredentials): Promise<LoginRes
     url: "/api/login",
     data: credentials,
   });
+
   localStorage.setItem("access_token", response.token);
+
   return response;
 }
 
@@ -59,20 +59,31 @@ export const registerUser = async (
     url: "/register",
     data: credentials,
   });
+
   localStorage.setItem("access_token", response.token);
+
   return response;
 };
 
 export const createSpot = async (spotData: SpotFormData): Promise<Spot> => {
-  const response = await fetchRequest<Spot>({
+  return await fetchRequest<Spot>({
     method:"post",
     url:"/api/spots",
     data: spotData
   })
-
-  return response;
 };
 
-// export const deleteSpot = async (spotId: string): Promise<void> => {
-//   return await fetchRequest<void>("delete", `/api/spots/${spotId}`);
-// };
+export const updateSpot = async(spotData: Spot): Promise<Spot> => {
+  return await fetchRequest<Spot>({
+    method:"put",
+    url:`/api/spots/${spotData.id}`,
+    data: spotData
+  })
+}
+
+export const deleteSpot = async(spotId: number): Promise<void> => {
+  return await fetchRequest<void>({
+    method:"delete",
+    url:`/api/spots/${spotId}`
+  })
+}

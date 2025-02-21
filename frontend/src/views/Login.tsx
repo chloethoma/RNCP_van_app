@@ -2,7 +2,6 @@ import { useId, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { loginUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
-import { AxiosError } from "axios";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/ErrorMessage";
 
@@ -28,15 +27,11 @@ function Login() {
       await loginUser(requestBody);
       navigate("/");
     } catch (error) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(
-          error.response?.data?.error?.message || "Échec de l'authentification."
-        );
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
       } else {
         setErrorMessage("Une erreur inconnue est survenue.");
-        console.error("Erreur inconnue :", error);
       }
-      setTimeout(() => setErrorMessage(""), 3000);
     }
   }
 
@@ -44,9 +39,7 @@ function Login() {
     <div className="flex items-center justify-center min-h-screen bg-light-green">
       <div className="w-full max-w-sm p-8 pt-0 rounded-lg sm:p-8">
 
-        {errorMessage && (
-          <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
-        )}
+        <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
 
         {/* Header */}
         <div className="flex flex-col items-center mb-2">
