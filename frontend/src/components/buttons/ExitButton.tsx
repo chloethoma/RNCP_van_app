@@ -8,9 +8,11 @@ interface ExitButtonProps {
 function ExitButton ({onClick}: ExitButtonProps)
 {
     return (
-        <Button onClick={onClick} size={"small"}>
-            <X size={20}/>
-        </Button>
+        <Button 
+            onClick={onClick} 
+            size={"small"}
+            icon={<X size={20}/>}
+            />
     )
 }
 

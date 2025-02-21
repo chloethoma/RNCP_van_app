@@ -21,17 +21,17 @@ apiClient.interceptors.request.use((config) => {
 });
 
 // Check token validity for each call api dans redirect to /login if invalid
-// apiClient.interceptors.response.use(
-//     (response) => response,
-//     (error) => {
-//         const isLoginRequest = error.config?.url === "/api/login"
-//       if (error.response && error.response.status === 401 && !isLoginRequest) {
-//         localStorage.removeItem("access_token");
-//         window.location.href = "/login";
-//       }
-//       return Promise.reject(error);
-//     }
-//   );
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        const isLoginRequest = error.config?.url === "/api/login"
+      if (error.response && error.response.status === 401 && !isLoginRequest) {
+        localStorage.removeItem("access_token");
+        window.location.href = "/login";
+      }
+      return Promise.reject(error);
+    }
+  );
 
 const fetchRequest = async <T>({
   method,
@@ -46,16 +46,16 @@ const fetchRequest = async <T>({
       headers,
       data,
     });
+
     return response.data;
   } catch (error) {
+    let errorMessage = "Une erreur s'est produite";
+
     if (error instanceof AxiosError) {
-      const errorMessage =
-        error.response?.data?.error?.message || "Une erreur s'est produite";
-      console.error(`API request failed: ${errorMessage}`);
-    } else {
-      console.error("An unexpected error occurred:", error);
+      errorMessage = error.response?.data?.error?.message || errorMessage;
     }
-    throw error;
+
+    throw new Error(errorMessage);
   }
 };
 

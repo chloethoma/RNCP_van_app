@@ -7,9 +7,10 @@ import AppLayout from "../../components/AppLayout";
 import Community from "../../views/Community";
 import Profile from "../../views/Profile";
 import Settings from "../../views/Settings";
-import NewSpotDetails from "../../views/newSpot/NewSpotDetails";
-import Spot from "../../views/SpotDetails";
-import NewSpotLocation from "../../views/newSpot/NewSpotLocation";
+import SpotAddDetails from "../../views/Spot/SpotAddDetails";
+import Spot from "../../views/Spot/SpotDetails";
+import SpotAddLocation from "../../views/Spot/SpotAddLocation";
+import SpotEdit from "../../views/Spot/SpotEdit";
 
 function Routing() {
   return (
@@ -30,9 +31,10 @@ function Routing() {
         <Route path="/community" element={<Community />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/spot/add-location" element={<NewSpotLocation />} />
-        <Route path="/spot/add-details" element={<NewSpotDetails />} />
+        <Route path="/spot/add-location" element={<SpotAddLocation />} />
+        <Route path="/spot/add-details" element={<SpotAddDetails />} />
         <Route path="/spot/:spotId" element={<Spot />} />
+        <Route path="/spot/:spotId/edit" element={<SpotEdit />} />
       </Route>
 
       {/* Route 404 */}

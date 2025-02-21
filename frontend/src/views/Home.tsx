@@ -7,9 +7,9 @@ import { Spot } from "../types/spot";
 import SpotPreview from "../components/SpotPreview";
 import { Locate, Plus } from "lucide-react";
 import Button from "../components/buttons/Button";
-import { useNavigate } from "react-router";
-import { AxiosError } from "axios";
+import { useLocation, useNavigate } from "react-router";
 import ErrorMessage from "../components/ErrorMessage";
+import SuccessMessage from "../components/SuccessMessage";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
@@ -24,7 +24,7 @@ const ERROR_MESSAGES = {
     "La géolocalisation n'est pas supportée par votre navigateur.",
   GEOLOCATION_FAIL: "Impossible de récupérer votre position.",
   SPOTS_LOAD: "Erreur lors du chargement des spots.",
-  SPOT_LOAD: "Erreur lors du chargement du spot.",
+  SPOT_LOAD: "Erreur lors de la récupération du spot.",
 };
 
 const ERROR_CONSOLE = {
@@ -39,25 +39,22 @@ function Home() {
   const mapRef = useRef<Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [userLocation, setUserLocation] = useState<LngLatLike | null>(null);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(location.state?.successMessage || null);
 
   const handleMarkerClick = async (spot: Feature) => {
     try {
-      const spotDetails = await fetchSpotById(spot.properties.id);
-      setSelectedSpot(spotDetails);
+      const fetchedSpot = await fetchSpotById(spot.properties.id);
+      setSelectedSpot(fetchedSpot);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        setErrorMessage(ERROR_MESSAGES.SPOT_LOAD);
-        console.error(
-          ERROR_CONSOLE.SPOT_LOAD,
-          error.response?.data?.error?.message
-        );
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
       } else {
-        setErrorMessage(ERROR_MESSAGES.DEFAULT);
-        console.error(ERROR_CONSOLE.DEFAULT, error);
+        setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
       }
     }
   };
@@ -146,15 +143,10 @@ function Home() {
             .addEventListener("click", () => handleMarkerClick(spot));
         });
       } catch (error) {
-        if (error instanceof AxiosError) {
-          setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
-          console.error(
-            ERROR_CONSOLE.SPOTS_LOAD,
-            error.response?.data?.error?.message
-          );
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
         } else {
-          setErrorMessage(ERROR_MESSAGES.DEFAULT);
-          console.error(ERROR_CONSOLE.DEFAULT, error);
+          setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
         }
       }
     };
@@ -166,12 +158,9 @@ function Home() {
     <>
       <div ref={mapContainerRef} className="h-full w-full bg-light-grey" />
 
-      {errorMessage && (
-        <ErrorMessage
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-        />
-      )}
+      <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
+      <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
+
 
       {selectedSpot && (
         <SpotPreview
@@ -183,14 +172,10 @@ function Home() {
       {!selectedSpot && (
         <>
           <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10">
-            <Button onClick={handleNavigate}>
-              <Plus size={22} />
-            </Button>
+            <Button onClick={handleNavigate} icon={<Plus size={22} />}/>
           </div>
           <div className="fixed bottom-40 right-4 flex flex-col items-end space-y-3 z-10">
-            <Button onClick={() => getCurrentPositionAndFlyTo(ZOOM)}>
-              <Locate size={22} />
-            </Button>
+            <Button onClick={() => getCurrentPositionAndFlyTo(ZOOM)} icon={<Locate size={22} />}/>
           </div>
         </>
       )}
