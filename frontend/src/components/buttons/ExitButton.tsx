@@ -1,19 +1,12 @@
-import Button from "./Button";
-import { X } from 'lucide-react';
+import IconButton from "./IconButton";
+import { X } from "lucide-react";
 
 interface ExitButtonProps {
-    onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-function ExitButton ({onClick}: ExitButtonProps)
-{
-    return (
-        <Button 
-            onClick={onClick} 
-            size={"small"}
-            icon={<X size={20}/>}
-            />
-    )
+function ExitButton({ onClick }: ExitButtonProps) {
+  return <IconButton onClick={onClick} size={"small"} icon={<X size={20} />} />;
 }
 
 export default ExitButton;

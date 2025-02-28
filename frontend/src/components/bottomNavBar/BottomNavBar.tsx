@@ -12,7 +12,7 @@ function BottomNavBar() {
         <Users size={24} />
       </NavItem>
 
-      <NavItem to={"/profile"} label={"Profil"}>
+      <NavItem to={"/profile"} label={"Mon Profil"}>
         <User size={24} />
       </NavItem>
 

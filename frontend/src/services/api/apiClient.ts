@@ -22,16 +22,16 @@ apiClient.interceptors.request.use((config) => {
 
 // Check token validity for each call api dans redirect to /login if invalid
 apiClient.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        const isLoginRequest = error.config?.url === "/api/login"
-      if (error.response && error.response.status === 401 && !isLoginRequest) {
-        localStorage.removeItem("access_token");
-        window.location.href = "/login";
-      }
-      return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    const isLoginRequest = error.config?.url === "/api/login";
+    if (error.response && error.response.status === 401 && !isLoginRequest) {
+      localStorage.removeItem("access_token");
+      window.location.href = "/login";
     }
-  );
+    return Promise.reject(error);
+  },
+);
 
 const fetchRequest = async <T>({
   method,

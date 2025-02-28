@@ -38,8 +38,10 @@ function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-light-green">
       <div className="w-full max-w-sm p-8 pt-0 rounded-lg sm:p-8">
-
-        <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
+        <ErrorMessage
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
 
         {/* Header */}
         <div className="flex flex-col items-center mb-2">

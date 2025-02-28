@@ -10,8 +10,9 @@ interface ButtonProps {
 }
 
 const COLORS = {
-  "dark-green": "bg-dark-green hover:bg-dark-green-hover text-white",
+  darkGreen: "bg-dark-green hover:bg-dark-green-hover text-white",
   red: "bg-red hover:bg-red-hover text-white",
+  white: "bg-white, hover:bg-white-hover text-white",
 } as const;
 
 const SIZES = {
@@ -19,20 +20,29 @@ const SIZES = {
   small: "p-1",
 } as const;
 
-function Button({ onClick, icon, label, color = "dark-green", size = "default", className }: ButtonProps) {
+function IconButton({
+  onClick,
+  icon,
+  label,
+  color = "darkGreen",
+  size = "default",
+  className,
+}: ButtonProps) {
   return (
     <button
       onClick={onClick}
       className={clsx(
-        "rounded-full shadow-xl transition flex items-center justify-center",
+        "rounded-full shadow-sm transition flex items-center justify-center",
         COLORS[color],
         SIZES[size],
-        className
+        className,
       )}
     >
-      {icon ? icon : label && <span className="text-sm font-bold">{label}</span>}
+      {icon
+        ? icon
+        : label && <span className="text-sm font-bold">{label}</span>}
     </button>
   );
 }
 
-export default Button;
+export default IconButton;

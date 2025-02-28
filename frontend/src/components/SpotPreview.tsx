@@ -11,21 +11,23 @@ function SpotPreview({ selectedSpot, setSelectedSpot }: SpotPreviewProps) {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/spot/${selectedSpot.id}`, {state: {spot: selectedSpot}});
-  }
+    navigate(`/spot/${selectedSpot.id}`, { state: { spot: selectedSpot } });
+  };
 
   return (
     <>
-      <div 
-      onClick={handleNavigate}
-      className="fixed bottom-24 px-4 py-4 mx-4 sm:mx-6 md:mx-10 lg:mx-16 max-w-screen-md left-0 right-0 bg-white shadow-lg rounded-xl transition-transform duration-300 ease-in-out transform">
+      <div
+        onClick={handleNavigate}
+        className="fixed bottom-24 px-4 py-4 mx-4 sm:mx-6 md:mx-10 lg:mx-16 max-w-screen-md left-0 right-0 bg-white shadow-lg rounded-xl transition-transform duration-300 ease-in-out transform"
+      >
         <div className="relative">
           <div className="absolute -top-1 -right-0.5">
-            <ExitButton onClick={(e) => {
-              e.stopPropagation();
-              setSelectedSpot(null);
-              }}>
-            </ExitButton>
+            <ExitButton
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedSpot(null);
+              }}
+            ></ExitButton>
           </div>
           <h3 className="text-lg text-dark-grey font-default font-semibold line-clamp-1">
             {selectedSpot.id}

@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import mapboxgl, { LngLatLike, Map } from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Button from "../../components/buttons/Button";
+import IconButton from "../../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
 import { Pin } from "lucide-react";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -82,8 +82,8 @@ function SpotAddLocation() {
         <Pin size={40} className="text-red drop-shadow-lg" />
       </div>
       <div className="flex fixed bottom-28 left-1/2 transform -translate-x-1/2 z-10 gap-4">
-        <Button onClick={handleValidateLocation} label="C'est ici !"/>
-        <Button onClick={() => navigate(-1)} color="red" label="Quitter"/>
+        <IconButton onClick={handleValidateLocation} label="C'est ici !" />
+        <IconButton onClick={() => navigate(-1)} color="red" label="Quitter" />
       </div>
     </>
   );

@@ -10,7 +10,7 @@ const MESSAGES = {
   ERROR_DEFAULT: "Une erreur est survenue",
   ERROR_INPUT_MISSING: "Veuillez entrer une description",
   ERROR_CREATE: "Erreur lors de la création du spot",
-  SUCCESS_CREATE: "Spot ajouté à la map avec succès !"
+  SUCCESS_CREATE: "Spot ajouté à la map avec succès !",
 };
 
 function SpotAddDetails() {
@@ -34,7 +34,7 @@ function SpotAddDetails() {
       const requestBody = { longitude, latitude, description };
       await createSpot(requestBody);
 
-      navigate("/", { state: {successMessage: MESSAGES.SUCCESS_CREATE}});
+      navigate("/", { state: { successMessage: MESSAGES.SUCCESS_CREATE } });
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -53,18 +53,20 @@ function SpotAddDetails() {
         setErrorMessage={setErrorMessage}
       />
 
-      <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative 
-                   overflow-y-auto h-[calc(100vh-4rem-5rem)]">
+      <div
+        className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative 
+                   overflow-y-auto h-[calc(100vh-4rem-5rem)]"
+      >
         <div className="h-36 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm rounded-lg mb-4">
           <p>Zone d'upload d'images (à implémenter)</p>
         </div>
 
         <div className="text-center mb-4">
-            <MapPin size={26} className="text-red drop-shadow-lg mx-auto" />
-            <p className="text-xs text-grey mt-2">
-              Latitude: {latitude} | Longitude: {longitude}
-            </p>
-          </div>
+          <MapPin size={26} className="text-red drop-shadow-lg mx-auto" />
+          <p className="text-xs text-grey mt-2">
+            Latitude: {latitude} | Longitude: {longitude}
+          </p>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className="mt-3">

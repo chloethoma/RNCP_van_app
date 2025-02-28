@@ -6,7 +6,7 @@ interface PrivateRouteProps {
   children: React.ReactNode;
 }
 
-function isTokenValid (): boolean {
+function isTokenValid(): boolean {
   const token = localStorage.getItem("access_token");
   if (!token) return false;
 
@@ -18,11 +18,10 @@ function isTokenValid (): boolean {
     console.log(error);
     return false;
   }
-};
+}
 
-function PrivateRoute ({children}: PrivateRouteProps): JSX.Element {
-    return isTokenValid() ? <>{children}</> : <Navigate to="/login" />;
-
+function PrivateRoute({ children }: PrivateRouteProps): JSX.Element {
+  return isTokenValid() ? <>{children}</> : <Navigate to="/login" />;
 }
 
 export default PrivateRoute;

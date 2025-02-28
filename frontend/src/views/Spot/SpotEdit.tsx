@@ -60,9 +60,7 @@ function SpotEdit() {
           setErrorMessage={setErrorMessage}
         />
 
-        <div
-          className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative overflow-y-auto h-[calc(100vh-4rem-5rem)]"
-        >
+        <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative overflow-y-auto h-[calc(100vh-4rem-5rem)]">
           <div className="h-36 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm rounded-lg mb-4">
             <p>Zone d'upload d'images (à implémenter)</p>
           </div>
