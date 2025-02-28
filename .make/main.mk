@@ -16,6 +16,7 @@ PHP      = $(PHP_CONT) php
 COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
 NPM      = $(FRONT_CONT) npm
+NPX      = $(FRONT_CONT) npx
 
 # Misc
 .DEFAULT_GOAL = help

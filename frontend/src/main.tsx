@@ -9,5 +9,5 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <Routing />
     </BrowserRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

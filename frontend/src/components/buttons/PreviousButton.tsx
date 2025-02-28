@@ -7,7 +7,11 @@ interface PreviousButtonProps {
 
 function PreviousButton({ onClick }: PreviousButtonProps) {
   return (
-    <IconButton onClick={onClick} size={"small"} icon={<ArrowLeft size={20} />} />
+    <IconButton
+      onClick={onClick}
+      size={"small"}
+      icon={<ArrowLeft size={20} />}
+    />
   );
 }
 

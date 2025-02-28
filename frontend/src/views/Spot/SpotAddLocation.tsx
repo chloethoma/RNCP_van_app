@@ -82,8 +82,8 @@ function SpotAddLocation() {
         <Pin size={40} className="text-red drop-shadow-lg" />
       </div>
       <div className="flex fixed bottom-28 left-1/2 transform -translate-x-1/2 z-10 gap-4">
-        <IconButton onClick={handleValidateLocation} label="C'est ici !"/>
-        <IconButton onClick={() => navigate(-1)} color="red" label="Quitter"/>
+        <IconButton onClick={handleValidateLocation} label="C'est ici !" />
+        <IconButton onClick={() => navigate(-1)} color="red" label="Quitter" />
       </div>
     </>
   );

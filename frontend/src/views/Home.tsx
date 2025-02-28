@@ -44,7 +44,9 @@ function Home() {
   const [userLocation, setUserLocation] = useState<LngLatLike | null>(null);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(location.state?.successMessage || null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(
+    location.state?.successMessage || null,
+  );
 
   const handleMarkerClick = async (spot: Feature) => {
     try {
@@ -119,7 +121,7 @@ function Home() {
       (error) => {
         setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
         console.error(ERROR_CONSOLE.GEOLOCATION_FAIL, error);
-      }
+      },
     );
   }, []);
 
@@ -158,9 +160,14 @@ function Home() {
     <>
       <div ref={mapContainerRef} className="h-full w-full bg-light-grey" />
 
-      <ErrorMessage errorMessage={errorMessage} setErrorMessage={setErrorMessage}/>
-      <SuccessMessage successMessage={successMessage} setSuccessMessage={setSuccessMessage}/>
-
+      <ErrorMessage
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+      <SuccessMessage
+        successMessage={successMessage}
+        setSuccessMessage={setSuccessMessage}
+      />
 
       {selectedSpot && (
         <SpotPreview
@@ -172,10 +179,13 @@ function Home() {
       {!selectedSpot && (
         <>
           <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10">
-            <IconButton onClick={handleNavigate} icon={<Plus size={22} />}/>
+            <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
           </div>
           <div className="fixed bottom-40 right-4 flex flex-col items-end space-y-3 z-10">
-            <IconButton onClick={() => getCurrentPositionAndFlyTo(ZOOM)} icon={<Locate size={22} />}/>
+            <IconButton
+              onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
+              icon={<Locate size={22} />}
+            />
           </div>
         </>
       )}

@@ -11,7 +11,7 @@ import ErrorMessage from "../components/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage";
 import IconButton from "../components/buttons/IconButton";
 import { useNavigate } from "react-router";
-import Modal from "../components/modal/Modal";
+import ConfirmationModal from "../components/modal/ConfirmationModal";
 
 interface InfoRowProps {
   label: string;
@@ -69,17 +69,18 @@ function Profile() {
     }
   };
 
-  const handleUpdatePassword = async (newPassword: string) => {};
+  const handleUpdatePassword = (newPassword: string) => {
+    return newPassword;
+  };
 
   const handleLogOut = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("access_token");
     navigate("/login");
   };
 
   const handleDelete = async () => {
     try {
       await deleteUser();
-      localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
       if (error instanceof Error) {
@@ -160,9 +161,9 @@ function Profile() {
             Supprimer mon compte
           </button>
 
-          {/* Modale de confirmation */}
+          {/* Modale de confirmation avant suppression du compte */}
           {isModalOpen && (
-            <Modal
+            <ConfirmationModal
               title="Êtes-vous sûr de vouloir supprimer votre compte ?"
               onConfirm={handleDelete}
               onCancel={() => setIsModalOpen(false)}
@@ -209,7 +210,7 @@ function InfoRow({ label, value, onSave, type = "text" }: InfoRowProps) {
       {isEditing ? (
         <IconButton
           onClick={handleSave}
-          icon={<Check size={20} color="green" />}
+          icon={<Check size={20} color="green" strokeWidth={3} />}
           color="white"
         />
       ) : (

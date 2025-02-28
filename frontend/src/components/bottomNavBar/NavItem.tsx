@@ -3,10 +3,10 @@ import { NavLink } from "react-router";
 interface NavItemProps {
   to: string;
   label: string;
-  children: JSX.Element
+  children: JSX.Element;
 }
 
-function NavItem ({ to, label, children }: NavItemProps) {
+function NavItem({ to, label, children }: NavItemProps) {
   return (
     <NavLink
       to={to}
@@ -16,6 +16,6 @@ function NavItem ({ to, label, children }: NavItemProps) {
       <span className="text-xs test-black">{label}</span>
     </NavLink>
   );
-};
+}
 
 export default NavItem;

@@ -10,3 +10,6 @@ front-bash: ## Connect to the frontend container via bash so up and down arrows 
 lint: ## Run ESLint
 	@$(NPM) run lint
 
+prettier: ## Start formatting with prettier
+	@$(NPX) prettier . --write
+

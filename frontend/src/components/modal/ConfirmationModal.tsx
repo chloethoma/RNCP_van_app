@@ -8,7 +8,7 @@ interface ModalProps {
   cancelText?: string;
 }
 
-const Modal = ({
+const ConfirmationModal = ({
   title,
   onConfirm,
   onCancel,
@@ -43,4 +43,4 @@ const Modal = ({
   );
 };
 
-export default Modal;
+export default ConfirmationModal;
