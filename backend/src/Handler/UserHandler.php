@@ -52,15 +52,14 @@ class UserHandler
         return $this->transformer->mapEntityToDTO();
     }
 
-    public function handleUpdate(int $userId, UserDTO $dto): UserDTO
+    public function handleUpdate(UserDTO $dto): UserDTO
     {
+        $userId = $this->manager->getOwner();
         $user = $this->repository->findByUserIdentifier($userId);
 
         if (!$user) {
             throw new NotFoundHttpException();
         }
-
-        $this->manager->checkAccess($user);
 
         $this->transformer->setEntity($user);
         $this->transformer->setDTO($dto);
@@ -75,15 +74,14 @@ class UserHandler
         return $this->transformer->mapEntityToDTO();
     }
 
-    public function handleDelete(int $userId): void
+    public function handleDelete(): void
     {
+        $userId = $this->manager->getOwner();
         $user = $this->repository->findByUserIdentifier($userId);
 
         if (!$user) {
             throw new NotFoundHttpException();
         }
-
-        $this->manager->checkAccess($user);
 
         $this->em->remove($user);
         $this->em->flush();

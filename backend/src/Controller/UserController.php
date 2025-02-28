@@ -69,16 +69,15 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user/{userId}',
+        path: '/api/user',
         name: 'edit_user',
         methods: ['PUT'],
         format: 'json')]
     public function updateUser(
         #[MapRequestPayload(validationGroups: ['update'], serializationContext: ['groups' => ['update']])] UserDTO $dto,
-        int $userId,
     ): JsonResponse {
         try {
-            $user = $this->handler->handleUpdate($userId, $dto);
+            $user = $this->handler->handleUpdate($dto);
 
             $response = $this->serveOkResponse($user, groups: ['read']);
         } catch (NotFoundHttpException $e) {
@@ -95,14 +94,14 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user/{userId}',
+        path: '/api/user',
         name: 'delete_user',
         methods: ['DELETE'],
         format: 'json')]
-    public function deleteUser(int $userId): JsonResponse
+    public function deleteUser(): JsonResponse
     {
         try {
-            $this->handler->handleDelete($userId);
+            $this->handler->handleDelete();
 
             $response = $this->serveNoContentResponse();
         } catch (NotFoundHttpException $e) {
