@@ -1,27 +1,17 @@
 import fetchRequest from "./apiClient";
 import { Feature, FeatureCollection } from "../../types/feature";
 import { Spot } from "../../types/spot";
+import { User } from "../../types/user";
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  token: string;
-}
-
-interface RegistrationCredentials {
-  email: string;
-  pseudo: string;
-  password: string;
-}
-
-interface RegistrationResponse {
-  token: string;
-}
-
+// Spot
 type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">
+
+// User
+type LoginCredentials = Pick<User, "email" | "password">
+type RegistrationCredentials = Pick<User, "email" | "pseudo" | "password">
+type Token = {
+  token: string
+}
 
 export const fetchSpots = async (): Promise<Feature[]> => {
   const response = await fetchRequest<FeatureCollection>({
@@ -37,32 +27,6 @@ export const fetchSpotById = async (spotId: number): Promise<Spot> => {
     method: "get",
     url: `api/spots/${spotId}`,
   });
-};
-
-export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  const response = await fetchRequest<LoginResponse>({
-    method: "post",
-    url: "/api/login",
-    data: credentials,
-  });
-
-  localStorage.setItem("access_token", response.token);
-
-  return response;
-}
-
-export const registerUser = async (
-  credentials: RegistrationCredentials
-): Promise<RegistrationResponse> => {
-  const response = await fetchRequest<RegistrationResponse>({
-    method: "post",
-    url: "/register",
-    data: credentials,
-  });
-
-  localStorage.setItem("access_token", response.token);
-
-  return response;
 };
 
 export const createSpot = async (spotData: SpotFormData): Promise<Spot> => {
@@ -87,3 +51,53 @@ export const deleteSpot = async(spotId: number): Promise<void> => {
     url:`/api/spots/${spotId}`
   })
 }
+
+export const loginUser = async (credentials: LoginCredentials): Promise<Token> => {
+  const response = await fetchRequest<Token>({
+    method: "post",
+    url: "/api/login",
+    data: credentials,
+  });
+
+  localStorage.setItem("access_token", response.token);
+
+  return response;
+}
+
+export const registerUser = async (
+  credentials: RegistrationCredentials
+): Promise<Token> => {
+  const response = await fetchRequest<Token>({
+    method: "post",
+    url: "/register",
+    data: credentials,
+  });
+
+  localStorage.setItem("access_token", response.token);
+
+  return response;
+};
+
+export const fetchUserByToken = async (): Promise<User> => {
+  return await fetchRequest<User>({
+    method: "get",
+    url: "api/user",
+  });
+};
+
+export const updateUser = async (userData: User): Promise<User> => {
+  return await fetchRequest<User>({
+    method: "put",
+    url:"/api/user",
+    data: userData
+  })
+}
+
+export const deleteUser = async(): Promise<void> => {
+  return await fetchRequest<void>({
+    method:"delete",
+    url:"/api/user"
+  })
+}
+
+

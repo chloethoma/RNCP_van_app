@@ -1,5 +1,5 @@
 interface FormButtonProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 function FormButton({ children }: FormButtonProps) {

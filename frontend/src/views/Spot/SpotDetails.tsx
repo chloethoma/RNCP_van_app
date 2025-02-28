@@ -2,7 +2,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { Spot } from "../../types/spot";
 import { useEffect, useState } from "react";
 import ErrorMessage from "../../components/ErrorMessage";
-import Button from "../../components/buttons/Button";
+import IconButton from "../../components/buttons/IconButton";
 import {
   Heart,
   Navigation,
@@ -107,27 +107,27 @@ function SpotDetails() {
 
           <div className="flex justify-between items-center mt-4">
             <div className="flex flex-col items-center gap-2">
-              <Button onClick={handleItinerary} icon={<Navigation size={24} />} />
+              <IconButton onClick={handleItinerary} icon={<Navigation size={24} />} />
               <span className="mt-1 text-xs text-grey">Itinéraire</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <Button onClick={handleFavorite} icon={<Heart size={24} />} />
+              <IconButton onClick={handleFavorite} icon={<Heart size={24} />} />
               <span className="mt-1 text-xs text-grey">Favoris</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <Button onClick={handleShare} icon={<Share2 size={24} />} />
+              <IconButton onClick={handleShare} icon={<Share2 size={24} />} />
               <span className="mt-1 text-xs text-grey">Partager</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <Button onClick={handleEdit} icon={<PencilLine size={24} />} />
+              <IconButton onClick={handleEdit} icon={<PencilLine size={24} />} />
               <span className="mt-1 text-xs text-grey">Modifier</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <Button onClick={handleDelete} icon={<Trash size={24} />} color="red" />
+              <IconButton onClick={handleDelete} icon={<Trash size={24} />} color="red" />
               <span className="mt-1 text-xs text-grey">Supprimer</span>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { fetchSpotById, fetchSpots } from "../services/api/apiRequests";
 import { Spot } from "../types/spot";
 import SpotPreview from "../components/SpotPreview";
 import { Locate, Plus } from "lucide-react";
-import Button from "../components/buttons/Button";
+import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
 import ErrorMessage from "../components/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage";
@@ -172,10 +172,10 @@ function Home() {
       {!selectedSpot && (
         <>
           <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10">
-            <Button onClick={handleNavigate} icon={<Plus size={22} />}/>
+            <IconButton onClick={handleNavigate} icon={<Plus size={22} />}/>
           </div>
           <div className="fixed bottom-40 right-4 flex flex-col items-end space-y-3 z-10">
-            <Button onClick={() => getCurrentPositionAndFlyTo(ZOOM)} icon={<Locate size={22} />}/>
+            <IconButton onClick={() => getCurrentPositionAndFlyTo(ZOOM)} icon={<Locate size={22} />}/>
           </div>
         </>
       )}
