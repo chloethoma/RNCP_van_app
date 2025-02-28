@@ -38,15 +38,14 @@ class UserHandler
         return $this->transformer->mapEntityToDTO();
     }
 
-    public function handleGet(int $userId): UserDTO
+    public function handleGet(): UserDTO
     {
+        $userId = $this->manager->getOwner();
         $user = $this->repository->findByUserIdentifier($userId);
 
         if (!$user) {
             throw new NotFoundHttpException();
         }
-
-        $this->manager->checkAccess($user);
 
         $this->transformer->setEntity($user);
 

@@ -47,14 +47,14 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user/{userId}',
+        path: '/api/user',
         name: 'read_user',
         methods: ['GET'],
         format: 'json')]
-    public function getUserIdentity(int $userId): JsonResponse
+    public function getUserIdentity(): JsonResponse
     {
         try {
-            $user = $this->handler->handleGet($userId);
+            $user = $this->handler->handleGet();
 
             $response = $this->serveOkResponse($user, groups: ['read']);
         } catch (NotFoundHttpException $e) {
