@@ -16,7 +16,7 @@ const ConfirmationModal = ({
   cancelText = "Annuler",
 }: ModalProps) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex justify-center items-center z-40">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
