@@ -11,7 +11,7 @@ class UserPasswordDTO
     #[Groups(['update'])]
     #[Assert\NotBlank(groups: ['update'])]
     #[Assert\Length(min: 8, groups: ['update'])]
-    public string $oldPassword;
+    public string $currentPassword;
 
     #[Groups(['update'])]
     #[Assert\NotBlank(groups: ['update'])]
