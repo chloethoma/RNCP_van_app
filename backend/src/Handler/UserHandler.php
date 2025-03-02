@@ -4,6 +4,8 @@ namespace App\Handler;
 
 use App\DataTransformer\UserDataTransformer;
 use App\DTO\User\UserDTO;
+use App\DTO\User\UserPasswordDTO;
+use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,32 +42,20 @@ class UserHandler
 
     public function handleGet(): UserDTO
     {
-        $userId = $this->manager->getOwner();
-        $user = $this->repository->findByUserIdentifier($userId);
-
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
-
-        $this->transformer->setEntity($user);
+        $this->transformer->setEntity($this->getUser());
 
         return $this->transformer->mapEntityToDTO();
     }
 
     public function handleUpdate(UserDTO $dto): UserDTO
     {
-        $userId = $this->manager->getOwner();
-        $user = $this->repository->findByUserIdentifier($userId);
+        $user = $this->getUser();
 
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
+        $this->manager->checkEmailOrPseudoAlreadyTaken($user);
 
         $this->transformer->setEntity($user);
         $this->transformer->setDTO($dto);
         $updatedUser = $this->transformer->mapDTOToEntity();
-
-        $this->manager->checkEmailOrPseudoAlreadyTaken($user);
 
         $this->em->flush();
 
@@ -74,7 +64,23 @@ class UserHandler
         return $this->transformer->mapEntityToDTO();
     }
 
+    public function handleUpdatePassword(UserPasswordDTO $dto): void
+    {
+        $user = $this->getUser();
+
+        $this->manager->checkCurrentPasswordValidity($user, $dto->oldPassword);
+        $user = $this->manager->hashPassword($user, $dto->newPassword);
+
+        $this->em->flush();
+    }
+
     public function handleDelete(): void
+    {
+        $this->em->remove($this->getUser());
+        $this->em->flush();
+    }
+
+    private function getUser(): User
     {
         $userId = $this->manager->getOwner();
         $user = $this->repository->findByUserIdentifier($userId);
@@ -83,7 +89,6 @@ class UserHandler
             throw new NotFoundHttpException();
         }
 
-        $this->em->remove($user);
-        $this->em->flush();
+        return $user;
     }
 }

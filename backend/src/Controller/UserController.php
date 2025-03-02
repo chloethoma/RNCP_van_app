@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DTO\User\UserDTO;
+use App\DTO\User\UserPasswordDTO;
 use App\Handler\UserHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +17,7 @@ class UserController extends ApiController
 {
     public const TARGET = 'User controller';
     private const USER_NOT_FOUND_ERROR_MESSAGE = 'User not found';
-    private const ACCESS_DENIED_ERROR_MESSAGE = 'You are not authorized to perform this action';
+    private const ACCESS_DENIED_PASSWORD_ERROR_MESSAGE = 'Current password is incorrect';
 
     public function __construct(
         LoggerInterface $logger,
@@ -59,8 +60,6 @@ class UserController extends ApiController
             $response = $this->serveOkResponse($user, groups: ['read']);
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -82,8 +81,31 @@ class UserController extends ApiController
             $response = $this->serveOkResponse($user, groups: ['read']);
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (ConflictHttpException $e) {
+            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
+    #[Route(
+        path: '/api/user',
+        name: 'edit_user_password',
+        methods: ['PATCH'],
+        format: 'json')]
+    public function updateUserPassword(
+        #[MapRequestPayload(validationGroups: ['update'], serializationContext: ['groups' => ['update']])] UserPasswordDTO $dto,
+    ): JsonResponse {
+        try {
+            $this->handler->handleUpdatePassword($dto);
+
+            $response = $this->serveNoContentResponse();
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_PASSWORD_ERROR_MESSAGE, self::TARGET);
         } catch (ConflictHttpException $e) {
             $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
@@ -106,8 +128,6 @@ class UserController extends ApiController
             $response = $this->serveNoContentResponse();
         } catch (NotFoundHttpException $e) {
             $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }

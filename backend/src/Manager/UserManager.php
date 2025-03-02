@@ -24,6 +24,11 @@ class UserManager
         $this->tokenStorageInterface = $tokenStorageInterface;
     }
 
+    public function getOwner(): int
+    {
+        return (int) $this->security->getUser()->getUserIdentifier();
+    }
+
     public function hashPassword(User $user, string $plainPassword): User
     {
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
@@ -50,24 +55,19 @@ class UserManager
         }
     }
 
+    public function checkCurrentPasswordValidity(User $user, string $oldPassword): void
+    {
+        if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
+            throw new AccessDeniedHttpException();
+        }
+    }
+
     public function createToken(User $user): User
     {
         $token = $this->jwtManager->create($user);
         $user->setToken($token);
 
         return $user;
-    }
-
-    public function checkAccess(User $user): void
-    {
-        if ($user->getId() !== $this->getOwner()) {
-            throw new AccessDeniedHttpException();
-        }
-    }
-
-    public function getOwner(): int
-    {
-        return (int) $this->security->getUser()->getUserIdentifier();
     }
 
     private function isEmailAlreadyTaken(User $user): bool

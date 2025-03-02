@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exceptions\Validation;
+namespace App\Services\Exceptions\Validation;
 
 class InvalidReceivedDataException extends \Exception
 {
