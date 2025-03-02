@@ -55,9 +55,9 @@ class UserManager
         }
     }
 
-    public function checkCurrentPasswordValidity(User $user, string $oldPassword): void
+    public function checkCurrentPasswordValidity(User $user, string $currentPassword): void
     {
-        if (!$this->passwordHasher->isPasswordValid($user, $oldPassword)) {
+        if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
             throw new AccessDeniedHttpException();
         }
     }

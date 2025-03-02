@@ -15,9 +15,9 @@ class NotIdenticalPasswordValidator extends ConstraintValidator
         }
 
         $dto = $this->context->getObject();
-        $oldPassword = $dto->oldPassword;
+        $currentPassword = $dto->currentPassword;
 
-        if ($oldPassword === $newPassword) {
+        if ($currentPassword === $newPassword) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation();
         }

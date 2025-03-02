@@ -68,7 +68,7 @@ class UserHandler
     {
         $user = $this->getUser();
 
-        $this->manager->checkCurrentPasswordValidity($user, $dto->oldPassword);
+        $this->manager->checkCurrentPasswordValidity($user, $dto->currentPassword);
         $user = $this->manager->hashPassword($user, $dto->newPassword);
 
         $this->em->flush();
