@@ -17,10 +17,6 @@ class UserDTO
         #[Assert\Email(groups: ['read', 'create', 'update'])]
         public readonly string $email,
 
-        #[Groups(['read', 'update'])]
-        #[Assert\Type('bool', groups: ['read', 'update'])]
-        public readonly ?bool $emailVerified,
-
         #[Groups(['read', 'create', 'update'])]
         #[Assert\NotBlank(groups: ['read', 'create', 'update'])]
         #[Assert\Length(min: 3, max: 50, groups: ['read', 'create', 'update'])]
@@ -46,6 +42,10 @@ class UserDTO
         #[Groups(['read'])]
         #[Assert\NotBlank(allowNull: true, groups: ['read'])]
         public readonly ?string $token,
+
+        #[Groups(['read', 'create', 'update'])]
+        #[Assert\Type('bool', groups: ['read', 'create', 'update'])]
+        public readonly ?bool $emailVerified = false,
 
         #[Groups(['create'])]
         #[Assert\NotBlank(allowNull: true, groups: ['create'])]

@@ -4,7 +4,7 @@ namespace App\DataTransformer;
 
 use App\DTO\User\UserDTO;
 use App\Entity\User;
-use App\Validator\Validator;
+use App\Services\Validator\Validator;
 
 class UserDataTransformer
 {
@@ -21,7 +21,7 @@ class UserDataTransformer
         $this->entity = $entity;
     }
 
-    public function setDTO(UserDTO $dto): void
+    public function setDTO($dto): void
     {
         $this->dto = $dto;
     }
@@ -33,14 +33,13 @@ class UserDataTransformer
         if (null !== $this->entity) {
             // case update
             $user = $this->entity;
-            $user->setEmailVerified($this->dto->emailVerified);
         } else {
             // case create
-            $user->setEmailVerified(false);
             $user->setCreatedAt(new \DateTimeImmutable());
         }
 
         $user->setEmail($this->dto->email);
+        $user->setEmailVerified($this->dto->emailVerified);
         $user->setPseudo($this->dto->pseudo);
         $user->setPicture($this->dto->picture);
         $user->setUpdatedAt(new \DateTime());
