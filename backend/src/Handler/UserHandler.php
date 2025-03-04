@@ -51,11 +51,11 @@ class UserHandler
     {
         $user = $this->getUser();
 
-        $this->manager->checkEmailOrPseudoAlreadyTaken($user);
-
         $this->transformer->setEntity($user);
         $this->transformer->setDTO($dto);
         $updatedUser = $this->transformer->mapDTOToEntity();
+
+        $this->manager->checkEmailOrPseudoAlreadyTaken($updatedUser);
 
         $this->em->flush();
 
