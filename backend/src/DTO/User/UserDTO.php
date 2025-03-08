@@ -8,8 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserDTO
 {
     public function __construct(
-        #[Groups(['read'])]
-        #[Assert\NotNull(groups: ['read'])]
+        #[Groups(['read', 'search_read'])]
+        #[Assert\NotNull(groups: ['read', 'search_read'])]
         public readonly ?int $id,
 
         #[Groups(['read', 'create', 'update'])]
@@ -17,10 +17,10 @@ class UserDTO
         #[Assert\Email(groups: ['read', 'create', 'update'])]
         public readonly string $email,
 
-        #[Groups(['read', 'create', 'update'])]
-        #[Assert\NotBlank(groups: ['read', 'create', 'update'])]
-        #[Assert\Length(min: 3, max: 50, groups: ['read', 'create', 'update'])]
-        #[Assert\Regex(pattern: '/^[a-zA-Z0-9_]+$/', message: 'Only letters, numbers, and underscores are allowed', groups: ['read', 'create', 'update'])]
+        #[Groups(['read', 'create', 'update', 'search_read'])]
+        #[Assert\NotBlank(groups: ['read', 'create', 'update', 'search_read'])]
+        #[Assert\Length(min: 3, max: 50, groups: ['read', 'create', 'update', 'search_read'])]
+        #[Assert\Regex(pattern: '/^[a-zA-Z0-9_]+$/', message: 'Only letters, numbers, and underscores are allowed', groups: ['read', 'create', 'update', 'search_read'])]
         public readonly string $pseudo,
 
         #[Groups(['read'])]
@@ -35,8 +35,8 @@ class UserDTO
         #[Assert\GreaterThanOrEqual(propertyPath: 'createdAt', groups: ['read'])]
         public readonly ?\DateTimeInterface $updatedAt,
 
-        #[Groups(['read', 'update'])]
-        #[Assert\NotBlank(allowNull: true, groups: ['read', 'update'])]
+        #[Groups(['read', 'update', 'search_read'])]
+        #[Assert\NotBlank(allowNull: true, groups: ['read', 'update', 'search_read'])]
         public readonly ?string $picture,
 
         #[Groups(['read'])]

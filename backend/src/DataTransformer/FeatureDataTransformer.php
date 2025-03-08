@@ -52,7 +52,7 @@ class FeatureDataTransformer
         return $spotFeatureCollection;
     }
 
-    public function transformArrayInObjectList(array $spotList): SpotCollection
+    public function transformArrayToObjectList(array $spotList): SpotCollection
     {
         $spotCollection = new SpotCollection();
         foreach ($spotList as $spot) {
