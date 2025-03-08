@@ -41,6 +41,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $picture = null;
 
+    private ?string $token = null;
+
     /**
      * @var list<string> The user roles
      */
@@ -53,11 +55,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Spot::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $spots;
 
-    private ?string $token = null;
+    /**
+     * @var Collection<int, Friendship>
+     */
+    #[ORM\OneToMany(targetEntity: Friendship::class, mappedBy: 'requester', orphanRemoval: true)]
+    private Collection $friendshipsRequested;
+
+    /**
+     * @var Collection<int, Friendship>
+     */
+    #[ORM\OneToMany(targetEntity: Friendship::class, mappedBy: 'receiver', orphanRemoval: true)]
+    private Collection $friendshipsReceived;
 
     public function __construct()
     {
         $this->spots = new ArrayCollection();
+        $this->friendshipsRequested = new ArrayCollection();
+        $this->friendshipsReceived = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -238,6 +252,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($spot->getOwner() === $this) {
                 $spot->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Friendship>
+     */
+    public function getFriendshipsRequested(): Collection
+    {
+        return $this->friendshipsRequested;
+    }
+
+    public function addFriendshipsRequested(Friendship $friendshipsRequested): static
+    {
+        if (!$this->friendshipsRequested->contains($friendshipsRequested)) {
+            $this->friendshipsRequested->add($friendshipsRequested);
+            $friendshipsRequested->setRequester($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriendshipsRequested(Friendship $friendshipsRequested): static
+    {
+        if ($this->friendshipsRequested->removeElement($friendshipsRequested)) {
+            // set the owning side to null (unless already changed)
+            if ($friendshipsRequested->getRequester() === $this) {
+                $friendshipsRequested->setRequester(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Friendship>
+     */
+    public function getFriendshipsReceived(): Collection
+    {
+        return $this->friendshipsReceived;
+    }
+
+    public function addFriendshipsReceived(Friendship $friendshipsReceived): static
+    {
+        if (!$this->friendshipsReceived->contains($friendshipsReceived)) {
+            $this->friendshipsReceived->add($friendshipsReceived);
+            $friendshipsReceived->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFriendshipsReceived(Friendship $friendshipsReceived): static
+    {
+        if ($this->friendshipsReceived->removeElement($friendshipsReceived)) {
+            // set the owning side to null (unless already changed)
+            if ($friendshipsReceived->getReceiver() === $this) {
+                $friendshipsReceived->setReceiver(null);
             }
         }
 
