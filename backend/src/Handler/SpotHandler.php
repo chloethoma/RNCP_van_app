@@ -95,7 +95,7 @@ class SpotHandler
 
         $spotList = $this->repository->findCollection($userId);
 
-        $spotCollection = $this->featureTransformer->transformArrayInObjectList($spotList);
+        $spotCollection = $this->featureTransformer->transformArrayToObjectList($spotList);
 
         $this->featureTransformer->setEntityList($spotCollection);
 

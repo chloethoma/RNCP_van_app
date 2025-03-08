@@ -3,6 +3,7 @@
 namespace App\Handler;
 
 use App\DataTransformer\UserDataTransformer;
+use App\DataTransformer\UserListDataTransformer;
 use App\DTO\User\UserDTO;
 use App\DTO\User\UserPasswordDTO;
 use App\Entity\User;
@@ -14,7 +15,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UserHandler
 {
     public function __construct(
-        protected UserDataTransformer $transformer,
+        protected UserDataTransformer $userTransformer,
+        protected UserListDataTransformer $userListTransformer,
         protected UserManager $manager,
         protected UserRepository $repository,
         protected EntityManagerInterface $em,
@@ -23,8 +25,8 @@ class UserHandler
 
     public function handleCreate(UserDTO $dto): UserDTO
     {
-        $this->transformer->setDTO($dto);
-        $user = $this->transformer->mapDTOToEntity();
+        $this->userTransformer->setDTO($dto);
+        $user = $this->userTransformer->mapDTOToEntity();
 
         $this->manager->checkEmailOrPseudoAlreadyTaken($user);
 
@@ -35,33 +37,33 @@ class UserHandler
 
         $user = $this->manager->createToken($user);
 
-        $this->transformer->setEntity($user);
+        $this->userTransformer->setEntity($user);
 
-        return $this->transformer->mapEntityToDTO();
+        return $this->userTransformer->mapEntityToDTO();
     }
 
     public function handleGet(): UserDTO
     {
-        $this->transformer->setEntity($this->getUser());
+        $this->userTransformer->setEntity($this->getUser());
 
-        return $this->transformer->mapEntityToDTO();
+        return $this->userTransformer->mapEntityToDTO();
     }
 
     public function handleUpdate(UserDTO $dto): UserDTO
     {
         $user = $this->getUser();
 
-        $this->transformer->setEntity($user);
-        $this->transformer->setDTO($dto);
-        $updatedUser = $this->transformer->mapDTOToEntity();
+        $this->userTransformer->setEntity($user);
+        $this->userTransformer->setDTO($dto);
+        $updatedUser = $this->userTransformer->mapDTOToEntity();
 
         $this->manager->checkEmailOrPseudoAlreadyTaken($updatedUser);
 
         $this->em->flush();
 
-        $this->transformer->setEntity($updatedUser);
+        $this->userTransformer->setEntity($updatedUser);
 
-        return $this->transformer->mapEntityToDTO();
+        return $this->userTransformer->mapEntityToDTO();
     }
 
     public function handleUpdatePassword(UserPasswordDTO $dto): void
@@ -78,6 +80,19 @@ class UserHandler
     {
         $this->em->remove($this->getUser());
         $this->em->flush();
+    }
+
+    /**
+     * @return \ArrayObject<int, UserDTO>
+     */
+    public function handleSearchUser(string $pseudo): \ArrayObject
+    {
+        $userList = $this->repository->searchUsersByName($pseudo);
+
+        $userCollection = $this->userListTransformer->transformArrayToObjectList($userList);
+        $this->userListTransformer->setEntityList($userCollection);
+
+        return $this->userListTransformer->mapEntityListToDTOList();
     }
 
     private function getUser(): User
