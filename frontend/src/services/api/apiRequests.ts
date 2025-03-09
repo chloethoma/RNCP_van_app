@@ -1,7 +1,7 @@
 import fetchRequest from "./apiClient";
 import { Feature, FeatureCollection } from "../../types/feature";
 import { Spot } from "../../types/spot";
-import { User } from "../../types/user";
+import { SearchUserResult, User } from "../../types/user";
 
 // Spot
 type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">;
@@ -103,3 +103,10 @@ export const deleteUser = async (): Promise<void> => {
 
   localStorage.removeItem("access_token");
 };
+
+export const searchUserByPseudo = async (pseudo: string): Promise<SearchUserResult[]> => {
+  return await fetchRequest<SearchUserResult[]>({
+    method: "get",
+    url: `/api/search/user?pseudo=${encodeURIComponent(pseudo)}`,
+  })
+}

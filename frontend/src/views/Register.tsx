@@ -8,7 +8,7 @@ import ErrorMessage from "../components/ErrorMessage";
 interface FormInputProps {
   label: string;
   type: "email" | "password" | "text";
-  placeHolder: string;
+  placeholder: string;
   value: string;
   onChange: (value: string) => void;
 }
@@ -73,28 +73,28 @@ function Register() {
           <Input
             label={"Email"}
             type={"email"}
-            placeHolder={"Entrez votre email"}
+            placeholder={"Entrez votre email"}
             value={email}
             onChange={setEmail}
           />
           <Input
             label={"Pseudo"}
             type={"text"}
-            placeHolder={"Entrez votre pseudo"}
+            placeholder={"Entrez votre pseudo"}
             value={pseudo}
             onChange={setPseudo}
           />
           <Input
             label={"Mot de passe"}
             type={"password"}
-            placeHolder={"Entrez votre mot de passe"}
+            placeholder={"Entrez votre mot de passe"}
             value={password}
             onChange={setPassword}
           />
           <Input
             label={"Confirmez votre mot de passe"}
             type={"password"}
-            placeHolder={"Confirmez votre mot de passe"}
+            placeholder={"Confirmez votre mot de passe"}
             value={confirmedPassword}
             onChange={setConfirmedPassword}
           />

@@ -11,6 +11,7 @@ import SpotAddDetails from "../../views/Spot/SpotAddDetails";
 import Spot from "../../views/Spot/SpotDetails";
 import SpotAddLocation from "../../views/Spot/SpotAddLocation";
 import SpotEdit from "../../views/Spot/SpotEdit";
+import SearchUser from "../../views/SearchUser";
 
 function Routing() {
   return (
@@ -29,6 +30,7 @@ function Routing() {
       >
         <Route path="/" element={<Home />} />
         <Route path="/community" element={<Community />} />
+        <Route path="/search/user" element={<SearchUser />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/spot/add-location" element={<SpotAddLocation />} />
