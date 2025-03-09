@@ -48,11 +48,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->findOneBy(['pseudo' => $pseudo]);
     }
 
-    public function searchUsersByName(string $pseudo): array
+    public function searchUsersNotFriendsWithCurrentUser(string $pseudo, int $currentUserId): array
     {
         return $this->createQueryBuilder('u')
+            ->leftJoin('App\Entity\Friendship', 'f', 'WITH',
+                '(f.requester = :currentUserId AND f.receiver = u.id) 
+                OR (f.requester = u.id AND f.receiver = :currentUserId)')
             ->where('u.pseudo LIKE :pseudo')
+            ->andWhere('f.id IS NULL')
             ->setParameter('pseudo', $pseudo.'%')
+            ->setParameter('currentUserId', $currentUserId)
             ->setMaxResults(20)
             ->getQuery()
             ->getResult();

@@ -87,7 +87,9 @@ class UserHandler
      */
     public function handleSearchUser(string $pseudo): \ArrayObject
     {
-        $userList = $this->repository->searchUsersByName($pseudo);
+        $user = $this->getUser();
+
+        $userList = $this->repository->searchUsersNotFriendsWithCurrentUser($pseudo, $user->getId());
 
         $userCollection = $this->userListTransformer->transformArrayToObjectList($userList);
         $this->userListTransformer->setEntityList($userCollection);
