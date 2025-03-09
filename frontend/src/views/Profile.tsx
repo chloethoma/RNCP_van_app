@@ -22,7 +22,7 @@ interface InfoRowProps {
 
 const MESSAGES = {
   ERROR_DEFAULT: "Une erreur est survenue",
-  ERROR_FETCH_USER: "Erreur lors de a récupération de vos données",
+  ERROR_FETCH_USER: "Erreur lors de la récupération de vos données",
   SUCCESS_UPDATE: "Mise à jour effectuée !",
   SUCCESS_DELETE: "Votre compte a bien été supprimé !",
 };
@@ -123,7 +123,7 @@ function Profile() {
             </div>
           </div> */}
 
-          {/* Informations utilisateur */}
+          {/* User informations */}
           <div className="w-full bg-white mt-4 p-4 shadow-md">
             <InfoRow
               label="Pseudo"
@@ -143,7 +143,7 @@ function Profile() {
             />
           </div>
 
-          {/* Déconnexion */}
+          {/* Logout */}
           <div className="w-full flex justify-between items-center p-4 bg-white mt-4 shadow-md text-black">
             <p className="text-md font-semibold text-black">Déconnexion</p>
             <IconButton
@@ -153,7 +153,7 @@ function Profile() {
             />
           </div>
 
-          {/* Suppression du compte */}
+          {/* Delete account */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="w-11/12 mt-6 p-4 bg-red text-white text-lg font-bold rounded-lg hover:bg-red-hover"
@@ -161,7 +161,7 @@ function Profile() {
             Supprimer mon compte
           </button>
 
-          {/* Modale de confirmation avant suppression du compte */}
+          {/* Modale confirmation before delete account */}
           {isModalOpen && (
             <ConfirmationModal
               title="Êtes-vous sûr de vouloir supprimer votre compte ?"

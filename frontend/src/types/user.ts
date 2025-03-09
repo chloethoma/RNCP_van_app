@@ -9,3 +9,6 @@ export interface User {
   token: string | null;
   password?: string;
 }
+
+export type SearchUserResult = Pick<User, "id" | "pseudo" | "picture">;
+
