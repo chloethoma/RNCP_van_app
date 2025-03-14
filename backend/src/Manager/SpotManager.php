@@ -5,7 +5,6 @@ namespace App\Manager;
 use App\Entity\Spot;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -13,13 +12,13 @@ class SpotManager
 {
     public function __construct(
         protected EntityManagerInterface $em,
-        protected Security $security,
+        protected UserManager $userManager,
     ) {
     }
 
     public function initSpotOwner(Spot $spot): Spot
     {
-        $userId = $this->getOwner();
+        $userId = $this->userManager->getOwnerId();
 
         $userRepository = $this->em->getRepository(User::class);
         $owner = $userRepository->find($userId);
@@ -35,13 +34,8 @@ class SpotManager
 
     public function checkAccess(Spot $spot): void
     {
-        if ($spot->getOwner()->getId() !== $this->getOwner()) {
+        if ($spot->getOwner()->getId() !== $this->userManager->getOwnerId()) {
             throw new AccessDeniedHttpException();
         }
-    }
-
-    private function getOwner(): int
-    {
-        return (int) $this->security->getUser()->getUserIdentifier();
     }
 }

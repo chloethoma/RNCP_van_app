@@ -91,7 +91,7 @@ class SpotHandler
 
     public function handleGetFeatureCollection(): SpotFeatureCollectionDTO
     {
-        $userId = $this->userManager->getOwner();
+        $userId = $this->userManager->getOwnerId();
 
         $spotList = $this->repository->findCollection($userId);
 

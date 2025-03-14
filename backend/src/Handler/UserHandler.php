@@ -99,7 +99,7 @@ class UserHandler
 
     private function getUser(): User
     {
-        $userId = $this->manager->getOwner();
+        $userId = $this->manager->getOwnerId();
         $user = $this->repository->findByUserIdentifier($userId);
 
         if (!$user) {
