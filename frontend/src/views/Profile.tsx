@@ -6,18 +6,26 @@ import {
   deleteUser,
   fetchUserByToken,
   updateUser,
+  updateUserPassword,
 } from "../services/api/apiRequests";
 import ErrorMessage from "../components/ErrorMessage";
 import SuccessMessage from "../components/SuccessMessage";
 import IconButton from "../components/buttons/IconButton";
 import { useNavigate } from "react-router";
 import ConfirmationModal from "../components/modal/ConfirmationModal";
+import UpdatePasswordModal from "../components/modal/UpdatePasswordModal";
 
 interface InfoRowProps {
   label: string;
   value: string;
   onSave: (value: string) => void;
   type?: string;
+}
+
+interface InfoPasswordRowProps {
+  label: string;
+  value: string;
+  onEditPassword: () => void;
 }
 
 const MESSAGES = {
@@ -33,7 +41,9 @@ function Profile() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -69,8 +79,22 @@ function Profile() {
     }
   };
 
-  const handleUpdatePassword = (newPassword: string) => {
-    return newPassword;
+  const handleUpdatePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ) => {
+    try {
+      const requestBody = { currentPassword, newPassword };
+      await updateUserPassword(requestBody);
+      setSuccessMessage(MESSAGES.SUCCESS_UPDATE);
+      setIsPasswordModalOpen(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage(MESSAGES.ERROR_DEFAULT);
+      }
+    }
   };
 
   const handleLogOut = () => {
@@ -135,11 +159,10 @@ function Profile() {
               value={user.email}
               onSave={(newValue) => handleUpdate("email", newValue)}
             />
-            <InfoRow
+            <InfoPasswordRow
               label="Mot de passe"
               value="••••••••"
-              onSave={(newPassword) => handleUpdatePassword(newPassword)}
-              type="password"
+              onEditPassword={() => setIsPasswordModalOpen(true)}
             />
           </div>
 
@@ -155,20 +178,28 @@ function Profile() {
 
           {/* Delete account */}
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsDeleteAccountModalOpen(true)}
             className="w-11/12 mt-6 p-4 bg-red text-white text-lg font-bold rounded-lg hover:bg-red-hover"
           >
             Supprimer mon compte
           </button>
 
-          {/* Modale confirmation before delete account */}
-          {isModalOpen && (
+          {/* Modal for confirmation delete account */}
+          {isDeleteAccountModalOpen && (
             <ConfirmationModal
               title="Êtes-vous sûr de vouloir supprimer votre compte ?"
               onConfirm={handleDelete}
-              onCancel={() => setIsModalOpen(false)}
+              onCancel={() => setIsDeleteAccountModalOpen(false)}
               confirmText="Oui, supprimer"
               cancelText="Annuler"
+            />
+          )}
+
+          {/* Modal for update user password */}
+          {isPasswordModalOpen && (
+            <UpdatePasswordModal
+              onConfirm={handleUpdatePassword}
+              onCancel={() => setIsPasswordModalOpen(false)}
             />
           )}
         </div>
@@ -177,7 +208,7 @@ function Profile() {
   );
 }
 
-function InfoRow({ label, value, onSave, type = "text" }: InfoRowProps) {
+function InfoRow({ label, value, onSave}: InfoRowProps) {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [inputValue, setInputValue] = useState<string>(value);
 
@@ -198,7 +229,7 @@ function InfoRow({ label, value, onSave, type = "text" }: InfoRowProps) {
         <p className="text-sm text-grey">{label}</p>
         {isEditing ? (
           <input
-            type={type}
+            type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             className="text-md font-semibold text-black border border-gray-300 px-2 py-1 rounded-md w-full"
@@ -223,5 +254,22 @@ function InfoRow({ label, value, onSave, type = "text" }: InfoRowProps) {
     </div>
   );
 }
+
+function InfoPasswordRow({ label, value, onEditPassword}: InfoPasswordRowProps) {
+  return (
+    <div className="flex justify-between items-center py-2 border-b border-light-grey">
+      <div className="flex-1">
+        <p className="text-sm text-grey">{label}</p>
+          <p className="text-md font-semibold text-black">{value}</p>
+      </div>
+        <IconButton
+          onClick={onEditPassword}
+          icon={<Pencil size={20} color="black" />}
+          color="white"
+        />
+    </div>
+  );
+}
+
 
 export default Profile;

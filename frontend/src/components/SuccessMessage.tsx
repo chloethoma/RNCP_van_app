@@ -23,7 +23,7 @@ function SuccessMessage({
   if (!successMessage) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 flex items-center gap-3 rounded-xl shadow-lg w-fit max-w-[80vw] z-40">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 flex items-center gap-3 rounded-xl shadow-lg w-fit max-w-[80vw] z-50">
       <p>{successMessage}</p>
       <button onClick={() => setSuccessMessage(null)}>
         <X size={20} />

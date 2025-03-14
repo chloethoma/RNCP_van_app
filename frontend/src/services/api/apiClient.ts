@@ -3,7 +3,7 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface FetchRequest extends AxiosRequestConfig {
-  method: "get" | "post" | "put" | "delete";
+  method: "get" | "post" | "put" | "patch" |"delete";
   url: string;
 }
 

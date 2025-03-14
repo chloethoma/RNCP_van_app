@@ -12,6 +12,10 @@ type RegistrationCredentials = Pick<User, "email" | "pseudo" | "password">;
 type Token = {
   token: string;
 };
+type PasswordUpdateCredentials = {
+  currentPassword: string,
+  newPassword: string
+}
 
 export const fetchSpots = async (): Promise<Feature[]> => {
   const response = await fetchRequest<FeatureCollection>({
@@ -94,6 +98,14 @@ export const updateUser = async (userData: User): Promise<User> => {
     data: userData,
   });
 };
+
+export const updateUserPassword = async (credentials: PasswordUpdateCredentials): Promise<void> => {
+  await fetchRequest<PasswordUpdateCredentials>({
+    method: "patch",
+    url: "/api/user",
+    data: credentials
+  })
+}
 
 export const deleteUser = async (): Promise<void> => {
   await fetchRequest<void>({
