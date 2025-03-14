@@ -24,7 +24,7 @@ class UserManager
         $this->tokenStorageInterface = $tokenStorageInterface;
     }
 
-    public function getOwner(): int
+    public function getOwnerId(): int
     {
         return (int) $this->security->getUser()->getUserIdentifier();
     }

@@ -122,6 +122,20 @@ class ApiController extends AbstractController
         );
     }
 
+    public function serveBadRequestResponse(string $message, string $target): JsonResponse
+    {
+        return $this->json(
+            [
+                'error' => [
+                    'code' => 'Bad Request',
+                    'message' => $message,
+                    'target' => $target,
+                ],
+            ],
+            Response::HTTP_BAD_REQUEST
+        );
+    }
+
     private function buildContext(?array $groups = null): array
     {
         return $groups ? ['groups' => $groups] : [];

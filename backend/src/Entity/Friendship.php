@@ -30,6 +30,13 @@ class Friendship
         return $this->id;
     }
 
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function getRequester(): ?User
     {
         return $this->requester;
@@ -59,9 +66,9 @@ class Friendship
         return $this->isConfirmed;
     }
 
-    public function setConfirmed(): static
+    public function setConfirmed(bool $isConfirmed): static
     {
-        $this->isConfirmed = true;
+        $this->isConfirmed = $isConfirmed;
 
         return $this;
     }
