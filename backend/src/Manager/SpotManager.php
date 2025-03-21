@@ -18,7 +18,7 @@ class SpotManager
 
     public function initSpotOwner(Spot $spot): Spot
     {
-        $userId = $this->userManager->getOwnerId();
+        $userId = $this->userManager->getAuthenticatedUserId();
 
         $userRepository = $this->em->getRepository(User::class);
         $owner = $userRepository->find($userId);
@@ -34,7 +34,7 @@ class SpotManager
 
     public function checkAccess(Spot $spot): void
     {
-        if ($spot->getOwner()->getId() !== $this->userManager->getOwnerId()) {
+        if ($spot->getOwner()->getId() !== $this->userManager->getAuthenticatedUserId()) {
             throw new AccessDeniedHttpException();
         }
     }

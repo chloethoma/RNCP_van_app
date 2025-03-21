@@ -1,22 +1,22 @@
 <?php
 
-namespace App\DTO\Feature;
+namespace App\DTO\SpotGeoJson;
 
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpotGeometryDTO
+class SpotDTO
 {
-    public const TYPE = 'Point';
+    public const TYPE = 'Feature';
 
     public function __construct(
         #[Groups(['read'])]
-        #[Assert\Type(type: 'array', groups: ['read'])]
-        #[Assert\Count(min: 2, max: 2, groups: ['read'])]
-        #[Assert\All([
-            new Assert\Type(type: 'float', groups: ['read']),
-        ])]
-        public array $coordinates,
+        #[Assert\Valid(groups: ['read'])]
+        public SpotGeometryDTO $geometry,
+
+        #[Groups(['read'])]
+        #[Assert\Valid(groups: ['read'])]
+        public SpotPropertiesDTO $properties,
 
         #[Groups(['read'])]
         #[Assert\IdenticalTo(value: self::TYPE, groups: ['read'])]

@@ -2,10 +2,10 @@
 
 namespace App\Handler;
 
-use App\DataTransformer\FeatureDataTransformer;
 use App\DataTransformer\SpotDataTransformer;
-use App\DTO\Feature\SpotFeatureCollectionDTO;
+use App\DataTransformer\SpotListDataTransformer;
 use App\DTO\Spot\SpotDTO;
+use App\DTO\SpotGeoJson\SpotCollectionDTO;
 use App\Manager\SpotManager;
 use App\Manager\UserManager;
 use App\Repository\SpotRepository;
@@ -18,7 +18,7 @@ class SpotHandler
         protected SpotRepository $repository,
         protected SpotDataTransformer $spotTransformer,
         protected SpotManager $spotManager,
-        protected FeatureDataTransformer $featureTransformer,
+        protected SpotListDataTransformer $spotListTransformer,
         protected UserManager $userManager,
         protected EntityManagerInterface $em,
     ) {
@@ -89,16 +89,16 @@ class SpotHandler
         $this->em->flush();
     }
 
-    public function handleGetFeatureCollection(): SpotFeatureCollectionDTO
+    public function handleGetSpotCollection(): SpotCollectionDTO
     {
-        $userId = $this->userManager->getOwnerId();
+        $userId = $this->userManager->getAuthenticatedUserId();
 
         $spotList = $this->repository->findCollection($userId);
 
-        $spotCollection = $this->featureTransformer->transformArrayToObjectList($spotList);
+        $spotCollection = $this->spotListTransformer->transformArrayToObjectList($spotList);
 
-        $this->featureTransformer->setEntityList($spotCollection);
+        $this->spotListTransformer->setEntityList($spotCollection);
 
-        return $this->featureTransformer->mapEntityListToDTOList();
+        return $this->spotListTransformer->mapEntityListToDTOList();
     }
 }

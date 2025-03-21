@@ -48,7 +48,7 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user',
+        path: '/api/users',
         name: 'read_user',
         methods: ['GET'],
         format: 'json')]
@@ -68,7 +68,7 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user',
+        path: '/api/users',
         name: 'edit_user',
         methods: ['PUT'],
         format: 'json')]
@@ -91,7 +91,7 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user',
+        path: '/api/users',
         name: 'edit_user_password',
         methods: ['PATCH'],
         format: 'json')]
@@ -116,7 +116,7 @@ class UserController extends ApiController
     }
 
     #[Route(
-        path: '/api/user',
+        path: '/api/users',
         name: 'delete_user',
         methods: ['DELETE'],
         format: 'json')]

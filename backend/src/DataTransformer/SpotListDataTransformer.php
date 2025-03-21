@@ -2,14 +2,14 @@
 
 namespace App\DataTransformer;
 
-use App\DTO\Feature\SpotFeatureCollectionDTO;
-use App\DTO\Feature\SpotFeatureDTO;
-use App\DTO\Feature\SpotGeometryDTO;
-use App\DTO\Feature\SpotPropertiesDTO;
+use App\DTO\SpotGeoJson\SpotCollectionDTO;
+use App\DTO\SpotGeoJson\SpotDTO;
+use App\DTO\SpotGeoJson\SpotGeometryDTO;
+use App\DTO\SpotGeoJson\SpotPropertiesDTO;
 use App\Entity\SpotCollection;
 use App\Services\Validator\Validator;
 
-class FeatureDataTransformer
+class SpotListDataTransformer
 {
     private SpotCollection $entityList;
 
@@ -23,9 +23,9 @@ class FeatureDataTransformer
         $this->entityList = $entityList;
     }
 
-    public function mapEntityListToDTOList(): SpotFeatureCollectionDTO
+    public function mapEntityListToDTOList(): SpotCollectionDTO
     {
-        $featureList = [];
+        $spotList = [];
 
         foreach ($this->entityList as $entity) {
             $geometry = new SpotGeometryDTO(
@@ -36,20 +36,20 @@ class FeatureDataTransformer
                 id: $entity->getId()
             );
 
-            $feature = new SpotFeatureDTO(
+            $spot = new SpotDTO(
                 geometry: $geometry,
                 properties: $properties
             );
 
-            $featureList[] = $feature;
+            $spotList[] = $spot;
         }
 
-        $spotFeatureCollection = new SpotFeatureCollectionDTO(
-            features: $featureList);
+        $spotCollection = new SpotCollectionDTO(
+            features: $spotList);
 
-        $this->validator->validate($spotFeatureCollection, SpotFeatureCollectionDTO::class);
+        $this->validator->validate($spotCollection, SpotCollectionDTO::class);
 
-        return $spotFeatureCollection;
+        return $spotCollection;
     }
 
     public function transformArrayToObjectList(array $spotList): SpotCollection
