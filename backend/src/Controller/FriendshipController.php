@@ -27,7 +27,7 @@ class FriendshipController extends ApiController
     }
 
     #[Route(
-        path: '/api/friendship',
+        path: '/api/friendships',
         name: 'create_friendship',
         methods: ['POST'],
         format: 'json')]
@@ -44,6 +44,25 @@ class FriendshipController extends ApiController
             $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
         } catch (ConflictHttpException $e) {
             $response = $this->serveConflictResponse(self::CONFLICT_ERROR_MESSAGE, self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
+    #[Route(
+        path: '/api/friendships/pending/{type}',
+        name: 'read_pending_friendships',
+        methods: ['GET'],
+        requirements: ['type' => 'received|sent'],
+        format: 'json')]
+    public function getFriendshipsRequestsSent(string $type): JsonResponse
+    {
+        try {
+            $pendingFriendshipList = $this->handler->handleGetPendingFriendships($type);
+
+            $response = $this->serveOkResponse($pendingFriendshipList, groups: ['read']);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }

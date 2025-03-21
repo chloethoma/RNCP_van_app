@@ -18,30 +18,18 @@ class FriendshipManager
     ) {
     }
 
-    public function initOwner(Friendship $friendship): Friendship
+    public function initAuthenticatedUser(Friendship $friendship): Friendship
     {
-        $userId = $this->userManager->getOwnerId();
+        $user = $this->findUserById($this->userManager->getAuthenticatedUserId());
 
-        $userRepository = $this->em->getRepository(User::class);
-        $owner = $userRepository->find($userId);
-
-        if (!$owner) {
-            throw new NotFoundHttpException();
-        }
-
-        $friendship->setRequester($owner);
+        $friendship->setRequester($user);
 
         return $friendship;
     }
 
     public function initFriendUser(int $friendUserId, Friendship $friendship): Friendship
     {
-        $userRepository = $this->em->getRepository(User::class);
-        $friendUser = $userRepository->find($friendUserId);
-
-        if (!$friendUser) {
-            throw new NotFoundHttpException();
-        }
+        $friendUser = $this->findUserById($friendUserId);
 
         $friendship->setReceiver($friendUser);
 
@@ -55,8 +43,20 @@ class FriendshipManager
 
     public function checkIfFriendshipAlreadyExists(Friendship $friendship): void
     {
-        if ($this->repository->countFriendships($friendship->getRequester()->getId(), $friendship->getReceiver()->getId()) > 0) {
+        if ($this->repository->friendshipExists($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
             throw new ConflictHttpException();
         }
+    }
+
+    private function findUserById(int $id): User
+    {
+        $userRepository = $this->em->getRepository(User::class);
+        $user = $userRepository->find($id);
+
+        if (!$user) {
+            throw new NotFoundHttpException();
+        }
+
+        return $user;
     }
 }
