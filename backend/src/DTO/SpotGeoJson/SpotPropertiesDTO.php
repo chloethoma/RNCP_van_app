@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTO\Feature;
+namespace App\DTO\SpotGeoJson;
 
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;

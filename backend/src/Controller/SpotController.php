@@ -62,7 +62,7 @@ class SpotController extends ApiController
     public function getSpots(): JsonResponse
     {
         try {
-            $spotList = $this->handler->handleGetFeatureCollection();
+            $spotList = $this->handler->handleGetSpotCollection();
 
             $response = $this->serveOkResponse($spotList);
         } catch (NotFoundHttpException $e) {

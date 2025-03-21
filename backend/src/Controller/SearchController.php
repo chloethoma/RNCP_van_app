@@ -20,7 +20,7 @@ class SearchController extends ApiController
     }
 
     #[Route(
-        path: '/api/search/user',
+        path: '/api/search/users',
         name: 'search_users',
         methods: ['GET'],
         format: 'json')]

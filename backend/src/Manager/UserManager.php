@@ -8,6 +8,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -24,9 +25,20 @@ class UserManager
         $this->tokenStorageInterface = $tokenStorageInterface;
     }
 
-    public function getOwnerId(): int
+    public function getAuthenticatedUserId(): int
     {
         return (int) $this->security->getUser()->getUserIdentifier();
+    }
+
+    public function getAuthenticatedUser(): User
+    {
+        $user = $this->userRepository->findByUserIdentifier($this->getAuthenticatedUserId());
+
+        if (!$user) {
+            throw new NotFoundHttpException();
+        }
+
+        return $user;
     }
 
     public function hashPassword(User $user, string $plainPassword): User

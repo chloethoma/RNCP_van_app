@@ -1,11 +1,11 @@
 <?php
 
-namespace App\DTO\Feature;
+namespace App\DTO\SpotGeoJson;
 
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpotFeatureCollectionDTO
+class SpotCollectionDTO
 {
     public const TYPE = 'FeatureCollection';
 
@@ -16,10 +16,10 @@ class SpotFeatureCollectionDTO
 
         #[Assert\Valid(groups: ['read'])]
         #[Assert\All([
-            new Assert\Type(type: SpotFeatureDTO::class, groups: ['read']),
+            new Assert\Type(type: SpotDTO::class, groups: ['read']),
         ])]
         /**
-         * @var SpotFeatureDTO[]
+         * @var SpotDTO[]
          */
         public array $features = [],
     ) {

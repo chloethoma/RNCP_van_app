@@ -6,11 +6,9 @@ use App\DataTransformer\UserDataTransformer;
 use App\DataTransformer\UserListDataTransformer;
 use App\DTO\User\UserDTO;
 use App\DTO\User\UserPasswordDTO;
-use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserHandler
 {
@@ -44,14 +42,14 @@ class UserHandler
 
     public function handleGet(): UserDTO
     {
-        $this->userTransformer->setEntity($this->getUser());
+        $this->userTransformer->setEntity($this->manager->getAuthenticatedUser());
 
         return $this->userTransformer->mapEntityToDTO();
     }
 
     public function handleUpdate(UserDTO $dto): UserDTO
     {
-        $user = $this->getUser();
+        $user = $this->manager->getAuthenticatedUser();
 
         $this->userTransformer->setEntity($user);
         $this->userTransformer->setDTO($dto);
@@ -68,7 +66,7 @@ class UserHandler
 
     public function handleUpdatePassword(UserPasswordDTO $dto): void
     {
-        $user = $this->getUser();
+        $user = $this->manager->getAuthenticatedUser();
 
         $this->manager->checkCurrentPasswordValidity($user, $dto->currentPassword);
         $user = $this->manager->hashPassword($user, $dto->newPassword);
@@ -78,7 +76,7 @@ class UserHandler
 
     public function handleDelete(): void
     {
-        $this->em->remove($this->getUser());
+        $this->em->remove($this->manager->getAuthenticatedUser());
         $this->em->flush();
     }
 
@@ -87,7 +85,7 @@ class UserHandler
      */
     public function handleSearchUser(string $pseudo): \ArrayObject
     {
-        $user = $this->getUser();
+        $user = $this->manager->getAuthenticatedUser();
 
         $userList = $this->repository->searchUsersNotFriendsWithCurrentUser($pseudo, $user->getId());
 
@@ -95,17 +93,5 @@ class UserHandler
         $this->userListTransformer->setEntityList($userCollection);
 
         return $this->userListTransformer->mapEntityListToDTOList();
-    }
-
-    private function getUser(): User
-    {
-        $userId = $this->manager->getOwnerId();
-        $user = $this->repository->findByUserIdentifier($userId);
-
-        if (!$user) {
-            throw new NotFoundHttpException();
-        }
-
-        return $user;
     }
 }
