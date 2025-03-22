@@ -1,12 +1,12 @@
 import fetchRequest from "./apiClient";
-import { Feature, FeatureCollection } from "../../types/feature";
-import { Spot } from "../../types/spot";
-import { SearchUserResult, User } from "../../types/user";
+import { SpoGeoJsonCollection, Spot, SpotGeoJson } from "../../types/spot";
+import { FriendshipUser, User } from "../../types/user";
+import { Friendship } from "../../types/friendship";
 
-// Spot
+// Spot types
 type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">;
 
-// User
+// User types
 type LoginCredentials = Pick<User, "email" | "password">;
 type RegistrationCredentials = Pick<User, "email" | "pseudo" | "password">;
 type Token = {
@@ -17,8 +17,15 @@ type PasswordUpdateCredentials = {
   newPassword: string
 }
 
-export const fetchSpots = async (): Promise<Feature[]> => {
-  const response = await fetchRequest<FeatureCollection>({
+// Friendship types
+type FriendshipCreatePayload = {
+  receiver: Pick<FriendshipUser, "id">
+};
+
+type PendingFriendshipType = "received" | "sent";
+
+export const fetchSpots = async (): Promise<SpotGeoJson[]> => {
+  const response = await fetchRequest<SpoGeoJsonCollection>({
     method: "get",
     url: "api/spots",
   });
@@ -87,14 +94,14 @@ export const registerUser = async (
 export const fetchUserByToken = async (): Promise<User> => {
   return await fetchRequest<User>({
     method: "get",
-    url: "api/user",
+    url: "api/users",
   });
 };
 
 export const updateUser = async (userData: User): Promise<User> => {
   return await fetchRequest<User>({
     method: "put",
-    url: "/api/user",
+    url: "/api/users",
     data: userData,
   });
 };
@@ -102,23 +109,38 @@ export const updateUser = async (userData: User): Promise<User> => {
 export const updateUserPassword = async (credentials: PasswordUpdateCredentials): Promise<void> => {
   await fetchRequest<PasswordUpdateCredentials>({
     method: "patch",
-    url: "/api/user",
-    data: credentials
+    url: "/api/users",
+    data: credentials,
   })
 }
 
 export const deleteUser = async (): Promise<void> => {
   await fetchRequest<void>({
     method: "delete",
-    url: "/api/user",
+    url: "/api/users",
   });
 
   localStorage.removeItem("access_token");
 };
 
-export const searchUserByPseudo = async (pseudo: string): Promise<SearchUserResult[]> => {
-  return await fetchRequest<SearchUserResult[]>({
+export const searchUserByPseudo = async (pseudo: string): Promise<FriendshipUser[]> => {
+  return await fetchRequest<FriendshipUser[]>({
     method: "get",
-    url: `/api/search/user?pseudo=${encodeURIComponent(pseudo)}`,
+    url: `/api/search/users?pseudo=${encodeURIComponent(pseudo)}`,
+  })
+}
+
+export const createFriendshipRequest = async (payload: FriendshipCreatePayload): Promise<Friendship> => {
+  return await fetchRequest<Friendship>({
+    method:"post",
+    url: "/api/friendships",
+    data: payload,
+  })
+}
+
+export const getPendingFriendships = async (type: PendingFriendshipType): Promise<Friendship[]> => {
+  return await fetchRequest<Friendship[]>({
+    method: "get",
+    url: `/api/friendships/pending/${type}`,
   })
 }

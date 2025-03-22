@@ -1,15 +1,14 @@
+import "mapbox-gl/dist/mapbox-gl.css";
 import { useRef, useEffect, useState } from "react";
 import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { Feature } from "../types/feature";
 import { fetchSpotById, fetchSpots } from "../services/api/apiRequests";
-import { Spot } from "../types/spot";
+import { Spot, SpotGeoJson } from "../types/spot";
 import SpotPreview from "../components/SpotPreview";
 import { Locate, Plus } from "lucide-react";
 import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
-import ErrorMessage from "../components/ErrorMessage";
-import SuccessMessage from "../components/SuccessMessage";
+import ErrorMessage from "../components/messages/ErrorMessage";
+import SuccessMessage from "../components/messages/SuccessMessage";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
@@ -48,7 +47,7 @@ function Home() {
     location.state?.successMessage || null,
   );
 
-  const handleMarkerClick = async (spot: Feature) => {
+  const handleMarkerClick = async (spot: SpotGeoJson) => {
     try {
       const fetchedSpot = await fetchSpotById(spot.properties.id);
       setSelectedSpot(fetchedSpot);
@@ -80,7 +79,7 @@ function Home() {
 
   const handleNavigate = () => {
     if (userLocation) {
-      navigate("/spot/add-location", { state: { userLocation } });
+      navigate("/spots/add-location", { state: { userLocation } });
     } else {
       setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
     }

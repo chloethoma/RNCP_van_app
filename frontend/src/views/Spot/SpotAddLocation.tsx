@@ -4,7 +4,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import IconButton from "../../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
 import { Pin } from "lucide-react";
-import ErrorMessage from "../../components/ErrorMessage";
+import ErrorMessage from "../../components/messages/ErrorMessage";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const ZOOM: number = 18;
@@ -41,7 +41,7 @@ function SpotAddLocation() {
       return;
     }
 
-    navigate("/spot/add-details", {
+    navigate("/spots/add-details", {
       state: { longitude: center.lng, latitude: center.lat },
     });
   };

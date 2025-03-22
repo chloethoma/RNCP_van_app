@@ -1,3 +1,25 @@
+import { LngLatLike } from "mapbox-gl";
+
+export interface SpoGeoJsonCollection {
+  type: "FeatureCollection";
+  features: SpotGeoJson[];
+}
+
+export interface SpotGeoJson {
+  type: "Feature";
+  geometry: Geometry;
+  properties: Properties;
+}
+
+export interface Geometry {
+  type: string;
+  coordinates: LngLatLike;
+}
+
+export interface Properties {
+  id: number;
+}
+
 export interface Spot {
   id: number;
   latitude: number;

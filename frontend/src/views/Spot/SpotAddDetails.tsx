@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { useId, useState } from "react";
 import Header from "../../components/header/Header";
 import FormButton from "../../components/buttons/FormButton";
-import ErrorMessage from "../../components/ErrorMessage";
+import ErrorMessage from "../../components/messages/ErrorMessage";
 import { createSpot } from "../../services/api/apiRequests";
 
 const MESSAGES = {
@@ -46,7 +46,7 @@ function SpotAddDetails() {
 
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen bg-light-grey w-full">
-      <Header text={"Ajout d'un spot"} />
+      <Header text={"AJOUTER UN SPOT"} />
 
       <ErrorMessage
         errorMessage={errorMessage}

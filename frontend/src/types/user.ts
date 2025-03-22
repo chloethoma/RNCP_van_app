@@ -10,5 +10,5 @@ export interface User {
   password?: string;
 }
 
-export type SearchUserResult = Pick<User, "id" | "pseudo" | "picture">;
+export type FriendshipUser = Pick<User, "id" | "pseudo" | "picture">;
 

@@ -11,7 +11,7 @@ function Header({ text }: HeaderProps) {
   return (
     <div className="w-full flex items-center mb-2 gap-6 bg-white h-14 p-4">
       <PreviousButton onClick={() => navigate(-1)} />
-      <h1 className="text-xl font-bold text-dark-grey">{text}</h1>
+      <h1 className="text-xl font-semibold text-dark-grey">{text}</h1>
     </div>
   );
 }

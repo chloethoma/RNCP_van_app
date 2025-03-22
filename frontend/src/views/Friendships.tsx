@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Search, UserPlus } from "lucide-react";
 import Header from "../components/header/Header";
 import IconButton from "../components/buttons/IconButton";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
-const Community = () => {
+const Friendships = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   // const [friends, setFriends] = useState<User[]>([]);
@@ -40,8 +40,13 @@ const Community = () => {
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-light-grey font-default">
-      <Header text="Ma Commu" />
-      
+      <Header text="MA COMMU" />
+
+      {/* Pending friendships */}
+      <div className="w-full flex justify-between items-center p-4 bg-white mt-4 shadow-md text-black">
+        <Link to={"/friendships/pending"} className="text-md font-semibold text-black">Demandes en attente de validation</Link>
+      </div>
+
       {/* Search friends */}
       <div className="w-full flex items-center justify-between p-4 bg-white mt-4 shadow-md">
         <div className="flex items-center border rounded-md w-3/4">
@@ -57,8 +62,8 @@ const Community = () => {
 
         {/* Add new friend */}
         <IconButton
-          icon={<UserPlus size={24} strokeWidth={3}/>}
-          onClick={() => navigate('/search/user')}
+          icon={<UserPlus size={24} strokeWidth={3} />}
+          onClick={() => navigate("/search/users")}
           color="darkGreen"
           className="ml-4"
         />
@@ -94,4 +99,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default Friendships;

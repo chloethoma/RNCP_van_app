@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { registerUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
 import Logo from "../assets/logo_transparent.svg";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "../components/messages/ErrorMessage";
 
 interface FormInputProps {
   label: string;
