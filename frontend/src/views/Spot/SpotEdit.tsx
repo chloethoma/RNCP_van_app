@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router";
 import { Spot } from "../../types/spot";
 import Header from "../../components/header/Header";
-import ErrorMessage from "../../components/ErrorMessage";
+import ErrorMessage from "../../components/messages/ErrorMessage";
 import { MapPin } from "lucide-react";
 import FormButton from "../../components/buttons/FormButton";
 import { useId, useState } from "react";
@@ -38,7 +38,7 @@ function SpotEdit() {
     try {
       await updateSpot(updatedSpot);
 
-      navigate(`/spot/${updatedSpot.id}`, {
+      navigate(`/spots/${updatedSpot.id}`, {
         state: { spot: updatedSpot, successMessage: MESSAGES.SUCCESS_UPDATE },
       });
     } catch (error) {
@@ -53,7 +53,7 @@ function SpotEdit() {
   return (
     <>
       <div className="relative flex flex-col items-center justify-start min-h-screen bg-light-grey w-full">
-        <Header text={"Modification du spot"} />
+        <Header text={"MODIFICATION DU SPOT"} />
 
         <ErrorMessage
           errorMessage={errorMessage}

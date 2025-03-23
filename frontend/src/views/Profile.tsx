@@ -8,8 +8,8 @@ import {
   updateUser,
   updateUserPassword,
 } from "../services/api/apiRequests";
-import ErrorMessage from "../components/ErrorMessage";
-import SuccessMessage from "../components/SuccessMessage";
+import ErrorMessage from "../components/messages/ErrorMessage";
+import SuccessMessage from "../components/messages/SuccessMessage";
 import IconButton from "../components/buttons/IconButton";
 import { useNavigate } from "react-router";
 import ConfirmationModal from "../components/modal/ConfirmationModal";
@@ -117,7 +117,7 @@ function Profile() {
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-light-grey font-default">
-      <Header text={"Mon profil"} />
+      <Header text="MON PROFIL" />
 
       <ErrorMessage
         errorMessage={errorMessage}

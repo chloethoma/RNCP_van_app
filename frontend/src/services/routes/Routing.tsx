@@ -4,14 +4,15 @@ import Home from "../../views/Home";
 import Login from "../../views/Login";
 import Register from "../../views/Register";
 import AppLayout from "../../components/AppLayout";
-import Community from "../../views/Community";
 import Profile from "../../views/Profile";
 import Settings from "../../views/Settings";
 import SpotAddDetails from "../../views/Spot/SpotAddDetails";
 import Spot from "../../views/Spot/SpotDetails";
 import SpotAddLocation from "../../views/Spot/SpotAddLocation";
 import SpotEdit from "../../views/Spot/SpotEdit";
-import SearchUser from "../../views/SearchUser";
+import SearchUser from "../../views/Friendship/SearchUser";
+import PendingFriendships from "../../views/Friendship/PendingFriendships";
+import Friendships from "../../views/Friendships";
 
 function Routing() {
   return (
@@ -29,14 +30,15 @@ function Routing() {
         }
       >
         <Route path="/" element={<Home />} />
-        <Route path="/community" element={<Community />} />
-        <Route path="/search/user" element={<SearchUser />} />
+        <Route path="/spots/add-location" element={<SpotAddLocation />} />
+        <Route path="/spots/add-details" element={<SpotAddDetails />} />
+        <Route path="/spots/:spotId" element={<Spot />} />
+        <Route path="/spots/:spotId/edit" element={<SpotEdit />} />
+        <Route path="/friendships" element={<Friendships />} />
+        <Route path="/search/users" element={<SearchUser />} />
+        <Route path="/friendships/pending" element={<PendingFriendships />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/spot/add-location" element={<SpotAddLocation />} />
-        <Route path="/spot/add-details" element={<SpotAddDetails />} />
-        <Route path="/spot/:spotId" element={<Spot />} />
-        <Route path="/spot/:spotId/edit" element={<SpotEdit />} />
       </Route>
 
       {/* Route 404 */}

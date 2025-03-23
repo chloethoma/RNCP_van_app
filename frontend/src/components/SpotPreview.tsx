@@ -11,7 +11,7 @@ function SpotPreview({ selectedSpot, setSelectedSpot }: SpotPreviewProps) {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/spot/${selectedSpot.id}`, { state: { spot: selectedSpot } });
+    navigate(`/spots/${selectedSpot.id}`, { state: { spot: selectedSpot } });
   };
 
   return (

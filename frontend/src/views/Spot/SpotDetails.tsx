@@ -1,12 +1,12 @@
 import { useLocation, useNavigate, useParams } from "react-router";
 import { Spot } from "../../types/spot";
 import { useEffect, useState } from "react";
-import ErrorMessage from "../../components/ErrorMessage";
+import ErrorMessage from "../../components/messages/ErrorMessage";
 import IconButton from "../../components/buttons/IconButton";
 import { Heart, Navigation, PencilLine, Share2, Trash } from "lucide-react";
 import Header from "../../components/header/Header";
 import { deleteSpot, fetchSpotById } from "../../services/api/apiRequests";
-import SuccessMessage from "../../components/SuccessMessage";
+import SuccessMessage from "../../components/messages/SuccessMessage";
 
 const MESSAGES = {
   ERROR_DEFAULT: "Une erreur est survenue",
@@ -45,7 +45,7 @@ function SpotDetails() {
   }, [spotId, spot]);
 
   const handleEdit = () => {
-    navigate(`/spot/${spot?.id}/edit`, { state: { spot } });
+    navigate(`/spots/${spot?.id}/edit`, { state: { spot } });
   };
 
   const handleDelete = async () => {
@@ -75,7 +75,7 @@ function SpotDetails() {
 
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen bg-light-grey w-full">
-      <Header text={"Fiche spot"} />
+      <Header text={"FICHE SPOT"} />
 
       <ErrorMessage
         errorMessage={errorMessage}

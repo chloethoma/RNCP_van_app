@@ -8,7 +8,7 @@ function BottomNavBar() {
         <Home size={24} />
       </NavItem>
 
-      <NavItem to={"/community"} label={"Ma commu"}>
+      <NavItem to={"/friendships"} label={"Ma commu"}>
         <Users size={24} />
       </NavItem>
 

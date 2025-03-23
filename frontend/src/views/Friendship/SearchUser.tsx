@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
-import { searchUserByPseudo } from "../services/api/apiRequests";
-import { SearchUserResult } from "../types/user";
-import Header from "../components/header/Header";
+import {
+  createFriendshipRequest,
+  searchUserByPseudo,
+} from "../../services/api/apiRequests";
+import { FriendshipUser } from "../../types/user";
+import Header from "../../components/header/Header";
 import { Search } from "lucide-react";
-import ErrorMessage from "../components/ErrorMessage";
-import Avatar from "../assets/avatar_cat.png";
+import ErrorMessage from "../../components/messages/ErrorMessage";
+import ListButton from "../../components/buttons/ListButton";
+import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
 
 const MESSAGES = {
   ERROR_DEFAULT: "Une erreur est survenue",
@@ -12,10 +16,12 @@ const MESSAGES = {
 
 function SearchUser() {
   const [query, setQuery] = useState("");
-  const [users, setUsers] = useState<SearchUserResult[]>([]);
+  const [users, setUsers] = useState<FriendshipUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [requestsSent, setRequestsSent] = useState<{ [key: number]: boolean }>({});
+  const [requestsSent, setRequestsSent] = useState<{ [key: number]: boolean }>(
+    {}
+  );
 
   useEffect(() => {
     if (!query) {
@@ -45,9 +51,15 @@ function SearchUser() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  const handleAddFriend = async (userId: number) => {
+  const handleFriendshipRequest = async (userId: number) => {
     try {
-      //   await sendFriendRequest(userId);
+      const payload = {
+        receiver: {
+          id: userId,
+        },
+      };
+
+      await createFriendshipRequest(payload);
       setRequestsSent((prev) => ({ ...prev, [userId]: true }));
     } catch (error) {
       setErrorMessage(
@@ -69,7 +81,7 @@ function SearchUser() {
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-light-grey font-default">
-      <Header text="Ajouter un ami" />
+      <Header text="RECHERCHE" />
 
       <ErrorMessage
         errorMessage={errorMessage}
@@ -83,7 +95,7 @@ function SearchUser() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Rechercher un nouvel ami..."
+            placeholder="Rechercher un utilisateur..."
             className="w-full px-3 py-2 border-none focus:outline-none"
           />
         </div>
@@ -96,46 +108,28 @@ function SearchUser() {
       <ul className="w-full max-w-md mt-4 space-y-2">
         {users.length > 0
           ? users.map((user) => (
-              <li
-                key={user.id}
-                className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md"
-              >
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={user.picture || Avatar}
-                    alt={user.pseudo}
-                    className="w-10 h-10 rounded-full"
+              <FriendshipUserRow user={user}>
+                {requestsSent[user.id] ? (
+                  <>
+                    <ListButton
+                      label="Demande envoyée"
+                      color="grey"
+                      className="disabled"
+                    />
+                    <ListButton
+                      onClick={() => handleCancelRequest(user.id)}
+                      label="Annuler"
+                      color="red"
+                    />
+                  </>
+                ) : (
+                  <ListButton
+                    onClick={() => handleFriendshipRequest(user.id)}
+                    label="Ajouter"
+                    color="darkGreen"
                   />
-                  <div className="text-black font-medium">{user.pseudo}</div>
-                </div>
-
-                {/* Buttons */}
-                <div className="flex items-center space-x-2">
-                  {requestsSent[user.id] ? (
-                    <>
-                      <button
-                        className="px-3 py-1 text-grey bg-light-grey rounded-xl"
-                        disabled
-                      >
-                        Demande envoyée
-                      </button>
-                      <button
-                        className="px-3 py-1 text-white bg-red rounded-xl hover:bg-red-hover"
-                        onClick={() => handleCancelRequest(user.id)}
-                      >
-                        Annuler
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      className="px-3 py-1 text-white bg-dark-green rounded-xl hover:bg-dark-green-hover"
-                      onClick={() => handleAddFriend(user.id)}
-                    >
-                      Ajouter
-                    </button>
-                  )}
-                </div>
-              </li>
+                )}
+              </FriendshipUserRow>
             ))
           : query &&
             !loading && (
