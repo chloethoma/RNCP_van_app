@@ -116,7 +116,7 @@ class FriendshipController extends ApiController
     }
 
     #[Route(
-        path: '/api/friendships/{friendId}/delete',
+        path: '/api/friendships/{friendId}',
         name: 'delete_friendship',
         requirements: ['friendId' => Requirement::DIGITS],
         methods: ['DELETE'],

@@ -34,7 +34,7 @@ class SpotDTO
 
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
-        public readonly ?int $userId = null,
+        public readonly ?int $ownerId = null,
     ) {
     }
 }

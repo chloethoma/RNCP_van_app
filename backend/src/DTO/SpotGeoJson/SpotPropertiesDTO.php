@@ -10,7 +10,11 @@ class SpotPropertiesDTO
     public function __construct(
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
-        public int $id,
+        public int $spotId,
+
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
+        public int $ownerId,
     ) {
     }
 }
