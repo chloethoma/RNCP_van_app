@@ -37,8 +37,36 @@ class FriendshipRepository extends ServiceEntityRepository
             ->leftJoin('f.requester', 'requester')
             ->leftJoin('f.receiver', 'receiver')
             ->where("$field = :userId")
+            ->andWhere('f.isConfirmed = false')
             ->setParameter('userId', $userId)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findConfirmFriendships(int $userId): array
+    {
+        return $this->createQueryBuilder('f')
+            ->addSelect('PARTIAL requester.{id, pseudo, picture}', 'PARTIAL receiver.{id, pseudo, picture}')
+            ->leftJoin('f.requester', 'requester')
+            ->leftJoin('f.receiver', 'receiver')
+            ->where('(f.requester = :user OR f.receiver = :user)')
+            ->andWhere('f.isConfirmed = true')
+            ->setParameter('user', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findOneFriendshipById(int $userId, int $friendId): ?Friendship
+    {
+        return $this->createQueryBuilder('f')
+            ->addSelect('PARTIAL requester.{id, pseudo, picture}', 'PARTIAL receiver.{id, pseudo, picture}')
+            ->leftJoin('f.requester', 'requester')
+            ->leftJoin('f.receiver', 'receiver')
+            ->where('(f.requester = :user AND f.receiver = :friend)')
+            ->orWhere('(f.requester = :friend AND f.receiver = :user)')
+            ->setParameter('user', $userId)
+            ->setParameter('friend', $friendId)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
