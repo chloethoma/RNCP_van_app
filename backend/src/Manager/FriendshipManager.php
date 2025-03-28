@@ -59,4 +59,11 @@ class FriendshipManager
 
         return $user;
     }
+
+    public function initConfirmFriendship(Friendship $friendship): Friendship
+    {
+        $friendship->setConfirmed(true);
+
+        return $friendship;
+    }
 }

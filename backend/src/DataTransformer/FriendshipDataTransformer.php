@@ -5,6 +5,7 @@ namespace App\DataTransformer;
 use App\DTO\Friendship\FriendshipDTO;
 use App\DTO\Friendship\FriendshipUserDTO;
 use App\Entity\Friendship;
+use App\Entity\User;
 use App\Services\Validator\Validator;
 
 class FriendshipDataTransformer
@@ -42,25 +43,26 @@ class FriendshipDataTransformer
 
     public function mapEntityToDTO(): FriendshipDTO
     {
-        $requester = new FriendshipUserDTO(
-            id: $this->entity->getRequester()->getId(),
-            pseudo: $this->entity->getRequester()->getPseudo(),
-            picture: $this->entity->getRequester()->getPicture()
-        );
-
-        $receiver = new FriendshipUserDTO(
-            id: $this->entity->getReceiver()->getId(),
-            pseudo: $this->entity->getReceiver()->getPseudo(),
-            picture: $this->entity->getReceiver()->getPicture()
-        );
-
         $dto = new FriendshipDTO(
-            requester: $requester,
-            receiver: $receiver,
+            requester: $this->mapFriendshipUser($this->entity->getRequester()),
+            receiver: $this->mapFriendshipUser($this->entity->getReceiver()),
             isConfirmed: $this->entity->isConfirmed(),
         );
 
         $this->validator->validate($dto, FriendshipDTO::class, ['read']);
+
+        return $dto;
+    }
+
+    private function mapFriendshipUser(User $entity): FriendshipUserDTO
+    {
+        $dto = new FriendshipUserDTO(
+            id: $entity->getId(),
+            pseudo: $entity->getPseudo(),
+            picture: $entity->getPicture()
+        );
+
+        $this->validator->validate($dto, FriendshipUserDTO::class);
 
         return $dto;
     }

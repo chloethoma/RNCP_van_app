@@ -11,6 +11,7 @@ use App\Repository\FriendshipRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FriendshipHandler
 {
@@ -60,5 +61,53 @@ class FriendshipHandler
         $this->friendshipListTransformer->setEntityList($pendingCollection);
 
         return $this->friendshipListTransformer->mapEntityListToDTOList();
+    }
+
+    /**
+     * @return \ArrayObject<int, FriendshipDTO>
+     */
+    public function handleGetConfirmFriendshipList(): \ArrayObject
+    {
+        $userId = $this->userManager->getAuthenticatedUserId();
+
+        $friendshipList = $this->friendshipRepository->findConfirmFriendships($userId);
+        $friendshipCollection = $this->friendshipListTransformer->transformArrayToObjectList($friendshipList);
+
+        $this->friendshipListTransformer->setEntityList($friendshipCollection);
+
+        return $this->friendshipListTransformer->mapEntityListToDTOList();
+    }
+
+    public function handleConfirmFriendship(int $requesterId): FriendshipDTO
+    {
+        $userId = $this->userManager->getAuthenticatedUserId();
+
+        $friendship = $this->friendshipRepository->findOneFriendshipById($requesterId, $userId);
+
+        if (!$friendship) {
+            throw new NotFoundHttpException();
+        }
+
+        $friendship = $this->friendshipManager->initConfirmFriendship($friendship);
+
+        $this->em->flush();
+
+        $this->friendshipTransformer->setEntity($friendship);
+
+        return $this->friendshipTransformer->mapEntityToDTO();
+    }
+
+    public function handleDeleteFriendship(int $friendId): void
+    {
+        $userId = $this->userManager->getAuthenticatedUserId();
+
+        $friendship = $this->friendshipRepository->findOneFriendshipById($friendId, $userId);
+
+        if (!$friendship) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->em->remove($friendship);
+        $this->em->flush();
     }
 }
