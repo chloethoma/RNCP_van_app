@@ -50,7 +50,7 @@ class SpotDataTransformer
             longitude: $this->entity->getLongitude(),
             description: $this->entity->getDescription(),
             isFavorite: $this->entity->isFavorite(),
-            userId: $this->entity->getOwner()->getId()
+            ownerId: $this->entity->getOwner()->getId()
         );
 
         $this->validator->validate($dto, SpotDTO::class, ['read']);

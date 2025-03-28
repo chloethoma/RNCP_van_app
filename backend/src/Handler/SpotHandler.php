@@ -101,4 +101,32 @@ class SpotHandler
 
         return $this->spotListTransformer->mapEntityListToDTOList();
     }
+
+    public function handleGetSpotFriendsCollection(): SpotCollectionDTO
+    {
+        $userId = $this->userManager->getAuthenticatedUserId();
+
+        $spotList = $this->repository->findFriendsSpots($userId);
+
+        $spotCollection = $this->spotListTransformer->transformArrayToObjectList($spotList);
+
+        $this->spotListTransformer->setEntityList($spotCollection);
+
+        return $this->spotListTransformer->mapEntityListToDTOList();
+    }
+
+    public function handleGetSpotFriend(int $spotId): SpotDTO
+    {
+        $spot = $this->repository->findById($spotId);
+
+        if (!$spot) {
+            throw new NotFoundHttpException();
+        }
+
+        $this->spotManager->checkSpotFriendAccess($spot);
+
+        $this->spotTransformer->setEntity($spot);
+
+        return $this->spotTransformer->mapEntityToDTO();
+    }
 }

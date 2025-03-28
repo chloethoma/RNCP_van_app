@@ -147,4 +147,48 @@ class SpotController extends ApiController
 
         return $response;
     }
+
+    // Spot of friends controllers
+    #[Route(
+        path: 'api/spots/friends',
+        name: 'read_all_spots_friends',
+        methods: ['GET'],
+        format: 'json'
+    )]
+    public function getFriendsSpots(): JsonResponse
+    {
+        try {
+            $spotList = $this->handler->handleGetSpotFriendsCollection();
+
+            $response = $this->serveOkResponse($spotList);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
+    #[Route(
+        path: 'api/spots/{spotId}/friends',
+        name: 'read_spot_friend',
+        methods: ['GET'],
+        requirements: ['spotId' => Requirement::DIGITS],
+        format: 'json'
+    )]
+    public function getFriendSpot(int $spotId): JsonResponse
+    {
+        try {
+            $spot = $this->handler->handleGetSpotFriend($spotId);
+
+            $response = $this->serveOkResponse($spot, groups: ['read']);
+        } catch (NotFoundHttpException $e) {
+            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (AccessDeniedHttpException $e) {
+            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
 }

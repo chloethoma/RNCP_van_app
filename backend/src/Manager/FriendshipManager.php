@@ -43,7 +43,7 @@ class FriendshipManager
 
     public function checkIfFriendshipAlreadyExists(Friendship $friendship): void
     {
-        if ($this->repository->friendshipExists($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
+        if ($this->repository->isfriendshipExist($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
             throw new ConflictHttpException();
         }
     }

@@ -16,7 +16,7 @@ class FriendshipRepository extends ServiceEntityRepository
         parent::__construct($registry, Friendship::class);
     }
 
-    public function friendshipExists(int $requesterId, int $receiverId): bool
+    public function isfriendshipExist(int $requesterId, int $receiverId): bool
     {
         return (bool) $this->createQueryBuilder('f')
             ->select('COUNT(f.id)')

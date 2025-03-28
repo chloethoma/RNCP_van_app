@@ -33,7 +33,8 @@ class SpotListDataTransformer
             );
 
             $properties = new SpotPropertiesDTO(
-                id: $entity->getId()
+                spotId: $entity->getId(),
+                ownerId: $entity->getOwner()->getId()
             );
 
             $spot = new SpotDTO(
