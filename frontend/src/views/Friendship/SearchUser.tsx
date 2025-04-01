@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   createFriendshipRequest,
+  deleteFriendship,
   searchUserByPseudo,
 } from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
@@ -70,7 +71,7 @@ function SearchUser() {
 
   const handleCancelRequest = async (userId: number) => {
     try {
-      //   await cancelFriendRequest(userId);
+      await deleteFriendship(userId);
       setRequestsSent((prev) => ({ ...prev, [userId]: false }));
     } catch (error) {
       setErrorMessage(

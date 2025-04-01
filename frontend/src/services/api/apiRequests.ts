@@ -3,10 +3,10 @@ import { SpoGeoJsonCollection, Spot, SpotGeoJson } from "../../types/spot";
 import { FriendshipUser, User } from "../../types/user";
 import { Friendship } from "../../types/friendship";
 
-// Spot types
+// 🔹 Spot types
 type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">;
 
-// User types
+// 🔹 User types
 type LoginCredentials = Pick<User, "email" | "password">;
 type RegistrationCredentials = Pick<User, "email" | "pseudo" | "password">;
 type Token = {
@@ -17,12 +17,17 @@ type PasswordUpdateCredentials = {
   newPassword: string
 }
 
-// Friendship types
+// 🔹 Friendship types
 type FriendshipCreatePayload = {
   receiver: Pick<FriendshipUser, "id">
 };
 
 type PendingFriendshipType = "received" | "sent";
+
+
+// =====================================
+// 📌 SPOT REQUESTS
+// =====================================
 
 export const fetchSpots = async (): Promise<SpotGeoJson[]> => {
   const response = await fetchRequest<SpoGeoJsonCollection>({
@@ -62,6 +67,10 @@ export const deleteSpot = async (spotId: number): Promise<void> => {
     url: `/api/spots/${spotId}`,
   });
 };
+
+// =====================================
+// 📌 USER REQUESTS
+// =====================================
 
 export const loginUser = async (
   credentials: LoginCredentials,
@@ -123,6 +132,10 @@ export const deleteUser = async (): Promise<void> => {
   localStorage.removeItem("access_token");
 };
 
+// =====================================
+// 📌 FRIENDSHIP REQUESTS
+// =====================================
+
 export const searchUserByPseudo = async (pseudo: string): Promise<FriendshipUser[]> => {
   return await fetchRequest<FriendshipUser[]>({
     method: "get",
@@ -142,5 +155,26 @@ export const getPendingFriendships = async (type: PendingFriendshipType): Promis
   return await fetchRequest<Friendship[]>({
     method: "get",
     url: `/api/friendships/pending/${type}`,
+  })
+}
+
+export const getConfirmedFriendships = async (): Promise<Friendship[]> => {
+  return await fetchRequest<Friendship[]>({
+    method: "get",
+    url: "/api/friendships/confirmed",
+  })
+}
+
+export const acceptFriendship = async (friendId: number): Promise<Friendship> => {
+  return await fetchRequest<Friendship>({
+    method: "patch",
+    url: `/api/friendships/${friendId}/confirm`
+  })
+}
+
+export const deleteFriendship = async (friendId: number): Promise<void> => {
+  return await fetchRequest<void>({
+    method: "delete",
+    url: `/api/friendships/${friendId}`
   })
 }

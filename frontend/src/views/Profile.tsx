@@ -60,7 +60,7 @@ function Profile() {
     };
 
     fetchUser();
-  }, [user]);
+  }, []);
 
   const handleUpdate = async (field: keyof User, newValue: string) => {
     if (!user) return;
