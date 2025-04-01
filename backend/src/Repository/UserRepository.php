@@ -59,10 +59,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 OR (f.requester = u.id AND f.receiver = :currentUserId)'
             )
             ->where('u.pseudo LIKE :pseudo')
+            ->andWhere('u.id != :currentUserId')
             ->andWhere('f.id IS NULL')
             ->setParameter('pseudo', $pseudo.'%')
             ->setParameter('currentUserId', $currentUserId)
-            ->setMaxResults(20)
+            ->setMaxResults(30)
             ->getQuery()
             ->getResult();
     }
