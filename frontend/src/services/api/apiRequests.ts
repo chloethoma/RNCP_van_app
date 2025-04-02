@@ -1,7 +1,7 @@
 import fetchRequest from "./apiClient";
 import { SpoGeoJsonCollection, Spot, SpotGeoJson } from "../../types/spot";
 import { FriendshipUser, User } from "../../types/user";
-import { Friendship } from "../../types/friendship";
+import { Friendship, PartialFriendship } from "../../types/friendship";
 
 // 🔹 Spot types
 type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">;
@@ -18,10 +18,6 @@ type PasswordUpdateCredentials = {
 }
 
 // 🔹 Friendship types
-type FriendshipCreatePayload = {
-  receiver: Pick<FriendshipUser, "id">
-};
-
 type PendingFriendshipType = "received" | "sent";
 
 
@@ -29,7 +25,7 @@ type PendingFriendshipType = "received" | "sent";
 // 📌 SPOT REQUESTS
 // =====================================
 
-export const fetchSpots = async (): Promise<SpotGeoJson[]> => {
+export const fetchSpotList = async (): Promise<SpotGeoJson[]> => {
   const response = await fetchRequest<SpoGeoJsonCollection>({
     method: "get",
     url: "api/spots",
@@ -143,23 +139,22 @@ export const searchUserByPseudo = async (pseudo: string): Promise<FriendshipUser
   })
 }
 
-export const createFriendshipRequest = async (payload: FriendshipCreatePayload): Promise<Friendship> => {
+export const createFriendshipRequest = async (userId: number): Promise<Friendship> => {
   return await fetchRequest<Friendship>({
     method:"post",
-    url: "/api/friendships",
-    data: payload,
+    url: `/api/friendships/${userId}`,
   })
 }
 
-export const getPendingFriendships = async (type: PendingFriendshipType): Promise<Friendship[]> => {
-  return await fetchRequest<Friendship[]>({
+export const getPendingFriendshipList = async (type: PendingFriendshipType): Promise<PartialFriendship[]> => {
+  return await fetchRequest<PartialFriendship[]>({
     method: "get",
     url: `/api/friendships/pending/${type}`,
   })
 }
 
-export const getConfirmedFriendships = async (): Promise<Friendship[]> => {
-  return await fetchRequest<Friendship[]>({
+export const getConfirmedFriendshipList = async (): Promise<PartialFriendship[]> => {
+  return await fetchRequest<PartialFriendship[]>({
     method: "get",
     url: "/api/friendships/confirmed",
   })

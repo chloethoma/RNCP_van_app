@@ -54,13 +54,7 @@ function SearchUser() {
 
   const handleFriendshipRequest = async (userId: number) => {
     try {
-      const payload = {
-        receiver: {
-          id: userId,
-        },
-      };
-
-      await createFriendshipRequest(payload);
+      await createFriendshipRequest(userId);
       setRequestsSent((prev) => ({ ...prev, [userId]: true }));
     } catch (error) {
       setErrorMessage(

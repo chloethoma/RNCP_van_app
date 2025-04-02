@@ -1,7 +1,7 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useRef, useEffect, useState } from "react";
 import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
-import { fetchSpotById, fetchSpots } from "../services/api/apiRequests";
+import { fetchSpotById, fetchSpotList } from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
 import SpotPreview from "../components/SpotPreview";
 import { Locate, Plus } from "lucide-react";
@@ -44,8 +44,78 @@ function Home() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    location.state?.successMessage || null,
+    location.state?.successMessage || null
   );
+
+  // Initialize the map
+  useEffect(() => {
+    if (!mapContainerRef.current) {
+      console.error(ERROR_MESSAGES.CONTAINER);
+      return;
+    }
+
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
+    });
+
+    mapRef.current = map;
+
+    return () => {
+      map.remove();
+    };
+  }, []);
+
+  // Ask user to get his location with first rendering
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_UNSUPPORTED);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.longitude, position.coords.latitude]);
+      },
+      (error) => {
+        setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
+        console.error(ERROR_CONSOLE.GEOLOCATION_FAIL, error);
+      }
+    );
+  }, []);
+
+  // Fetch and display spots
+  useEffect(() => {
+    const loadSpots = async () => {
+      if (!mapRef.current) return;
+
+      try {
+        const spotList = await fetchSpotList();
+
+        if (spotList.length === 0) return;
+
+        spotList.forEach((spot) => {
+          const marker = new mapboxgl.Marker()
+            .setLngLat(spot.geometry.coordinates)
+            .addTo(mapRef.current!);
+
+          marker
+            .getElement()
+            .addEventListener("click", () => handleMarkerClick(spot));
+        });
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
+        }
+      }
+    };
+
+    loadSpots();
+  }, []);
 
   const handleMarkerClick = async (spot: SpotGeoJson) => {
     try {
@@ -84,76 +154,6 @@ function Home() {
       setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
     }
   };
-
-  // Initialize the map
-  useEffect(() => {
-    if (!mapContainerRef.current) {
-      console.error(ERROR_MESSAGES.CONTAINER);
-      return;
-    }
-
-    mapboxgl.accessToken = MAPBOX_TOKEN;
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
-    });
-
-    mapRef.current = map;
-
-    return () => {
-      map.remove();
-    };
-  }, []);
-
-  // Ask user to get his location with first rendering
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_UNSUPPORTED);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUserLocation([position.coords.longitude, position.coords.latitude]);
-      },
-      (error) => {
-        setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
-        console.error(ERROR_CONSOLE.GEOLOCATION_FAIL, error);
-      },
-    );
-  }, []);
-
-  // Fetch and display spots
-  useEffect(() => {
-    const loadSpots = async () => {
-      if (!mapRef.current) return;
-
-      try {
-        const spotList = await fetchSpots();
-
-        if (spotList.length === 0) return;
-
-        spotList.forEach((spot) => {
-          const marker = new mapboxgl.Marker()
-            .setLngLat(spot.geometry.coordinates)
-            .addTo(mapRef.current!);
-
-          marker
-            .getElement()
-            .addEventListener("click", () => handleMarkerClick(spot));
-        });
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(error.message);
-        } else {
-          setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
-        }
-      }
-    };
-
-    loadSpots();
-  }, []);
 
   return (
     <>

@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
-import { Search, Trash, UserPlus } from "lucide-react";
+import { Search, UserPlus } from "lucide-react";
 import Header from "../components/header/Header";
 import IconButton from "../components/buttons/IconButton";
 import { Link, useNavigate } from "react-router";
-import { Friendship } from "../types/friendship";
+import { PartialFriendship } from "../types/friendship";
 import {
   deleteFriendship,
-  fetchUserByToken,
-  getConfirmedFriendships,
+  getConfirmedFriendshipList,
 } from "../services/api/apiRequests";
 import FriendshipUserRow from "../components/friendshipList/FriendshipUserRow";
 import ListButton from "../components/buttons/ListButton";
-import { User } from "../types/user";
 import ErrorMessage from "../components/messages/ErrorMessage";
 
 const MESSAGES = {
@@ -22,8 +20,7 @@ const Friendships = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [friendships, setFriendships] = useState<Friendship[]>([]);
-  const [currentUser, setCurrentUser] = useState<User>();
+  const [friendships, setFriendships] = useState<PartialFriendship[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -31,7 +28,7 @@ const Friendships = () => {
       setLoading(true);
 
       try {
-        const friendList = await getConfirmedFriendships();
+        const friendList = await getConfirmedFriendshipList();
         setFriendships(friendList);
       } catch (error) {
         setErrorMessage(
@@ -45,32 +42,13 @@ const Friendships = () => {
     fetchFriendships();
   }, []);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const user = await fetchUserByToken();
-        setCurrentUser(user);
-      } catch (error) {
-        setErrorMessage(
-          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
-        );
-      }
-    };
-
-    fetchCurrentUser();
-  }, []);
-
   const handleDeleteFriend = async (friendId: number) => {
     try {
       await deleteFriendship(friendId);
 
       setFriendships((prevFriendships) =>
         prevFriendships.filter((friendship) => {
-          const user =
-            friendship.requester.id === friendId
-              ? friendship.requester
-              : friendship.receiver;
-          return user.id !== friendId;
+          return friendship.friend.id !== friendId;
         })
       );
     } catch (error) {
@@ -127,20 +105,12 @@ const Friendships = () => {
         {friendships.length > 0 ? (
           friendships
             .filter((friendship) => {
-              const friend =
-                friendship.requester.id === currentUser?.id
-                  ? friendship.receiver
-                  : friendship.requester;
-
-              return friend.pseudo
+              return friendship.friend.pseudo
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase());
             })
             .map((friendship) => {
-              const friend =
-                friendship.requester.id === currentUser?.id
-                  ? friendship.receiver
-                  : friendship.requester;
+              const friend = friendship.friend
 
               return (
                 <FriendshipUserRow key={friend.id} user={friend}>
