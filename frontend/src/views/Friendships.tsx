@@ -3,7 +3,7 @@ import { Search, UserPlus } from "lucide-react";
 import Header from "../components/header/Header";
 import IconButton from "../components/buttons/IconButton";
 import { Link, useNavigate } from "react-router";
-import { PartialFriendship, ReceivedFriendshipNumber } from "../types/friendship";
+import { PartialFriendship } from "../types/friendship";
 import {
   deleteFriendship,
   getConfirmedFriendshipList,
