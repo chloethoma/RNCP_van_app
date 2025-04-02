@@ -3,10 +3,11 @@ import { Search, UserPlus } from "lucide-react";
 import Header from "../components/header/Header";
 import IconButton from "../components/buttons/IconButton";
 import { Link, useNavigate } from "react-router";
-import { PartialFriendship } from "../types/friendship";
+import { PartialFriendship, ReceivedFriendshipNumber } from "../types/friendship";
 import {
   deleteFriendship,
   getConfirmedFriendshipList,
+  getReceivedFrienshipSummary,
 } from "../services/api/apiRequests";
 import FriendshipUserRow from "../components/friendshipList/FriendshipUserRow";
 import ListButton from "../components/buttons/ListButton";
@@ -20,7 +21,8 @@ const Friendships = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [friendships, setFriendships] = useState<PartialFriendship[]>([]);
+  const [friendshipList, setFriendshipList] = useState<PartialFriendship[]>([]);
+  const [receivedFriendshipNumber, setReceivedFriendshipNumber] = useState<number>(0);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ const Friendships = () => {
 
       try {
         const friendList = await getConfirmedFriendshipList();
-        setFriendships(friendList);
+        setFriendshipList(friendList);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
@@ -42,11 +44,26 @@ const Friendships = () => {
     fetchFriendships();
   }, []);
 
+  useEffect(() => {
+    const fetchReceivedFriendshipsSummary = async () => {
+      try {
+        const summary = await getReceivedFrienshipSummary();
+        setReceivedFriendshipNumber(summary.count);
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        );
+      }
+    }
+
+    fetchReceivedFriendshipsSummary();
+  }, []);
+
   const handleDeleteFriend = async (friendId: number) => {
     try {
       await deleteFriendship(friendId);
 
-      setFriendships((prevFriendships) =>
+      setFriendshipList((prevFriendships) =>
         prevFriendships.filter((friendship) => {
           return friendship.friend.id !== friendId;
         })
@@ -73,7 +90,7 @@ const Friendships = () => {
           to={"/friendships/pending"}
           className="text-md font-semibold text-black"
         >
-          Demandes en attente de validation
+          Demandes en attente de validation : {receivedFriendshipNumber}
         </Link>
       </div>
 
@@ -102,8 +119,8 @@ const Friendships = () => {
       {/* Friend list */}
       {!loading && (
       <ul className="w-full max-w-md mt-4 space-y-2">
-        {friendships.length > 0 ? (
-          friendships
+        {friendshipList.length > 0 ? (
+          friendshipList
             .filter((friendship) => {
               return friendship.friend.pseudo
                 .toLowerCase()

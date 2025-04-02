@@ -1,7 +1,7 @@
 import fetchRequest from "./apiClient";
 import { SpoGeoJsonCollection, Spot, SpotGeoJson } from "../../types/spot";
 import { FriendshipUser, User } from "../../types/user";
-import { Friendship, PartialFriendship } from "../../types/friendship";
+import { Friendship, PartialFriendship, ReceivedFriendshipNumber } from "../../types/friendship";
 
 // 🔹 Spot types
 type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">;
@@ -19,7 +19,6 @@ type PasswordUpdateCredentials = {
 
 // 🔹 Friendship types
 type PendingFriendshipType = "received" | "sent";
-
 
 // =====================================
 // 📌 SPOT REQUESTS
@@ -150,6 +149,13 @@ export const getPendingFriendshipList = async (type: PendingFriendshipType): Pro
   return await fetchRequest<PartialFriendship[]>({
     method: "get",
     url: `/api/friendships/pending/${type}`,
+  })
+}
+
+export const getReceivedFrienshipSummary = async (): Promise<ReceivedFriendshipNumber> => {
+  return await fetchRequest<ReceivedFriendshipNumber>({
+    method: "get",
+    url: "/api/friendships/pending/received/summary",
   })
 }
 
