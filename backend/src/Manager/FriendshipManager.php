@@ -18,6 +18,14 @@ class FriendshipManager
     ) {
     }
 
+    public function initNewFriendship(): Friendship
+    {
+        $friendship = new Friendship();
+        $friendship->setConfirmed(false);
+
+        return $friendship;
+    }
+
     public function initAuthenticatedUser(Friendship $friendship): Friendship
     {
         $user = $this->findUserById($this->userManager->getAuthenticatedUserId());

@@ -2,11 +2,9 @@
 
 namespace App\Controller;
 
-use App\DTO\Friendship\FriendshipDTO;
 use App\Handler\FriendshipHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -29,16 +27,16 @@ class FriendshipController extends ApiController
     }
 
     #[Route(
-        path: '/api/friendships',
+        path: '/api/friendships/{friendId}',
         name: 'create_friendship',
         methods: ['POST'],
+        requirements: ['friendId' => Requirement::DIGITS],
         format: 'json'
     )]
-    public function createFriendship(
-        #[MapRequestPayload(validationGroups: ['create'], serializationContext: ['groups' => ['create']])] FriendshipDTO $dto,
-    ): JsonResponse {
+    public function createFriendship(int $friendId): JsonResponse
+    {
         try {
-            $newFriendship = $this->handler->handleCreate($dto);
+            $newFriendship = $this->handler->handleCreate($friendId);
 
             $response = $this->serveCreatedResponse($newFriendship, self::TARGET, groups: ['read']);
         } catch (BadRequestHttpException $e) {
@@ -68,7 +66,8 @@ class FriendshipController extends ApiController
 
             $response = $this->serveOkResponse($pendingFriendshipList, groups: ['read']);
         } catch (\Throwable $e) {
-            $response = $this->handleException($e, self::TARGET);
+            // $response = $this->handleException($e, self::TARGET);
+            $response = $this->json($e);
         }
 
         return $response;

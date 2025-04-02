@@ -2,14 +2,14 @@
 
 namespace App\DataTransformer;
 
-use App\DTO\Friendship\FriendshipDTO;
 use App\DTO\Friendship\FriendshipUserDTO;
+use App\DTO\Friendship\PartialFriendshipDTO;
 use App\Entity\Friendship;
 use App\Entity\FriendshipCollection;
 use App\Entity\User;
 use App\Services\Validator\Validator;
 
-class FriendshipListDataTransformer
+class PartialFriendshipListDataTransformer
 {
     private FriendshipCollection $entityList;
 
@@ -23,12 +23,12 @@ class FriendshipListDataTransformer
         $this->entityList = $entityList;
     }
 
-    public function mapEntityListToDTOList(): \ArrayObject
+    public function mapEntityListToDTOList(int $userId): \ArrayObject
     {
         $friendshipList = new \ArrayObject();
 
         foreach ($this->entityList as $entity) {
-            $friendshipList->append($this->mapFriendship($entity));
+            $friendshipList->append($this->mapFriend($entity, $userId));
         }
 
         return $friendshipList;
@@ -44,15 +44,21 @@ class FriendshipListDataTransformer
         return $friendshipCollection;
     }
 
-    private function mapFriendship(Friendship $entity): FriendshipDTO
+    private function mapFriend(Friendship $entity, int $userId): PartialFriendshipDTO
     {
-        $dto = new FriendshipDTO(
-            requester: $this->mapFriendshipUser($entity->getRequester()),
-            receiver: $this->mapFriendshipUser($entity->getReceiver()),
-            isConfirmed: $entity->isConfirmed()
-        );
+        if ($entity->getRequester()->getId() === $userId) {
+            $dto = new PartialFriendshipDTO(
+                friend: $this->mapFriendshipUser($entity->getReceiver()),
+                isConfirmed: $entity->isConfirmed()
+            );
+        } else {
+            $dto = new PartialFriendshipDTO(
+                friend: $this->mapFriendshipUser($entity->getRequester()),
+                isConfirmed: $entity->isConfirmed()
+            );
+        }
 
-        $this->validator->validate($dto, FriendshipDTO::class);
+        $this->validator->validate($dto, PartialFriendshipDTO::class);
 
         return $dto;
     }
