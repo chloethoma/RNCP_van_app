@@ -1,50 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, UserPlus } from "lucide-react";
 import Header from "../components/header/Header";
 import IconButton from "../components/buttons/IconButton";
 import { Link, useNavigate } from "react-router";
+import { PartialFriendship } from "../types/friendship";
+import {
+  deleteFriendship,
+  getConfirmedFriendshipList,
+} from "../services/api/apiRequests";
+import FriendshipUserRow from "../components/friendshipList/FriendshipUserRow";
+import ListButton from "../components/buttons/ListButton";
+import ErrorMessage from "../components/messages/ErrorMessage";
+
+const MESSAGES = {
+  ERROR_DEFAULT: "Une erreur est survenue",
+};
 
 const Friendships = () => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  // const [friends, setFriends] = useState<User[]>([]);
-  // const [loading, setLoading] = useState(false);
+  const [friendships, setFriendships] = useState<PartialFriendship[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const data = await fetchFriends(); // Requête pour récupérer les amis
-  //       setFriends(data);
-  //     } catch (error) {
-  //       console.error("Erreur de récupération des amis:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchFriendships = async () => {
+      setLoading(true);
 
-  // const handleDeleteFriend = async (id: number) => {
-  //   try {
-  //     await removeFriend(id); // Fonction pour supprimer un ami
-  //     setFriends(friends.filter(friend => friend.id !== id)); // Mise à jour de la liste après suppression
-  //   } catch (error) {
-  //     console.error("Erreur de suppression de l'ami:", error);
-  //   }
-  // };
+      try {
+        const friendList = await getConfirmedFriendshipList();
+        setFriendships(friendList);
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // const filteredFriends = friends.filter(friend =>
-  //   friend.pseudo.toLowerCase().includes(searchQuery.toLowerCase())
-  // );
+    fetchFriendships();
+  }, []);
+
+  const handleDeleteFriend = async (friendId: number) => {
+    try {
+      await deleteFriendship(friendId);
+
+      setFriendships((prevFriendships) =>
+        prevFriendships.filter((friendship) => {
+          return friendship.friend.id !== friendId;
+        })
+      );
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-light-grey font-default">
       <Header text="MA COMMU" />
 
+      <ErrorMessage
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
+
       {/* Pending friendships */}
       <div className="w-full flex justify-between items-center p-4 bg-white mt-4 shadow-md text-black">
-        <Link to={"/friendships/pending"} className="text-md font-semibold text-black">Demandes en attente de validation</Link>
+        <Link
+          to={"/friendships/pending"}
+          className="text-md font-semibold text-black"
+        >
+          Demandes en attente de validation
+        </Link>
       </div>
 
       {/* Search friends */}
@@ -69,32 +99,34 @@ const Friendships = () => {
         />
       </div>
 
-      {/* Liste des amis */}
-      {/* {loading ? (
-        <p>Chargement...</p>
-      ) : (
-        <div className="w-full p-4">
-          {filteredFriends.length > 0 ? (
-            filteredFriends.map((friend) => (
-              <div key={friend.id} className="flex items-center justify-between bg-white p-3 mt-2 rounded-md shadow-md">
-                <img
-                  src={friend.avatar || "/default-avatar.png"}
-                  alt={friend.pseudo}
-                  className="w-12 h-12 rounded-full"
-                />
-                <p className="flex-1 ml-4 text-lg font-semibold">{friend.pseudo}</p>
-                <IconButton
-                  icon={<Trash2 size={20} color="red" />}
-                  onClick={() => handleDeleteFriend(friend.id)}
-                  color="white"
-                />
-              </div>
-            ))
-          ) : (
-            <p>Aucun ami trouvé.</p>
-          )}
-        </div>
-      )} */}
+      {/* Friend list */}
+      {!loading && (
+      <ul className="w-full max-w-md mt-4 space-y-2">
+        {friendships.length > 0 ? (
+          friendships
+            .filter((friendship) => {
+              return friendship.friend.pseudo
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase());
+            })
+            .map((friendship) => {
+              const friend = friendship.friend
+
+              return (
+                <FriendshipUserRow key={friend.id} user={friend}>
+                  <ListButton
+                    onClick={() => handleDeleteFriend(friend.id)}
+                    label="Supprimer"
+                    color="red"
+                  />
+                </FriendshipUserRow>
+              );
+            })
+        ) : (
+          <p className="text-grey mt-4">Aucune amitié trouvée</p>
+        )}
+      </ul>
+      )}
     </div>
   );
 };

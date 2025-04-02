@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/header/Header";
 import ErrorMessage from "../../components/messages/ErrorMessage";
-import { Friendship } from "../../types/friendship";
-import { getPendingFriendships } from "../../services/api/apiRequests";
+import { PartialFriendship } from "../../types/friendship";
+import {
+  acceptFriendship,
+  deleteFriendship,
+  getPendingFriendshipList,
+} from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
 import ListButton from "../../components/buttons/ListButton";
 import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
@@ -13,19 +17,18 @@ const MESSAGES = {
 
 function PendingFriendships() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [viewFriendshipsReceived, setViewFriendshipsReceived] =
-    useState<boolean>(true);
-  const [friendships, setFriendships] = useState<Friendship[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [viewFriendshipsReceived, setViewFriendshipsReceived] = useState<boolean>(true);
+  const [friendshipList, setFriendshipList] = useState<PartialFriendship[]>([]);
 
   useEffect(() => {
-    const fetchPendingFriendships = async () => {
+    const fetchPendingFriendshipList = async () => {
       setLoading(true);
 
       try {
         const type = viewFriendshipsReceived ? "received" : "sent";
-        const data = await getPendingFriendships(type);
-        setFriendships(data);
+        const data = await getPendingFriendshipList(type);
+        setFriendshipList(data);
       } catch (error) {
         setErrorMessage(
           error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
@@ -35,8 +38,42 @@ function PendingFriendships() {
       }
     };
 
-    fetchPendingFriendships();
+    fetchPendingFriendshipList();
   }, [viewFriendshipsReceived]);
+
+  const handleAcceptFriendship = async (friendId: number) => {
+    try {
+      await acceptFriendship(friendId);
+
+      setFriendshipList((prevFriendships) =>
+        prevFriendships.filter((friendship) => {
+          return friendship.friend.id !== friendId;
+        })
+      );
+
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+      );
+    }
+  };
+
+  const handleDeleteFriendship = async (friendId: number) => {
+    try {
+      await deleteFriendship(friendId);
+
+      setFriendshipList((prevFriendships) =>
+        prevFriendships.filter((friendship) => {
+          return friendship.friend.id !== friendId;
+        })
+      );
+
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-light-grey font-default">
@@ -77,30 +114,28 @@ function PendingFriendships() {
       {/* User list */}
       {!loading && (
         <ul className="w-full max-w-md mt-4 space-y-2">
-          {friendships.length > 0 ? (
-            friendships.map((friendship) => {
-              const user: FriendshipUser = viewFriendshipsReceived
-                ? friendship.requester
-                : friendship.receiver;
+          {friendshipList.length > 0 ? (
+            friendshipList.map((friendship) => {
+              const user: FriendshipUser = friendship.friend;
 
               return (
                 <FriendshipUserRow user={user}>
                   {viewFriendshipsReceived ? (
                     <>
                       <ListButton
-                        onClick={() => console.log("Accepter", user.id)}
+                        onClick={() => handleAcceptFriendship(user.id)}
                         label="Accepter"
                         color="darkGreen"
                       />
                       <ListButton
-                        onClick={() => console.log("Refuser", user.id)}
+                        onClick={() => handleDeleteFriendship(user.id)}
                         label="Refuser"
                         color="red"
                       />
                     </>
                   ) : (
                     <ListButton
-                      onClick={() => console.log("Annuler", user.id)}
+                      onClick={() => handleDeleteFriendship(user.id)}
                       label="Annuler"
                       color="red"
                     />

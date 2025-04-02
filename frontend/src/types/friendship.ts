@@ -5,3 +5,8 @@ export interface Friendship {
     receiver: FriendshipUser;
     isConfirmed: boolean;
 }
+
+export interface PartialFriendship {
+    friend: FriendshipUser;
+    isConfirmed: boolean;
+}
