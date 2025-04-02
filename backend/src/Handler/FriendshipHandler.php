@@ -5,6 +5,7 @@ namespace App\Handler;
 use App\DataTransformer\FriendshipDataTransformer;
 use App\DataTransformer\PartialFriendshipListDataTransformer;
 use App\DTO\Friendship\FriendshipDTO;
+use App\DTO\Friendship\FriendshipReceivedSummaryDTO;
 use App\DTO\Friendship\PartialFriendshipDTO;
 use App\Manager\FriendshipManager;
 use App\Manager\UserManager;
@@ -61,6 +62,15 @@ class FriendshipHandler
         $this->friendshipListTransformer->setEntityList($pendingCollection);
 
         return $this->friendshipListTransformer->mapEntityListToDTOList($userId);
+    }
+
+    public function handleGetReceivedFriendshipSummary(): FriendshipReceivedSummaryDTO
+    {
+        $receivedFriendshipList = $this->handleGetPendingFriendships('received');
+
+        $summary = count($receivedFriendshipList);
+
+        return new FriendshipReceivedSummaryDTO($summary);
     }
 
     /**
