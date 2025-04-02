@@ -59,15 +59,33 @@ class FriendshipController extends ApiController
         requirements: ['type' => 'received|sent'],
         format: 'json'
     )]
-    public function getFriendshipsRequestsSent(string $type): JsonResponse
+    public function getPendingFriendshipList(string $type): JsonResponse
     {
         try {
             $pendingFriendshipList = $this->handler->handleGetPendingFriendships($type);
 
             $response = $this->serveOkResponse($pendingFriendshipList, groups: ['read']);
         } catch (\Throwable $e) {
-            // $response = $this->handleException($e, self::TARGET);
-            $response = $this->json($e);
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
+    #[Route(
+        path: '/api/friendships/pending/received/summary',
+        name: 'read_pending_friendships_summary',
+        methods: ['GET'],
+        format: 'json'
+    )]
+    public function getReceivedFriendshipSummary(): JsonResponse
+    {
+        try {
+            $summary = $this->handler->handleGetReceivedFriendshipSummary();
+
+            $response = $this->serveOkResponse($summary, groups: ['read']);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
         }
 
         return $response;
@@ -79,7 +97,7 @@ class FriendshipController extends ApiController
         methods: ['GET'],
         format: 'json'
     )]
-    public function getConfirmedFriendships(): JsonResponse
+    public function getConfirmedFriendshipList(): JsonResponse
     {
         try {
             $friendshipList = $this->handler->handleGetConfirmFriendshipList();
