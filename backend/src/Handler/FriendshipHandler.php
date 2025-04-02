@@ -3,8 +3,9 @@
 namespace App\Handler;
 
 use App\DataTransformer\FriendshipDataTransformer;
-use App\DataTransformer\FriendshipListDataTransformer;
+use App\DataTransformer\PartialFriendshipListDataTransformer;
 use App\DTO\Friendship\FriendshipDTO;
+use App\DTO\Friendship\PartialFriendshipDTO;
 use App\Manager\FriendshipManager;
 use App\Manager\UserManager;
 use App\Repository\FriendshipRepository;
@@ -19,20 +20,19 @@ class FriendshipHandler
         protected UserManager $userManager,
         protected FriendshipManager $friendshipManager,
         protected FriendshipDataTransformer $friendshipTransformer,
-        protected FriendshipListDataTransformer $friendshipListTransformer,
+        protected PartialFriendshipListDataTransformer $friendshipListTransformer,
         protected EntityManagerInterface $em,
         protected UserRepository $userRepository,
         protected FriendshipRepository $friendshipRepository,
     ) {
     }
 
-    public function handleCreate(FriendshipDTO $dto): FriendshipDTO
+    public function handleCreate(int $friendId): FriendshipDTO
     {
-        $this->friendshipTransformer->setDTO($dto);
-        $friendship = $this->friendshipTransformer->mapDTOToEntity();
+        $friendship = $this->friendshipManager->initNewFriendship();
 
         $friendship = $this->friendshipManager->initAuthenticatedUser($friendship);
-        $friendship = $this->friendshipManager->initFriendUser($dto->receiver->id, $friendship);
+        $friendship = $this->friendshipManager->initFriendUser($friendId, $friendship);
 
         if (!$this->friendshipManager->isReceiverIdDifferentFromCurrentUser($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
             throw new BadRequestHttpException();
@@ -49,7 +49,7 @@ class FriendshipHandler
     }
 
     /**
-     * @return \ArrayObject<int, FriendshipDTO>
+     * @return \ArrayObject<int, PartialFriendshipDTO>
      */
     public function handleGetPendingFriendships(string $type): \ArrayObject
     {
@@ -60,11 +60,11 @@ class FriendshipHandler
 
         $this->friendshipListTransformer->setEntityList($pendingCollection);
 
-        return $this->friendshipListTransformer->mapEntityListToDTOList();
+        return $this->friendshipListTransformer->mapEntityListToDTOList($userId);
     }
 
     /**
-     * @return \ArrayObject<int, FriendshipDTO>
+     * @return \ArrayObject<int, PartialFriendshipDTO>
      */
     public function handleGetConfirmFriendshipList(): \ArrayObject
     {
@@ -75,7 +75,7 @@ class FriendshipHandler
 
         $this->friendshipListTransformer->setEntityList($friendshipCollection);
 
-        return $this->friendshipListTransformer->mapEntityListToDTOList();
+        return $this->friendshipListTransformer->mapEntityListToDTOList($userId);
     }
 
     public function handleConfirmFriendship(int $requesterId): FriendshipDTO

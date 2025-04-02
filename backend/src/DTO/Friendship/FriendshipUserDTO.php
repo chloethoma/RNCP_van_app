@@ -8,8 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FriendshipUserDTO
 {
     public function __construct(
-        #[Groups(['read', 'create', 'update'])]
-        #[Assert\NotNull(groups: ['read', 'create', 'update'])]
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
         public readonly ?int $id,
 
         #[Groups(['read'])]
