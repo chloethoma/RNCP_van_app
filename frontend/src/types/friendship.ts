@@ -10,3 +10,8 @@ export interface PartialFriendship {
     friend: FriendshipUser;
     isConfirmed: boolean;
 }
+
+export type ReceivedFriendshipNumber = {
+    count: number
+  };
+  

@@ -119,7 +119,7 @@ function Home() {
 
   const handleMarkerClick = async (spot: SpotGeoJson) => {
     try {
-      const fetchedSpot = await fetchSpotById(spot.properties.id);
+      const fetchedSpot = await fetchSpotById(spot.properties.spotId);
       setSelectedSpot(fetchedSpot);
     } catch (error) {
       if (error instanceof Error) {

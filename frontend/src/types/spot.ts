@@ -17,7 +17,8 @@ export interface Geometry {
 }
 
 export interface Properties {
-  id: number;
+  spotId: number;
+  ownerId: number;
 }
 
 export interface Spot {
