@@ -1,7 +1,12 @@
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
-import { fetchSpotById, fetchSpotList } from "../services/api/apiRequests";
+import {
+  fetchSpoFriendsList,
+  fetchSpotById,
+  fetchSpotFriendsById,
+  fetchSpotList,
+} from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
 import SpotPreview from "../components/SpotPreview";
 import { Locate, Plus } from "lucide-react";
@@ -9,6 +14,7 @@ import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import SuccessMessage from "../components/messages/SuccessMessage";
+import Toggle from "../components/toggle/Toggle";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
@@ -40,12 +46,14 @@ function Home() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [userLocation, setUserLocation] = useState<LngLatLike | null>(null);
-  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
     location.state?.successMessage || null
   );
+  const [userLocation, setUserLocation] = useState<LngLatLike>();
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>();
+  const [viewOwnSpots, setViewOwnSpots] = useState<boolean>(true);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   // Initialize the map
   useEffect(() => {
@@ -86,49 +94,65 @@ function Home() {
     );
   }, []);
 
+  const handleMarkerClick = useCallback(async (spot: SpotGeoJson) => {
+    try {
+      let fetchedSpot: Spot;
+  
+      if (viewOwnSpots) {
+        fetchedSpot = await fetchSpotById(spot.properties.spotId);
+      } else {
+        fetchedSpot = await fetchSpotFriendsById(spot.properties.spotId);
+      }
+  
+      setSelectedSpot(fetchedSpot);
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
+      );
+    }
+  }, [viewOwnSpots]);
+
+
   // Fetch and display spots
   useEffect(() => {
     const loadSpots = async () => {
       if (!mapRef.current) return;
-
+  
       try {
-        const spotList = await fetchSpotList();
-
+        let spotList;
+  
+        if (viewOwnSpots) {
+          spotList = await fetchSpotList();
+        } else {
+          spotList = await fetchSpoFriendsList();
+        }
+  
+        markersRef.current.forEach((marker) => marker.remove());
+        markersRef.current = [];
+  
         if (spotList.length === 0) return;
-
+  
         spotList.forEach((spot) => {
           const marker = new mapboxgl.Marker()
             .setLngLat(spot.geometry.coordinates)
             .addTo(mapRef.current!);
-
+  
           marker
             .getElement()
             .addEventListener("click", () => handleMarkerClick(spot));
+  
+          markersRef.current.push(marker);
         });
       } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(error.message);
-        } else {
-          setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
-        }
+        setErrorMessage(
+          error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
+        );
       }
     };
-
+  
     loadSpots();
-  }, []);
-
-  const handleMarkerClick = async (spot: SpotGeoJson) => {
-    try {
-      const fetchedSpot = await fetchSpotById(spot.properties.spotId);
-      setSelectedSpot(fetchedSpot);
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage(ERROR_MESSAGES.SPOTS_LOAD);
-      }
-    }
-  };
+  }, [viewOwnSpots, handleMarkerClick]);
+  
 
   const getCurrentPositionAndFlyTo = (zoom: number) => {
     if (!mapRef.current) {
@@ -167,6 +191,17 @@ function Home() {
         successMessage={successMessage}
         setSuccessMessage={setSuccessMessage}
       />
+
+      <div className="fixed top-2 left-1/2 transform -translate-x-1/2">
+        <Toggle
+          options={[
+            { label: "Mes spots", defaultValue: true },
+            { label: "Spots de la commu", defaultValue: false },
+          ]}
+          selectedValue={viewOwnSpots}
+          onChange={setViewOwnSpots}
+        />
+      </div>
 
       {selectedSpot && (
         <SpotPreview

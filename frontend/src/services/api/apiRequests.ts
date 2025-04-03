@@ -64,6 +64,25 @@ export const deleteSpot = async (spotId: number): Promise<void> => {
 };
 
 // =====================================
+// 📌 SPOT OF FRIENDS REQUESTS
+// =====================================
+export const fetchSpoFriendsList = async (): Promise<SpotGeoJson[]> => {
+  const response = await fetchRequest<SpoGeoJsonCollection>({
+    method: "get",
+    url: "api/spots/friends",
+  });
+
+  return response.features;
+};
+
+export const fetchSpotFriendsById = async (spotId: number): Promise<Spot> => {
+  return await fetchRequest<Spot>({
+    method: "get",
+    url: `api/spots/${spotId}/friends`,
+  });
+};
+
+// =====================================
 // 📌 USER REQUESTS
 // =====================================
 

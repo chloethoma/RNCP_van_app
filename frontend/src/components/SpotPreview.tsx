@@ -30,7 +30,7 @@ function SpotPreview({ selectedSpot, setSelectedSpot }: SpotPreviewProps) {
             ></ExitButton>
           </div>
           <h3 className="text-lg text-dark-grey font-default font-semibold line-clamp-1">
-            {selectedSpot.id}
+            {selectedSpot.owner.pseudo}
           </h3>
           <p className="text-dark-grey font-default text-sm line-clamp-2">
             {selectedSpot.description}
