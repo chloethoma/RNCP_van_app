@@ -1,4 +1,5 @@
 import { LngLatLike } from "mapbox-gl";
+import { User } from "./user";
 
 export interface SpoGeoJsonCollection {
   type: "FeatureCollection";
@@ -21,11 +22,13 @@ export interface Properties {
   ownerId: number;
 }
 
+export type Owner = Pick<User, "id" | "pseudo" | "picture">;
+
 export interface Spot {
   id: number;
   latitude: number;
   longitude: number;
   description: string;
   isFavorite: boolean;
-  ownerId: number;
+  owner: Owner;
 }

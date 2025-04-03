@@ -10,6 +10,7 @@ import {
 import { FriendshipUser } from "../../types/user";
 import ListButton from "../../components/buttons/ListButton";
 import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
+import Toggle from "../../components/toggle/Toggle";
 
 const MESSAGES = {
   ERROR_DEFAULT: "Une erreur est survenue",
@@ -18,8 +19,9 @@ const MESSAGES = {
 function PendingFriendships() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [viewFriendshipsReceived, setViewFriendshipsReceived] = useState<boolean>(true);
   const [friendshipList, setFriendshipList] = useState<PartialFriendship[]>([]);
+  const [viewFriendshipsReceived, setViewFriendshipsReceived] =
+    useState<boolean>(true); // toggle
 
   useEffect(() => {
     const fetchPendingFriendshipList = async () => {
@@ -50,7 +52,6 @@ function PendingFriendships() {
           return friendship.friend.id !== friendId;
         })
       );
-
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
@@ -67,7 +68,6 @@ function PendingFriendships() {
           return friendship.friend.id !== friendId;
         })
       );
-
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
@@ -84,28 +84,15 @@ function PendingFriendships() {
         setErrorMessage={setErrorMessage}
       />
 
-      {/* Toggle */}
-      <div className="w-full flex justify-center mt-4">
-        <div className="flex bg-white px-2 py-1 rounded-full shadow-md">
-          <button
-            onClick={() => setViewFriendshipsReceived(true)}
-            className={`px-4 py-2 text-md font-semibold rounded-full transition ${
-              viewFriendshipsReceived ? "bg-dark-green text-white" : "text-grey"
-            }`}
-          >
-            Demandes reçues
-          </button>
-          <button
-            onClick={() => setViewFriendshipsReceived(false)}
-            className={`px-4 py-2 text-md font-semibold rounded-full transition ${
-              !viewFriendshipsReceived
-                ? "bg-dark-green text-white"
-                : "text-grey"
-            }`}
-          >
-            Demandes envoyées
-          </button>
-        </div>
+      <div className="w-full flex justify-center">
+        <Toggle
+          options={[
+            { label: "Demandes reçues", defaultValue: true },
+            { label: "Demandes envoyées", defaultValue: false },
+          ]}
+          selectedValue={viewFriendshipsReceived}
+          onChange={setViewFriendshipsReceived}
+        />
       </div>
 
       {/* Loader */}
