@@ -24,6 +24,11 @@ class SpotDTO
         #[Assert\NotBlank(groups: ['read', 'create', 'update'])]
         public readonly ?string $description,
 
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
+        #[Assert\Valid(groups: ['read'])]
+        public readonly SpotOwnerDTO $owner,
+
         #[Groups(['read', 'create', 'update'])]
         #[Assert\Type(type: 'boolean', groups: ['read', 'create', 'update'])]
         public readonly bool $isFavorite = false,
@@ -31,10 +36,6 @@ class SpotDTO
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
         public readonly ?int $id = null,
-
-        #[Groups(['read'])]
-        #[Assert\NotNull(groups: ['read'])]
-        public readonly ?int $ownerId = null,
     ) {
     }
 }

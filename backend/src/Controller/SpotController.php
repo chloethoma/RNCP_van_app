@@ -27,6 +27,10 @@ class SpotController extends ApiController
         parent::__construct($logger);
     }
 
+    // =====================================
+    // 📌 SPOT ROUTES
+    // =====================================
+
     #[Route(
         path: 'api/spots',
         name: 'create_spot',
@@ -148,7 +152,10 @@ class SpotController extends ApiController
         return $response;
     }
 
-    // Spot of friends controllers
+    // =====================================
+    // 📌 SPOT OF FRIENDS
+    // =====================================
+
     #[Route(
         path: 'api/spots/friends',
         name: 'read_all_spots_friends',

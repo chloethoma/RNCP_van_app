@@ -3,6 +3,7 @@
 namespace App\DataTransformer;
 
 use App\DTO\Spot\SpotDTO;
+use App\DTO\Spot\SpotOwnerDTO;
 use App\Entity\Spot;
 use App\Services\Validator\Validator;
 
@@ -44,13 +45,19 @@ class SpotDataTransformer
 
     public function mapEntityToDTO(): SpotDTO
     {
+        $owner = new SpotOwnerDTO(
+            id: $this->entity->getOwner()->getId(),
+            pseudo: $this->entity->getOwner()->getPseudo(),
+            picture: $this->entity->getOwner()->getPicture()
+        );
+
         $dto = new SpotDTO(
             id: $this->entity->getId(),
             latitude: $this->entity->getLatitude(),
             longitude: $this->entity->getLongitude(),
             description: $this->entity->getDescription(),
             isFavorite: $this->entity->isFavorite(),
-            ownerId: $this->entity->getOwner()->getId()
+            owner: $owner
         );
 
         $this->validator->validate($dto, SpotDTO::class, ['read']);
