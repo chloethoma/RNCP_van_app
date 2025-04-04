@@ -27,7 +27,7 @@ class SpotDTO
         #[Groups(['read'])]
         #[Assert\NotNull(groups: ['read'])]
         #[Assert\Valid(groups: ['read'])]
-        public readonly SpotOwnerDTO $owner,
+        public readonly ?SpotOwnerDTO $owner,
 
         #[Groups(['read', 'create', 'update'])]
         #[Assert\Type(type: 'boolean', groups: ['read', 'create', 'update'])]
