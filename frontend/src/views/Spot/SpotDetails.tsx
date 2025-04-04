@@ -1,12 +1,13 @@
 import { useLocation, useNavigate, useParams } from "react-router";
 import { Spot } from "../../types/spot";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import IconButton from "../../components/buttons/IconButton";
 import { Heart, Navigation, PencilLine, Share2, Trash } from "lucide-react";
 import Header from "../../components/headers/Header";
 import { deleteSpot, fetchSpotById } from "../../services/api/apiRequests";
 import SuccessMessage from "../../components/messages/SuccessMessage";
+import UserContext from "../../hooks/UserContext";
 
 const MESSAGES = {
   ERROR_DEFAULT: "Une erreur est survenue",
@@ -18,10 +19,11 @@ function SpotDetails() {
   const { spotId } = useParams<{ spotId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(UserContext);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    location.state?.successMessage || null,
+    location.state?.successMessage || null
   );
   const [spot, setSpot] = useState<Spot | null>(location.state?.spot || null);
 
@@ -97,42 +99,47 @@ function SpotDetails() {
             <p className="text-grey text-sm mt-2">{spot.description}</p>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
-            <div className="flex flex-col items-center gap-2">
-              <IconButton
-                onClick={handleItinerary}
-                icon={<Navigation size={24} />}
-              />
-              <span className="mt-1 text-xs text-grey">Itinéraire</span>
-            </div>
+          {user.id === spot.owner.id && (
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex flex-col items-center gap-2">
+                <IconButton
+                  onClick={handleItinerary}
+                  icon={<Navigation size={24} />}
+                />
+                <span className="mt-1 text-xs text-grey">Itinéraire</span>
+              </div>
 
-            <div className="flex flex-col items-center gap-2">
-              <IconButton onClick={handleFavorite} icon={<Heart size={24} />} />
-              <span className="mt-1 text-xs text-grey">Favoris</span>
-            </div>
+              <div className="flex flex-col items-center gap-2">
+                <IconButton
+                  onClick={handleFavorite}
+                  icon={<Heart size={24} />}
+                />
+                <span className="mt-1 text-xs text-grey">Favoris</span>
+              </div>
 
-            <div className="flex flex-col items-center gap-2">
-              <IconButton onClick={handleShare} icon={<Share2 size={24} />} />
-              <span className="mt-1 text-xs text-grey">Partager</span>
-            </div>
+              <div className="flex flex-col items-center gap-2">
+                <IconButton onClick={handleShare} icon={<Share2 size={24} />} />
+                <span className="mt-1 text-xs text-grey">Partager</span>
+              </div>
 
-            <div className="flex flex-col items-center gap-2">
-              <IconButton
-                onClick={handleEdit}
-                icon={<PencilLine size={24} />}
-              />
-              <span className="mt-1 text-xs text-grey">Modifier</span>
-            </div>
+              <div className="flex flex-col items-center gap-2">
+                <IconButton
+                  onClick={handleEdit}
+                  icon={<PencilLine size={24} />}
+                />
+                <span className="mt-1 text-xs text-grey">Modifier</span>
+              </div>
 
-            <div className="flex flex-col items-center gap-2">
-              <IconButton
-                onClick={handleDelete}
-                icon={<Trash size={24} />}
-                color="red"
-              />
-              <span className="mt-1 text-xs text-grey">Supprimer</span>
+              <div className="flex flex-col items-center gap-2">
+                <IconButton
+                  onClick={handleDelete}
+                  icon={<Trash size={24} />}
+                  color="red"
+                />
+                <span className="mt-1 text-xs text-grey">Supprimer</span>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* <div className="text-center mt-6 pt-4">
             <MapPin size={24} className="text-red drop-shadow-lg mx-auto" />
