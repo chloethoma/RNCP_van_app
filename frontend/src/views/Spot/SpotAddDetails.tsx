@@ -1,7 +1,7 @@
 import { MapPin } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { useId, useState } from "react";
-import Header from "../../components/header/Header";
+import Header from "../../components/headers/Header";
 import FormButton from "../../components/buttons/FormButton";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { createSpot } from "../../services/api/apiRequests";

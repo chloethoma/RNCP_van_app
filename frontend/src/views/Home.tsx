@@ -1,11 +1,12 @@
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useContext } from "react";
 import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
 import {
   fetchSpoFriendsList,
   fetchSpotById,
   fetchSpotFriendsById,
   fetchSpotList,
+  fetchUserByToken,
 } from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
 import SpotPreview from "../components/SpotPreview";
@@ -15,6 +16,7 @@ import { useLocation, useNavigate } from "react-router";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import SuccessMessage from "../components/messages/SuccessMessage";
 import Toggle from "../components/toggle/Toggle";
+import UserContext from "../hooks/UserContext";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
@@ -45,6 +47,8 @@ function Home() {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const userContext = useContext(UserContext);
+  const { setUser } = userContext || {};
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
@@ -76,6 +80,26 @@ function Home() {
     };
   }, []);
 
+  // Fetch the user data and set in UserContext
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await fetchUserByToken();
+
+        if (setUser) {
+          setUser(userData);
+        }
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération de l'utilisateur :",
+          error
+        );
+      }
+    };
+
+    fetchUser();
+  }, [setUser]);
+
   // Ask user to get his location with first rendering
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -94,53 +118,55 @@ function Home() {
     );
   }, []);
 
-  const handleMarkerClick = useCallback(async (spot: SpotGeoJson) => {
-    try {
-      let fetchedSpot: Spot;
-  
-      if (viewOwnSpots) {
-        fetchedSpot = await fetchSpotById(spot.properties.spotId);
-      } else {
-        fetchedSpot = await fetchSpotFriendsById(spot.properties.spotId);
-      }
-  
-      setSelectedSpot(fetchedSpot);
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
-      );
-    }
-  }, [viewOwnSpots]);
+  const handleMarkerClick = useCallback(
+    async (spot: SpotGeoJson) => {
+      try {
+        let fetchedSpot: Spot;
 
+        if (viewOwnSpots) {
+          fetchedSpot = await fetchSpotById(spot.properties.spotId);
+        } else {
+          fetchedSpot = await fetchSpotFriendsById(spot.properties.spotId);
+        }
+
+        setSelectedSpot(fetchedSpot);
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
+        );
+      }
+    },
+    [viewOwnSpots]
+  );
 
   // Fetch and display spots
   useEffect(() => {
     const loadSpots = async () => {
       if (!mapRef.current) return;
-  
+
       try {
         let spotList;
-  
+
         if (viewOwnSpots) {
           spotList = await fetchSpotList();
         } else {
           spotList = await fetchSpoFriendsList();
         }
-  
+
         markersRef.current.forEach((marker) => marker.remove());
         markersRef.current = [];
-  
+
         if (spotList.length === 0) return;
-  
+
         spotList.forEach((spot) => {
           const marker = new mapboxgl.Marker()
             .setLngLat(spot.geometry.coordinates)
             .addTo(mapRef.current!);
-  
+
           marker
             .getElement()
             .addEventListener("click", () => handleMarkerClick(spot));
-  
+
           markersRef.current.push(marker);
         });
       } catch (error) {
@@ -149,10 +175,9 @@ function Home() {
         );
       }
     };
-  
+
     loadSpots();
   }, [viewOwnSpots, handleMarkerClick]);
-  
 
   const getCurrentPositionAndFlyTo = (zoom: number) => {
     if (!mapRef.current) {
@@ -183,16 +208,18 @@ function Home() {
     <>
       <div ref={mapContainerRef} className="h-full w-full bg-light-grey" />
 
-      <ErrorMessage
-        errorMessage={errorMessage}
-        setErrorMessage={setErrorMessage}
-      />
-      <SuccessMessage
-        successMessage={successMessage}
-        setSuccessMessage={setSuccessMessage}
-      />
+      <div className="fixed top-6 w-full flex justify-center z-50">
+        <ErrorMessage
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
+        <SuccessMessage
+          successMessage={successMessage}
+          setSuccessMessage={setSuccessMessage}
+        />
+      </div>
 
-      <div className="fixed top-2 left-1/2 transform -translate-x-1/2">
+      <div className="fixed top-6 w-full flex justify-center">
         <Toggle
           options={[
             { label: "Mes spots", defaultValue: true },

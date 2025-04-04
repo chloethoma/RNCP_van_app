@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Search, UserPlus } from "lucide-react";
-import Header from "../components/header/Header";
+import Header from "../components/headers/Header";
 import IconButton from "../components/buttons/IconButton";
 import { Link, useNavigate } from "react-router";
 import { PartialFriendship } from "../types/friendship";

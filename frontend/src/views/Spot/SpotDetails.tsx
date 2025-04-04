@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import IconButton from "../../components/buttons/IconButton";
 import { Heart, Navigation, PencilLine, Share2, Trash } from "lucide-react";
-import Header from "../../components/header/Header";
+import Header from "../../components/headers/Header";
 import { deleteSpot, fetchSpotById } from "../../services/api/apiRequests";
 import SuccessMessage from "../../components/messages/SuccessMessage";
 

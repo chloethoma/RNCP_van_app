@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/header/Header";
+import Header from "../../components/headers/Header";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { PartialFriendship } from "../../types/friendship";
 import {
@@ -84,7 +84,7 @@ function PendingFriendships() {
         setErrorMessage={setErrorMessage}
       />
 
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center pt-3">
         <Toggle
           options={[
             { label: "Demandes reçues", defaultValue: true },
@@ -106,7 +106,7 @@ function PendingFriendships() {
               const user: FriendshipUser = friendship.friend;
 
               return (
-                <FriendshipUserRow user={user}>
+                <FriendshipUserRow key={user.id} user={user}>
                   {viewFriendshipsReceived ? (
                     <>
                       <ListButton
