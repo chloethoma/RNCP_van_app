@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import { Spot } from "../../types/spot";
-import Header from "../../components/header/Header";
+import Header from "../../components/headers/Header";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { MapPin } from "lucide-react";
 import FormButton from "../../components/buttons/FormButton";

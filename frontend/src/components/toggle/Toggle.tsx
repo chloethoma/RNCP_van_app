@@ -6,7 +6,7 @@ interface ToggleProps {
   
   function Toggle({ options, selectedValue, onChange }: ToggleProps) {
     return (
-        <div className="flex bg-white px-2 py-1 rounded-full shadow-md">
+        <div className="flex bg-white rounded-full shadow-md">
           {options.map((option) => (
             <button
               key={option.label}

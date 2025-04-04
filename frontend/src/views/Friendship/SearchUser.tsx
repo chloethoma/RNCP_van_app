@@ -5,7 +5,7 @@ import {
   searchUserByPseudo,
 } from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
-import Header from "../../components/header/Header";
+import Header from "../../components/headers/Header";
 import { Search } from "lucide-react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import ListButton from "../../components/buttons/ListButton";
@@ -103,7 +103,7 @@ function SearchUser() {
       <ul className="w-full max-w-md mt-4 space-y-2">
         {users.length > 0
           ? users.map((user) => (
-              <FriendshipUserRow user={user}>
+              <FriendshipUserRow key={user.id} user={user}>
                 {requestsSent[user.id] ? (
                   <>
                     <ListButton

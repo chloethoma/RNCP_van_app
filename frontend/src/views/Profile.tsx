@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Check, LogOut, Pencil } from "lucide-react";
-import Header from "../components/header/Header";
+import Header from "../components/headers/Header";
 import { User } from "../types/user";
 import {
   deleteUser,
-  fetchUserByToken,
   updateUser,
   updateUserPassword,
 } from "../services/api/apiRequests";
@@ -14,6 +13,7 @@ import IconButton from "../components/buttons/IconButton";
 import { useNavigate } from "react-router";
 import ConfirmationModal from "../components/modal/ConfirmationModal";
 import UpdatePasswordModal from "../components/modal/UpdatePasswordModal";
+import UserContext from "../hooks/UserContext";
 
 interface InfoRowProps {
   label: string;
@@ -40,27 +40,16 @@ function Profile() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const userContext = useContext(UserContext);
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const fetchedUser = await fetchUserByToken();
-        setUser(fetchedUser);
-      } catch (error) {
-        if (error instanceof Error) {
-          setErrorMessage(error.message);
-        } else {
-          setErrorMessage(MESSAGES.ERROR_FETCH_USER);
-        }
-      }
-    };
+  if (!userContext) {
+    return <div>Chargement...</div>; // ou rediriger
+  }
 
-    fetchUser();
-  }, []);
+  const {user, setUser} = userContext
 
   const handleUpdate = async (field: keyof User, newValue: string) => {
     if (!user) return;
