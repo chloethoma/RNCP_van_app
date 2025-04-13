@@ -10,6 +10,9 @@ front-bash: ## Connect to the frontend container via bash so up and down arrows 
 lint: ## Run ESLint
 	@$(NPM) run lint
 
+type-check: ## Run TypeScript Compiler
+	@$(NPM) run type-check
+
 prettier: ## Start formatting with prettier
 	@$(NPX) prettier . --write
 

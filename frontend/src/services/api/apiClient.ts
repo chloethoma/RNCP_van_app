@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { translateErrorMessage } from "../helpers/ErrorApiHelper";
+import { translateErrorMessage } from "../helpers/errorApiHelper";
 import { messages } from "../helpers/messagesHelper";
 
 const API_URL = import.meta.env.VITE_API_URL;
