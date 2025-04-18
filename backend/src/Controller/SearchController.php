@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Handler\UserHandler;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
@@ -31,6 +33,10 @@ class SearchController extends ApiController
             $userList = $this->handler->handleSearchUser($pseudo);
 
             $response = $this->serveOkResponse($userList, groups: ['search_read']);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }

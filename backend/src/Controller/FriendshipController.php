@@ -3,21 +3,19 @@
 namespace App\Controller;
 
 use App\Handler\FriendshipHandler;
+use App\Services\Exceptions\Friendship\FriendshipBadRequestException;
+use App\Services\Exceptions\Friendship\FriendshipConflictException;
+use App\Services\Exceptions\Friendship\FriendshipNotFoundException;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 
 class FriendshipController extends ApiController
 {
     private const TARGET = 'Friendship controller';
-    private const USER_NOT_FOUND_ERROR_MESSAGE = 'Friend not found';
-    private const FRIENDSHIP_NOT_FOUND_ERROR_MESSAGE = 'Friendship not found';
-    private const CONFLICT_ERROR_MESSAGE = 'Friendship already exists';
-    private const BAD_REQUEST_ERROR_MESSAGE = 'The receiver id cannot be the same as the requester id';
 
     public function __construct(
         LoggerInterface $logger,
@@ -39,12 +37,14 @@ class FriendshipController extends ApiController
             $newFriendship = $this->handler->handleCreate($friendId);
 
             $response = $this->serveCreatedResponse($newFriendship, self::TARGET, groups: ['read']);
-        } catch (BadRequestHttpException $e) {
-            $response = $this->serveBadRequestResponse(self::BAD_REQUEST_ERROR_MESSAGE, self::TARGET);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (ConflictHttpException $e) {
-            $response = $this->serveConflictResponse(self::CONFLICT_ERROR_MESSAGE, self::TARGET);
+        } catch (FriendshipBadRequestException $e) {
+            $response = $this->serveBadRequestResponse($e->getMessage(), self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (FriendshipConflictException $e) {
+            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -65,6 +65,8 @@ class FriendshipController extends ApiController
             $pendingFriendshipList = $this->handler->handleGetPendingFriendships($type);
 
             $response = $this->serveOkResponse($pendingFriendshipList, groups: ['read']);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -84,6 +86,8 @@ class FriendshipController extends ApiController
             $summary = $this->handler->handleGetReceivedFriendshipSummary();
 
             $response = $this->serveOkResponse($summary, groups: ['read']);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -103,6 +107,8 @@ class FriendshipController extends ApiController
             $friendshipList = $this->handler->handleGetConfirmFriendshipList();
 
             $response = $this->serveOkResponse($friendshipList, groups: ['read']);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -123,8 +129,10 @@ class FriendshipController extends ApiController
             $confirmFriendship = $this->handler->handleConfirmFriendship($requesterId);
 
             $response = $this->serveOkResponse($confirmFriendship, groups: ['read']);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::FRIENDSHIP_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (FriendshipNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -145,8 +153,10 @@ class FriendshipController extends ApiController
             $this->handler->handleDeleteFriendship($friendId);
 
             $response = $this->serveNoContentResponse();
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::FRIENDSHIP_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (FriendshipNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }

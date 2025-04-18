@@ -4,11 +4,13 @@ namespace App\Controller;
 
 use App\DTO\Spot\SpotDTO;
 use App\Handler\SpotHandler;
+use App\Services\Exceptions\Spot\SpotAccessDeniedException;
+use App\Services\Exceptions\Spot\SpotNotFoundException;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Requirement\Requirement;
@@ -16,9 +18,6 @@ use Symfony\Component\Routing\Requirement\Requirement;
 class SpotController extends ApiController
 {
     private const TARGET = 'Spot Controller';
-    private const USER_NOT_FOUND_ERROR_MESSAGE = 'User not found';
-    private const SPOT_NOT_FOUND_ERROR_MESSAGE = 'Spot not found';
-    private const ACCESS_DENIED_ERROR_MESSAGE = 'You are not authorized to perform this action';
 
     public function __construct(
         LoggerInterface $logger,
@@ -48,8 +47,10 @@ class SpotController extends ApiController
                 $urlGenerator->generate('read_spot', ['spotId' => $newSpot->id]),
                 groups: ['read']
             );
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -69,8 +70,8 @@ class SpotController extends ApiController
             $spotList = $this->handler->handleGetSpotCollection();
 
             $response = $this->serveOkResponse($spotList);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -91,10 +92,12 @@ class SpotController extends ApiController
             $spot = $this->handler->handleGet($spotId);
 
             $response = $this->serveOkResponse($spot, groups: ['read']);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (SpotNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (SpotAccessDeniedException $e) {
+            $response = $this->serveAccessDeniedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -117,10 +120,12 @@ class SpotController extends ApiController
             $spot = $this->handler->handleUpdate($dto, $spotId);
 
             $response = $this->serveOkResponse($spot, groups: ['read']);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (SpotNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (SpotAccessDeniedException $e) {
+            $response = $this->serveAccessDeniedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -141,10 +146,12 @@ class SpotController extends ApiController
             $this->handler->handleDelete($spotId);
 
             $response = $this->serveNoContentResponse();
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (SpotNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (SpotAccessDeniedException $e) {
+            $response = $this->serveAccessDeniedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -168,6 +175,8 @@ class SpotController extends ApiController
             $spotList = $this->handler->handleGetSpotFriendsCollection();
 
             $response = $this->serveOkResponse($spotList);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -188,10 +197,12 @@ class SpotController extends ApiController
             $spot = $this->handler->handleGetSpotFriend($spotId);
 
             $response = $this->serveOkResponse($spot, groups: ['read']);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::SPOT_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (SpotNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (SpotAccessDeniedException $e) {
+            $response = $this->serveAccessDeniedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }

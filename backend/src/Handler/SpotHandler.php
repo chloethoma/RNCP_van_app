@@ -9,8 +9,8 @@ use App\DTO\SpotGeoJson\SpotCollectionDTO;
 use App\Manager\SpotManager;
 use App\Manager\UserManager;
 use App\Repository\SpotRepository;
+use App\Services\Exceptions\Spot\SpotNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SpotHandler
 {
@@ -44,7 +44,7 @@ class SpotHandler
         $spot = $this->repository->findById($spotId);
 
         if (!$spot) {
-            throw new NotFoundHttpException();
+            throw new SpotNotFoundException();
         }
 
         $this->spotManager->checkAccess($spot);
@@ -59,7 +59,7 @@ class SpotHandler
         $spot = $this->repository->findById($spotId);
 
         if (!$spot) {
-            throw new NotFoundHttpException();
+            throw new SpotNotFoundException();
         }
 
         $this->spotManager->checkAccess($spot);
@@ -80,7 +80,7 @@ class SpotHandler
         $spot = $this->repository->findById($spotId);
 
         if (!$spot) {
-            throw new NotFoundHttpException();
+            throw new SpotNotFoundException();
         }
 
         $this->spotManager->checkAccess($spot);
@@ -120,7 +120,7 @@ class SpotHandler
         $spot = $this->repository->findById($spotId);
 
         if (!$spot) {
-            throw new NotFoundHttpException();
+            throw new SpotNotFoundException();
         }
 
         $this->spotManager->checkSpotFriendAccess($spot);
