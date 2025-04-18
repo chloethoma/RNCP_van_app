@@ -4,6 +4,7 @@ import { registerUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/messages/ErrorMessage";
+import { messages } from "../services/helpers/messagesHelper";
 
 interface FormInputProps {
   label: string;
@@ -27,7 +28,7 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmedPassword) {
-      setPasswordError("Les mots de passe ne sont pas identiques.");
+      setPasswordError(messages.password_not_identical);
       return;
     } else {
       setPasswordError("");
@@ -38,11 +39,7 @@ function Register() {
       await registerUser(requestBody);
       navigate("/");
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Erreur lors de l'inscription");
-      }
+      setErrorMessage(error instanceof Error ? error.message : messages.error_register);
     }
   }
 

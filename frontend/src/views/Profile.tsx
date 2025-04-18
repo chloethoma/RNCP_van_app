@@ -14,6 +14,7 @@ import { useNavigate } from "react-router";
 import ConfirmationModal from "../components/modal/ConfirmationModal";
 import UpdatePasswordModal from "../components/modal/UpdatePasswordModal";
 import UserContext from "../hooks/UserContext";
+import { messages } from "../services/helpers/messagesHelper";
 
 interface InfoRowProps {
   label: string;
@@ -27,13 +28,6 @@ interface InfoPasswordRowProps {
   value: string;
   onEditPassword: () => void;
 }
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-  ERROR_FETCH_USER: "Erreur lors de la récupération de vos données",
-  SUCCESS_UPDATE: "Mise à jour effectuée !",
-  SUCCESS_DELETE: "Votre compte a bien été supprimé !",
-};
 
 function Profile() {
   const navigate = useNavigate();
@@ -58,13 +52,9 @@ function Profile() {
       const updatedUser = { ...user, [field]: newValue };
       await updateUser(updatedUser);
       setUser(updatedUser);
-      setSuccessMessage(MESSAGES.SUCCESS_UPDATE);
+      setSuccessMessage(messages.success_update);
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage(MESSAGES.ERROR_DEFAULT);
-      }
+      setErrorMessage(error instanceof Error ? error.message : messages.error_default);
     }
   };
 
@@ -75,14 +65,10 @@ function Profile() {
     try {
       const requestBody = { currentPassword, newPassword };
       await updateUserPassword(requestBody);
-      setSuccessMessage(MESSAGES.SUCCESS_UPDATE);
+      setSuccessMessage(messages.success_update);
       setIsPasswordModalOpen(false);
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage(MESSAGES.ERROR_DEFAULT);
-      }
+      setErrorMessage(error instanceof Error ? error.message : messages.error_default);
     }
   };
 
@@ -96,11 +82,7 @@ function Profile() {
       await deleteUser();
       navigate("/login");
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage(MESSAGES.ERROR_DEFAULT);
-      }
+      setErrorMessage(error instanceof Error ? error.message : messages.error_default);
     }
   };
 

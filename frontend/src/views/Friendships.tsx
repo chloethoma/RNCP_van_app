@@ -12,10 +12,8 @@ import {
 import FriendshipUserRow from "../components/friendshipList/FriendshipUserRow";
 import ListButton from "../components/buttons/ListButton";
 import ErrorMessage from "../components/messages/ErrorMessage";
+import { messages } from "../services/helpers/messagesHelper";
 
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-};
 
 const Friendships = () => {
   const navigate = useNavigate();
@@ -34,7 +32,7 @@ const Friendships = () => {
         setFriendshipList(friendList);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+          error instanceof Error ? error.message : messages.error_default
         );
       } finally {
         setLoading(false);
@@ -51,7 +49,7 @@ const Friendships = () => {
         setReceivedFriendshipNumber(summary.count);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+          error instanceof Error ? error.message : messages.error_default
         );
       }
     }
@@ -70,7 +68,7 @@ const Friendships = () => {
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default
       );
     }
   };

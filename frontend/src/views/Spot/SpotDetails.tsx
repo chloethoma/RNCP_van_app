@@ -8,12 +8,7 @@ import Header from "../../components/headers/Header";
 import { deleteSpot, fetchSpotById } from "../../services/api/apiRequests";
 import SuccessMessage from "../../components/messages/SuccessMessage";
 import UserContext from "../../hooks/UserContext";
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-  ERROR_FETCH_SPOT: "Erreur lors de a récupération du spot",
-  SUCCESS_DELETE: "Spot supprimé avec succès !",
-};
+import { messages } from "../../services/helpers/messagesHelper";
 
 function SpotDetails() {
   const { spotId } = useParams<{ spotId: string }>();
@@ -37,7 +32,7 @@ function SpotDetails() {
           if (error instanceof Error) {
             setErrorMessage(error.message);
           } else {
-            setErrorMessage(MESSAGES.ERROR_FETCH_SPOT);
+            setErrorMessage(messages.error_spot_load);
           }
         }
       };
@@ -53,12 +48,12 @@ function SpotDetails() {
   const handleDelete = async () => {
     try {
       await deleteSpot(Number(spotId));
-      navigate("/", { state: { successMessage: MESSAGES.SUCCESS_DELETE } });
+      navigate("/", { state: { successMessage: messages.success_spot_delete } });
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage(MESSAGES.ERROR_DEFAULT);
+        setErrorMessage(messages.error_default);
       }
     }
   };

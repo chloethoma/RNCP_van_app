@@ -2,23 +2,7 @@ import fetchRequest from "./apiClient";
 import { SpoGeoJsonCollection, Spot, SpotGeoJson } from "../../types/spot";
 import { FriendshipUser, User } from "../../types/user";
 import { Friendship, PartialFriendship, ReceivedFriendshipNumber } from "../../types/friendship";
-
-// 🔹 Spot types
-type SpotFormData = Pick<Spot, "longitude" | "latitude" | "description">;
-
-// 🔹 User types
-type LoginCredentials = Pick<User, "email" | "password">;
-type RegistrationCredentials = Pick<User, "email" | "pseudo" | "password">;
-type Token = {
-  token: string;
-};
-type PasswordUpdateCredentials = {
-  currentPassword: string,
-  newPassword: string
-}
-
-// 🔹 Friendship types
-type PendingFriendshipType = "received" | "sent";
+import { LoginCredentials, PasswordUpdateCredentials, PendingFriendshipType, RegistrationCredentials, SpotFormData, Token } from "../../types/apiPayload";
 
 // =====================================
 // 📌 SPOT REQUESTS
