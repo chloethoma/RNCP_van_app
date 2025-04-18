@@ -5,9 +5,10 @@ namespace App\Manager;
 use App\Entity\Spot;
 use App\Entity\User;
 use App\Repository\FriendshipRepository;
+use App\Services\Exceptions\Spot\SpotAccessDeniedException;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SpotManager
 {
@@ -18,6 +19,10 @@ class SpotManager
     ) {
     }
 
+    /**
+     * @throws UnauthenticatedUserException
+     * @throws UserNotFoundException
+     */
     public function initSpotOwner(Spot $spot): Spot
     {
         $userId = $this->userManager->getAuthenticatedUserId();
@@ -26,7 +31,7 @@ class SpotManager
         $owner = $userRepository->find($userId);
 
         if (!$owner) {
-            throw new NotFoundHttpException();
+            throw new UserNotFoundException();
         }
 
         $spot->setOwner($owner);
@@ -34,20 +39,28 @@ class SpotManager
         return $spot;
     }
 
+    /**
+     * @throws UnauthenticatedUserException
+     * @throws SpotAccessDeniedException
+     */
     public function checkAccess(Spot $spot): void
     {
         if ($spot->getOwner()->getId() !== $this->userManager->getAuthenticatedUserId()) {
-            throw new AccessDeniedHttpException();
+            throw new SpotAccessDeniedException();
         }
     }
 
+    /**
+     * @throws UnauthenticatedUserException
+     * @throws SpotAccessDeniedException
+     */
     public function checkSpotFriendAccess(Spot $spot): void
     {
         $spotOwnerId = $spot->getOwner()->getId();
         $userId = $this->userManager->getAuthenticatedUserId();
 
         if (!$this->friendshipRepository->isfriendshipExist($spotOwnerId, $userId)) {
-            throw new AccessDeniedHttpException();
+            throw new SpotAccessDeniedException();
         }
     }
 }

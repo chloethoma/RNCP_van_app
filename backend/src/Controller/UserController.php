@@ -5,19 +5,18 @@ namespace App\Controller;
 use App\DTO\User\UserDTO;
 use App\DTO\User\UserPasswordDTO;
 use App\Handler\UserHandler;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
+use App\Services\Exceptions\User\UserAccessDeniedException;
+use App\Services\Exceptions\User\UserConflictException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserController extends ApiController
 {
     public const TARGET = 'User controller';
-    private const USER_NOT_FOUND_ERROR_MESSAGE = 'User not found';
-    private const ACCESS_DENIED_PASSWORD_ERROR_MESSAGE = 'Current password is incorrect';
 
     public function __construct(
         LoggerInterface $logger,
@@ -38,8 +37,8 @@ class UserController extends ApiController
             $newUser = $this->handler->handleCreate($dto);
 
             $response = $this->serveCreatedResponse($newUser, self::TARGET, groups: ['read']);
-        } catch (ConflictHttpException $e) {
-            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
+        } catch (UserConflictException $e) {
+            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET, $e->getDetails());
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -58,8 +57,10 @@ class UserController extends ApiController
             $user = $this->handler->handleGet();
 
             $response = $this->serveOkResponse($user, groups: ['read']);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -79,10 +80,12 @@ class UserController extends ApiController
             $user = $this->handler->handleUpdate($dto);
 
             $response = $this->serveOkResponse($user, groups: ['read']);
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (ConflictHttpException $e) {
-            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (UserConflictException $e) {
+            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET, $e->getDetails());
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -102,12 +105,12 @@ class UserController extends ApiController
             $this->handler->handleUpdatePassword($dto);
 
             $response = $this->serveNoContentResponse();
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
-        } catch (AccessDeniedHttpException $e) {
-            $response = $this->serveAccessDeniedResponse(self::ACCESS_DENIED_PASSWORD_ERROR_MESSAGE, self::TARGET);
-        } catch (ConflictHttpException $e) {
-            $response = $this->serveConflictResponse($e->getMessage(), self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (UserAccessDeniedException $e) {
+            $response = $this->serveAccessDeniedResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
@@ -126,8 +129,10 @@ class UserController extends ApiController
             $this->handler->handleDelete();
 
             $response = $this->serveNoContentResponse();
-        } catch (NotFoundHttpException $e) {
-            $response = $this->serveNotFoundResponse(self::USER_NOT_FOUND_ERROR_MESSAGE, self::TARGET);
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
         } catch (\Throwable $e) {
             $response = $this->handleException($e, self::TARGET);
         }
