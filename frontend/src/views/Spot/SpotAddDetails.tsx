@@ -5,13 +5,7 @@ import Header from "../../components/headers/Header";
 import FormButton from "../../components/buttons/FormButton";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { createSpot } from "../../services/api/apiRequests";
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-  ERROR_INPUT_MISSING: "Veuillez entrer une description",
-  ERROR_CREATE: "Erreur lors de la création du spot",
-  SUCCESS_CREATE: "Spot ajouté à la map avec succès !",
-};
+import { messages } from "../../services/helpers/messagesHelper";
 
 function SpotAddDetails() {
   const location = useLocation();
@@ -26,7 +20,7 @@ function SpotAddDetails() {
     e.preventDefault();
 
     if (!description.trim()) {
-      setErrorMessage(MESSAGES.ERROR_INPUT_MISSING);
+      setErrorMessage(messages.error_description_missing);
       return;
     }
 
@@ -34,12 +28,12 @@ function SpotAddDetails() {
       const requestBody = { longitude, latitude, description };
       await createSpot(requestBody);
 
-      navigate("/", { state: { successMessage: MESSAGES.SUCCESS_CREATE } });
+      navigate("/", { state: { successMessage: messages.success_spot_create } });
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage(MESSAGES.ERROR_DEFAULT);
+        setErrorMessage(messages.error_default);
       }
     }
   };

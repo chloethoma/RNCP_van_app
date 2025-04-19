@@ -6,13 +6,7 @@ import { MapPin } from "lucide-react";
 import FormButton from "../../components/buttons/FormButton";
 import { useId, useState } from "react";
 import { updateSpot } from "../../services/api/apiRequests";
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-  ERROR_INPUT_MISSING: "Veuillez entrer une description",
-  ERROR_UPDATE: "Erreur lors de l'update du spot",
-  SUCCESS_UPDATE: "Le spot a été mis à jours avec succès !",
-};
+import { messages } from "../../services/helpers/messagesHelper";
 
 function SpotEdit() {
   const location = useLocation();
@@ -31,7 +25,7 @@ function SpotEdit() {
     e.preventDefault();
 
     if (!updatedSpot.description.trim()) {
-      setErrorMessage(MESSAGES.ERROR_INPUT_MISSING);
+      setErrorMessage(messages.error_description_missing);
       return;
     }
 
@@ -39,14 +33,10 @@ function SpotEdit() {
       await updateSpot(updatedSpot);
 
       navigate(`/spots/${updatedSpot.id}`, {
-        state: { spot: updatedSpot, successMessage: MESSAGES.SUCCESS_UPDATE },
+        state: { spot: updatedSpot, successMessage: messages.success_spot_update },
       });
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage(MESSAGES.ERROR_DEFAULT);
-      }
+        setErrorMessage(error instanceof Error ? error.message : messages.error_default);
     }
   };
 

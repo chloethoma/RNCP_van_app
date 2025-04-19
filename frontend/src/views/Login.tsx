@@ -4,6 +4,7 @@ import { loginUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/messages/ErrorMessage";
+import { messages } from "../services/helpers/messagesHelper";
 
 interface FormInputProps {
   label: string;
@@ -27,11 +28,7 @@ function Login() {
       await loginUser(requestBody);
       navigate("/");
     } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Une erreur inconnue est survenue.");
-      }
+      setErrorMessage(error instanceof Error ? error.message : messages.error_default);
     }
   }
 

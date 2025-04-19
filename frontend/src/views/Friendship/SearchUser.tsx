@@ -10,10 +10,7 @@ import { Search } from "lucide-react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import ListButton from "../../components/buttons/ListButton";
 import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-};
+import { messages } from "../../services/helpers/messagesHelper";
 
 function SearchUser() {
   const [query, setQuery] = useState("");
@@ -38,7 +35,7 @@ function SearchUser() {
         setUsers(userList);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+          error instanceof Error ? error.message : messages.error_default
         );
       } finally {
         setLoading(false);
@@ -58,7 +55,7 @@ function SearchUser() {
       setRequestsSent((prev) => ({ ...prev, [userId]: true }));
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default
       );
     }
   };
@@ -69,7 +66,7 @@ function SearchUser() {
       setRequestsSent((prev) => ({ ...prev, [userId]: false }));
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default
       );
     }
   };

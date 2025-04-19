@@ -131,7 +131,7 @@ class ApiController extends AbstractController
         return $this->json(
             [
                 'error' => [
-                    'code' => 'Bad Request',
+                    'code' => 'BadRequest',
                     'message' => $message,
                     'target' => $target,
                 ],

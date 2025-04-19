@@ -11,10 +11,7 @@ import { FriendshipUser } from "../../types/user";
 import ListButton from "../../components/buttons/ListButton";
 import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
 import Toggle from "../../components/toggle/Toggle";
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-};
+import { messages } from "../../services/helpers/messagesHelper";
 
 function PendingFriendships() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,7 +30,7 @@ function PendingFriendships() {
         setFriendshipList(data);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+          error instanceof Error ? error.message : messages.error_default
         );
       } finally {
         setLoading(false);
@@ -54,7 +51,7 @@ function PendingFriendships() {
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default
       );
     }
   };
@@ -70,7 +67,7 @@ function PendingFriendships() {
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default
       );
     }
   };

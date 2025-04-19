@@ -17,30 +17,12 @@ import ErrorMessage from "../components/messages/ErrorMessage";
 import SuccessMessage from "../components/messages/SuccessMessage";
 import Toggle from "../components/toggle/Toggle";
 import UserContext from "../hooks/UserContext";
+import { messages } from "../services/helpers/messagesHelper";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
 const ZOOM: number = 10;
 const MAPBOX_TOKEN: string = import.meta.env.VITE_MAPBOX_TOKEN;
-
-const ERROR_MESSAGES = {
-  DEFAULT: "Une erreur inconnue est survenue",
-  CONTAINER: "La carte n'est pas encore prête.",
-  MAP_INIT: "Erreur lors de l'initialisation de la carte.",
-  GEOLOCATION_UNSUPPORTED:
-    "La géolocalisation n'est pas supportée par votre navigateur.",
-  GEOLOCATION_FAIL: "Impossible de récupérer votre position.",
-  SPOTS_LOAD: "Erreur lors du chargement des spots.",
-  SPOT_LOAD: "Erreur lors de la récupération du spot.",
-};
-
-const ERROR_CONSOLE = {
-  DEFAULT: "Unkown error",
-  MAP_INIT: "Map init error",
-  GEOLOCATION_FAIL: "Failed to geolocate",
-  SPOTS_LOAD: "Failed to load spots",
-  SPOT_LOAD: "Failed to load spot details",
-};
 
 function Home() {
   const mapRef = useRef<Map | null>(null);
@@ -62,7 +44,7 @@ function Home() {
   // Initialize the map
   useEffect(() => {
     if (!mapContainerRef.current) {
-      console.error(ERROR_MESSAGES.CONTAINER);
+      console.error(messages.error_container);
       return;
     }
 
@@ -103,7 +85,7 @@ function Home() {
   // Ask user to get his location with first rendering
   useEffect(() => {
     if (!navigator.geolocation) {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_UNSUPPORTED);
+      setErrorMessage(messages.error_geolocation_unsupported);
       return;
     }
 
@@ -112,8 +94,8 @@ function Home() {
         setUserLocation([position.coords.longitude, position.coords.latitude]);
       },
       (error) => {
-        setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
-        console.error(ERROR_CONSOLE.GEOLOCATION_FAIL, error);
+        setErrorMessage(messages.error_geolocation_fail);
+        console.error(error);
       }
     );
   }, []);
@@ -131,9 +113,7 @@ function Home() {
 
         setSelectedSpot(fetchedSpot);
       } catch (error) {
-        setErrorMessage(
-          error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
-        );
+        setErrorMessage(error instanceof Error ? error.message : messages.error_default);
       }
     },
     [viewOwnSpots]
@@ -171,7 +151,7 @@ function Home() {
         });
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
+          error instanceof Error ? error.message : messages.error_default
         );
       }
     };
@@ -181,12 +161,12 @@ function Home() {
 
   const getCurrentPositionAndFlyTo = (zoom: number) => {
     if (!mapRef.current) {
-      console.warn(ERROR_MESSAGES.CONTAINER);
+      console.warn(messages.error_container);
       return;
     }
 
     if (!userLocation) {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
+      setErrorMessage(messages.error_geolocation_fail);
       return;
     }
 
@@ -200,7 +180,7 @@ function Home() {
     if (userLocation) {
       navigate("/spots/add-location", { state: { userLocation } });
     } else {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
+      setErrorMessage(messages.error_geolocation_fail);
     }
   };
 

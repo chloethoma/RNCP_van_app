@@ -11,7 +11,7 @@ function ErrorMessage({ errorMessage, setErrorMessage }: ErrorMessageProps) {
     if (errorMessage) {
       const timer = setTimeout(() => {
         setErrorMessage(null);
-      }, 3000);
+      }, 4000);
 
       return () => clearTimeout(timer);
     }
@@ -20,10 +20,10 @@ function ErrorMessage({ errorMessage, setErrorMessage }: ErrorMessageProps) {
   if (!errorMessage) return null;
 
   return (
-    <div className="fixed top-4 w-full flex justify-center items-center bg-red text-white px-4 py-2 gap-3 rounded-xl shadow-lg max-w-[80vw] z-50">
-      <p>{errorMessage}</p>
+    <div className="fixed top-4 w-full flex justify-center items-center bg-error-bg border border-error-border px-4 py-2 gap-1 rounded-xl shadow-lg max-w-[80vw] z-50">
+      <p className="text-error-text font-bold">{errorMessage}</p>
       <button onClick={() => setErrorMessage(null)}>
-        <X size={20} />
+        <X size={20} color="#cc0033"/>
       </button>
     </div>
   );
