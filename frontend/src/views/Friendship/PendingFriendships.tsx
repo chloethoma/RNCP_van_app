@@ -9,7 +9,7 @@ import {
 } from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
 import ListButton from "../../components/buttons/ListButton";
-import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
+import FriendshipUserRow from "../../components/friendship/FriendshipUserRow";
 import Toggle from "../../components/toggle/Toggle";
 import { messages } from "../../services/helpers/messagesHelper";
 

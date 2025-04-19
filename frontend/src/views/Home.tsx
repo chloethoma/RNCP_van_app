@@ -9,7 +9,7 @@ import {
   fetchUserByToken,
 } from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
-import SpotPreview from "../components/SpotPreview";
+import SpotPreview from "../components/spot/SpotPreview";
 import { Locate, Plus } from "lucide-react";
 import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";

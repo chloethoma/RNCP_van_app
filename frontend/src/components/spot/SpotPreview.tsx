@@ -1,6 +1,6 @@
-import { Spot } from "../types/spot";
+import { Spot } from "../../types/spot";
 import { useNavigate } from "react-router";
-import ExitButton from "./buttons/ExitButton";
+import ExitButton from "../buttons/ExitButton";
 
 interface SpotPreviewProps {
   selectedSpot: Spot;

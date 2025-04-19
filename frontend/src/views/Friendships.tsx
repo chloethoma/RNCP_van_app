@@ -9,7 +9,7 @@ import {
   getConfirmedFriendshipList,
   getReceivedFrienshipSummary,
 } from "../services/api/apiRequests";
-import FriendshipUserRow from "../components/friendshipList/FriendshipUserRow";
+import FriendshipUserRow from "../components/friendship/FriendshipUserRow";
 import ListButton from "../components/buttons/ListButton";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import { messages } from "../services/helpers/messagesHelper";

@@ -1,18 +1,11 @@
-import { useId, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { registerUser } from "../services/api/apiRequests";
 import FormButton from "../components/buttons/FormButton";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import { messages } from "../services/helpers/messagesHelper";
-
-interface FormInputProps {
-  label: string;
-  type: "email" | "password" | "text";
-  placeholder: string;
-  value: string;
-  onChange: (value: string) => void;
-}
+import FormInput from "../components/form/FormInput";
 
 function Register() {
   const navigate = useNavigate();
@@ -39,56 +32,61 @@ function Register() {
       await registerUser(requestBody);
       navigate("/");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : messages.error_register);
+      setErrorMessage(
+        error instanceof Error ? error.message : messages.error_register
+      );
     }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-light-green">
-      <div className="w-full max-w-sm p-8 pt-0 rounded-lg shadow-md sm:p-8">
+    <div className="flex items-center justify-center h-screen bg-light-green overflow-hidden">
+      <div className="w-full max-w-sm p-8 pt-0 rounded-2xl border-2 border-border-grey shadow-lg">
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
         />
 
-        <div className="flex flex-col items-center mb-2">
-          <img src={Logo} alt="Logo" className="w-9/12" />
+        <div className="flex flex-col items-center">
+          <img src={Logo} alt="Logo" className="w-8/12" />
         </div>
         <div className="flex flex-col items-center mb-2">
-          <h2 className="text-2xl font-default font-semibold text-dark-grey text-center sm:text-2xl">
+          <h2 className="text-2xl font-default font-semibold text-dark-grey text-center">
             Inscription
           </h2>
           <p className="text-xs text-dark-grey mt-1 px-4">
             Vous avez déjà un compte ?{" "}
-            <Link to={"/login"} className="mt-4 text-xs text-center text-light">
+            <Link
+              to={"/login"}
+              className="text-xs text-center text-light/90 font-medium hover:underline hover:text-light transition-colors duration-200"
+            >
               Me connecter
             </Link>
           </p>
         </div>
 
         <form onSubmit={handleRegistration}>
-          <Input
+          <FormInput
             label={"Email"}
             type={"email"}
             placeholder={"Entrez votre email"}
             value={email}
             onChange={setEmail}
           />
-          <Input
+          <FormInput
             label={"Pseudo"}
             type={"text"}
             placeholder={"Entrez votre pseudo"}
             value={pseudo}
             onChange={setPseudo}
           />
-          <Input
+          <FormInput
             label={"Mot de passe"}
             type={"password"}
             placeholder={"Entrez votre mot de passe"}
             value={password}
             onChange={setPassword}
           />
-          <Input
+          <FormInput
             label={"Confirmez votre mot de passe"}
             type={"password"}
             placeholder={"Confirmez votre mot de passe"}
@@ -96,29 +94,11 @@ function Register() {
             onChange={setConfirmedPassword}
           />
           {passwordError && (
-            <p className="text-red-500 text-xs mt-1">{passwordError}</p>
+            <p className="text-red text-xs mt-1">{passwordError}</p>
           )}
-          <FormButton>M'inscrire</FormButton>
+          <FormButton>S'inscrire</FormButton>
         </form>
       </div>
-    </div>
-  );
-}
-
-function Input({ label, onChange, ...inputProps }: FormInputProps) {
-  const id = useId();
-  return (
-    <div className="mt-3">
-      <label htmlFor={id} className="block text-sm font-medium text-dark-grey">
-        {label}
-      </label>
-
-      <input
-        id={id}
-        className="mt-1 block w-full px-3 py-2 bg-light-grey border border-light-grey rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-dark-green focus:border-transparent sm:text-sm"
-        {...inputProps}
-        onChange={(e) => onChange(e.target.value)}
-      />
     </div>
   );
 }

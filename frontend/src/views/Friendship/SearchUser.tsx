@@ -9,7 +9,7 @@ import Header from "../../components/headers/Header";
 import { Search } from "lucide-react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import ListButton from "../../components/buttons/ListButton";
-import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
+import FriendshipUserRow from "../../components/friendship/FriendshipUserRow";
 import { messages } from "../../services/helpers/messagesHelper";
 
 function SearchUser() {
