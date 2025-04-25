@@ -42,15 +42,15 @@ function SpotEdit() {
 
   return (
     <>
-      <div className="relative flex flex-col items-center justify-start min-h-screen bg-light-grey w-full">
         <Header text={"MODIFICATION DU SPOT"} />
+        <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
 
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
         />
 
-        <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative overflow-y-auto h-[calc(100vh-4rem-5rem)]">
+        <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative h-[calc(100vh-4rem-5rem)]">
           <div className="h-36 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm rounded-lg mb-4">
             <p>Zone d'upload d'images (à implémenter)</p>
           </div>
@@ -64,16 +64,16 @@ function SpotEdit() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            <div className="mt-3">
+            <div className="mt-3 pt-2">
               <label
                 htmlFor={id}
-                className="text-sm font-medium text-dark-grey"
+                className="text-md font-medium text-dark-grey"
               >
                 Description
               </label>
               <textarea
                 id={id}
-                className="w-full h-32 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-dark-green placeholder-top placeholder-left resize-none"
+                className="w-full h-50 md:h-32 p-2 border text-sm border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-dark-green placeholder-top placeholder-left resize-none"
                 placeholder="Ajoutez une description..."
                 value={updatedSpot.description}
                 onChange={handleChange}

@@ -1,6 +1,8 @@
 import { Spot } from "../types/spot";
 import { useNavigate } from "react-router";
-import ExitButton from "./buttons/ExitButton";
+import Picture from "../assets/picture_default.jpg";
+import IconButton from "./buttons/IconButton";
+import { Eye, X } from "lucide-react";
 
 interface SpotPreviewProps {
   selectedSpot: Spot;
@@ -15,29 +17,44 @@ function SpotPreview({ selectedSpot, setSelectedSpot }: SpotPreviewProps) {
   };
 
   return (
-    <>
-      <div
-        onClick={handleNavigate}
-        className="fixed bottom-24 px-4 py-4 mx-4 sm:mx-6 md:mx-10 lg:mx-16 max-w-screen-md left-0 right-0 bg-white shadow-lg rounded-xl transition-transform duration-300 ease-in-out transform"
-      >
-        <div className="relative">
-          <div className="absolute -top-1 -right-0.5">
-            <ExitButton
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedSpot(null);
-              }}
-            ></ExitButton>
-          </div>
-          <h3 className="text-lg text-dark-grey font-default font-semibold line-clamp-1">
-            {selectedSpot.owner.pseudo}
-          </h3>
-          <p className="text-dark-grey font-default text-sm line-clamp-2">
-            {selectedSpot.description}
-          </p>
+    <div
+      className="relative space-y-2 lg:space-y-5 cursor-pointer"
+      onClick={handleNavigate}
+    >
+      <div className="relative w-full rounded-xl">
+        <img
+          src={selectedSpot.picture || Picture}
+          alt="picture"
+          className="w-full h-20 rounded-xl object-cover md:h-40"
+        />
+        <div className="absolute top-2 right-2 flex gap-2">
+          <IconButton
+            onClick={handleNavigate}
+            size="small"
+            color="white"
+            icon={<Eye size={26} strokeWidth={2} color="#000000"/>}
+          />
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedSpot(null);
+            }}
+            size="small"
+            color="white"
+            icon={<X size={26} strokeWidth={2} color="#000000"/>}
+          />
         </div>
       </div>
-    </>
+
+      <div className="m-3 flex flex-col gap-2">
+        <h3 className="text-sm text-dark-grey font-default font-semibold line-clamp-1 lg:line-clamp-none">
+          Description
+        </h3>
+        <p className="text-dark-grey font-default text-xs line-clamp-2 lg:line-clamp-none">
+          {selectedSpot.description}
+        </p>
+      </div>
+    </div>
   );
 }
 

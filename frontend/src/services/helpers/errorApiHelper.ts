@@ -64,7 +64,6 @@ const translateMessage = (message: string): string => {
   };
     
   export const translateErrorMessage = (error: Error): string => {
-    console.log(error)
     const mainMessage = translateMessage(error.message) || messages.error_default;
 
     let formattedDetails = "";

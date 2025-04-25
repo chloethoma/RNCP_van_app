@@ -11,7 +11,7 @@ interface ToggleProps {
             <button
               key={option.label}
               onClick={() => onChange(option.defaultValue)}
-              className={`px-4 py-2 text-md font-semibold rounded-full transition ${
+              className={`px-4 py-2 text-md font-semibold rounded-full cursor-pointer transition ${
                 selectedValue === option.defaultValue ? "bg-dark-green text-white" : "text-grey"
               }`}
             >
