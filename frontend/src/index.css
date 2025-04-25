@@ -7,7 +7,7 @@
   --color-dark-green-hover: oklch(28.59% 0.0597 190.09);
   --color-black: oklch(20% 0.0142 272.6);
   --color-white: oklch(98.81% 0 0); /* or ffffff ? */
-  --color-white-hover: oklch(88.81% 0 0);
+  --color-white-hover: oklch(95% 0 0);
   --color-light-grey: oklch(96.12% 0 0);
   --color-light-grey-hover: oklch(86.12% 0 0);
   --color-grey: oklch(48.19% 0 0);

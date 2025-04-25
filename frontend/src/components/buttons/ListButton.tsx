@@ -17,9 +17,9 @@ function ListButton({ onClick, label, color, className }: ButtonProps) {
   return (
     <button
       onClick={onClick}
-      className={clsx("px-3 py-1 rounded-full", COLORS[color], className)}
+      className={clsx("px-3 py-1 rounded-full cursor-pointer", COLORS[color], className)}
     >
-      <span className="">{label}</span>
+      <span className="text-sm">{label}</span>
     </button>
   );
 }

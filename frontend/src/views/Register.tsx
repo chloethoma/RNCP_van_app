@@ -39,13 +39,13 @@ function Register() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-light-green overflow-hidden">
-      <div className="w-full max-w-sm p-8 pt-0 rounded-2xl border-2 border-border-grey shadow-lg">
-        <ErrorMessage
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-        />
+    <div className="relative flex items-center justify-center h-screen bg-light-green overflow-hidden">
+      <ErrorMessage
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
 
+      <div className="w-full max-w-sm p-8 pt-0 rounded-2xl border-2 border-border-grey shadow-lg">
         <div className="flex flex-col items-center">
           <img src={Logo} alt="Logo" className="w-8/12" />
         </div>

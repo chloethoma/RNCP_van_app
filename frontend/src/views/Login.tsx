@@ -21,18 +21,20 @@ function Login() {
       await loginUser(requestBody);
       navigate("/");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : messages.error_default);
+      setErrorMessage(
+        error instanceof Error ? error.message : messages.error_default
+      );
     }
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-light-green">
-      <div className="w-full max-w-sm p-8 pt-0 rounded-2xl border-2 border-border-grey shadow-lg">
+    <div className="relative flex items-center justify-center h-screen bg-light-green">
       <ErrorMessage
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-        />
+        errorMessage={errorMessage}
+        setErrorMessage={setErrorMessage}
+      />
 
+      <div className="relative w-full max-w-sm p-8 pt-0 rounded-2xl border-2 border-border-grey shadow-lg">
         {/* Header */}
         <div className="flex flex-col items-center">
           <img src={Logo} alt="Logo" className="w-8/12" />

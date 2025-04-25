@@ -9,7 +9,7 @@ import {
   fetchUserByToken,
 } from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
-import SpotPreview from "../components/spot/SpotPreview";
+import SpotPreview from "../components/SpotPreview";
 import { Locate, Plus } from "lucide-react";
 import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
@@ -113,7 +113,9 @@ function Home() {
 
         setSelectedSpot(fetchedSpot);
       } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : messages.error_default);
+        setErrorMessage(
+          error instanceof Error ? error.message : messages.error_default
+        );
       }
     },
     [viewOwnSpots]
@@ -185,21 +187,8 @@ function Home() {
   };
 
   return (
-    <>
-      <div ref={mapContainerRef} className="h-full w-full bg-light-grey" />
-
-      <div className="fixed top-6 w-full flex justify-center z-50">
-        <ErrorMessage
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-        />
-        <SuccessMessage
-          successMessage={successMessage}
-          setSuccessMessage={setSuccessMessage}
-        />
-      </div>
-
-      <div className="fixed top-6 w-full flex justify-center">
+    <div className="h-full w-full flex flex-col lg:flex-row relative">
+      <div className="absolute top-6 w-full flex justify-center z-10">
         <Toggle
           options={[
             { label: "Mes spots", defaultValue: true },
@@ -210,27 +199,41 @@ function Home() {
         />
       </div>
 
-      {selectedSpot && (
-        <SpotPreview
-          selectedSpot={selectedSpot}
-          setSelectedSpot={setSelectedSpot}
+      <div className="absolute bottom-26 right-4 flex flex-col items-end space-y-3 z-10 lg:left-4">
+        <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
+        <IconButton
+          onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
+          icon={<Locate size={22} />}
         />
-      )}
+      </div>
 
-      {!selectedSpot && (
-        <>
-          <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10">
-            <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
-          </div>
-          <div className="fixed bottom-40 right-4 flex flex-col items-end space-y-3 z-10">
-            <IconButton
-              onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
-              icon={<Locate size={22} />}
-            />
-          </div>
-        </>
+      <div
+        ref={mapContainerRef}
+        className="relative flex items-center justify-center h-full w-full bg-light-grey "
+      >
+        <ErrorMessage
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
+        <SuccessMessage
+          successMessage={successMessage}
+          setSuccessMessage={setSuccessMessage}
+        />
+      </div>
+
+      {selectedSpot && (
+        <div
+          className="fixed bottom-26 mx-4 left-0 right-0 
+           bg-white shadow-lg rounded-xl z-10 transition-transform duration-300 ease-in-out transform 
+           lg:static lg:mx-0 lg:w-2/5 lg:h-full"
+        >
+          <SpotPreview
+            selectedSpot={selectedSpot}
+            setSelectedSpot={setSelectedSpot}
+          />
+        </div>
       )}
-    </>
+    </div>
   );
 }
 

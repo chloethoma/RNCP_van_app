@@ -12,11 +12,12 @@ interface ButtonProps {
 const COLORS = {
   darkGreen: "bg-dark-green hover:bg-dark-green-hover text-white",
   red: "bg-red hover:bg-red-hover text-white",
-  white: "bg-white, hover:bg-white-hover text-white",
+  white: "bg-white hover:bg-white-hover text-white",
 } as const;
 
 const SIZES = {
   default: "p-3",
+  medium: "p-2",
   small: "p-1",
 } as const;
 
@@ -32,7 +33,7 @@ function IconButton({
     <button
       onClick={onClick}
       className={clsx(
-        "rounded-full shadow-sm transition flex items-center justify-center",
+        "rounded-full shadow-sm transition flex items-center justify-center cursor-pointer",
         COLORS[color],
         SIZES[size],
         className,
