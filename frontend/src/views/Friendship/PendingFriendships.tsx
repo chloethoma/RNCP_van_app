@@ -30,7 +30,7 @@ function PendingFriendships() {
         setFriendshipList(data);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : messages.error_default
+          error instanceof Error ? error.message : messages.error_default,
         );
       } finally {
         setLoading(false);
@@ -47,11 +47,11 @@ function PendingFriendships() {
       setFriendshipList((prevFriendships) =>
         prevFriendships.filter((friendship) => {
           return friendship.friend.id !== friendId;
-        })
+        }),
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
@@ -63,11 +63,11 @@ function PendingFriendships() {
       setFriendshipList((prevFriendships) =>
         prevFriendships.filter((friendship) => {
           return friendship.friend.id !== friendId;
-        })
+        }),
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
@@ -128,11 +128,11 @@ function PendingFriendships() {
                 );
               })
             ) : (
-                <p className="text-grey m-6 text-center">
-                  {viewFriendshipsReceived
-                    ? "Aucune demande reçue"
-                    : "Aucune demande envoyée"}
-                </p>
+              <p className="text-grey m-6 text-center">
+                {viewFriendshipsReceived
+                  ? "Aucune demande reçue"
+                  : "Aucune demande envoyée"}
+              </p>
             )}
           </ul>
         )}

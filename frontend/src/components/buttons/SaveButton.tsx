@@ -6,7 +6,13 @@ interface SaveButtonProps {
 }
 
 function SaveButton({ onClick }: SaveButtonProps) {
-  return <IconButton onClick={onClick} color="white" icon={<Check size={16} color="green" strokeWidth={3} />} />;
+  return (
+    <IconButton
+      onClick={onClick}
+      color="white"
+      icon={<Check size={16} color="green" strokeWidth={3} />}
+    />
+  );
 }
 
 export default SaveButton;

@@ -19,7 +19,7 @@ function SearchUser() {
   const [hasSearched, setHasSearched] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [requestsSent, setRequestsSent] = useState<{ [key: number]: boolean }>(
-    {}
+    {},
   );
 
   useEffect(() => {
@@ -37,7 +37,7 @@ function SearchUser() {
         setUsers(userList);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : messages.error_default
+          error instanceof Error ? error.message : messages.error_default,
         );
       } finally {
         setLoading(false);
@@ -58,7 +58,7 @@ function SearchUser() {
       setRequestsSent((prev) => ({ ...prev, [userId]: true }));
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
@@ -69,7 +69,7 @@ function SearchUser() {
       setRequestsSent((prev) => ({ ...prev, [userId]: false }));
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };

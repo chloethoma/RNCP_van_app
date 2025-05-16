@@ -6,7 +6,13 @@ interface EditButtonProps {
 }
 
 function EditButton({ onClick }: EditButtonProps) {
-  return <IconButton onClick={onClick} color="white" icon={<Pencil size={16} color="black" />} />;
+  return (
+    <IconButton
+      onClick={onClick}
+      color="white"
+      icon={<Pencil size={16} color="black" />}
+    />
+  );
 }
 
 export default EditButton;

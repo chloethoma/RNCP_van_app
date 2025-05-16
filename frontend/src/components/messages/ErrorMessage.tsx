@@ -1,6 +1,9 @@
 import Message from "./Message";
 
-export default function ErrorMessage({ errorMessage, setErrorMessage }: {
+export default function ErrorMessage({
+  errorMessage,
+  setErrorMessage,
+}: {
   errorMessage: string | null;
   setErrorMessage: (value: string | null) => void;
 }) {

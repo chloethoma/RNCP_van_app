@@ -8,7 +8,6 @@ interface FormInputProps {
   onChange: (value: string) => void;
 }
 
-
 function FormInput({ label, onChange, ...inputProps }: FormInputProps) {
   const id = useId();
   return (

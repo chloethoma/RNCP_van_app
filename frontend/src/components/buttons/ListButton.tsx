@@ -29,7 +29,7 @@ function ListButton({
         "px-3 py-1 rounded-full cursor-pointer whitespace-nowrap",
         COLORS[color],
         className,
-        disabled && "cursor-not-allowed opacity-60"
+        disabled && "cursor-not-allowed opacity-60",
       )}
     >
       <span className="text-sm">{label}</span>

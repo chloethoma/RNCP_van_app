@@ -22,7 +22,7 @@ function Login() {
       navigate("/");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   }

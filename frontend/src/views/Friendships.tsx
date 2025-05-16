@@ -32,7 +32,7 @@ const Friendships = () => {
         setFriendshipList(friendList);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : messages.error_default
+          error instanceof Error ? error.message : messages.error_default,
         );
       } finally {
         setLoading(false);
@@ -49,7 +49,7 @@ const Friendships = () => {
         setReceivedFriendshipNumber(summary.count);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : messages.error_default
+          error instanceof Error ? error.message : messages.error_default,
         );
       }
     };
@@ -64,11 +64,11 @@ const Friendships = () => {
       setFriendshipList((prevFriendships) =>
         prevFriendships.filter((friendship) => {
           return friendship.friend.id !== friendId;
-        })
+        }),
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };

@@ -16,6 +16,6 @@ function Header({ text }: HeaderProps) {
       <h1 className="mx-auto text-xl font-semibold text-dark-grey">{text}</h1>
     </div>
   );
-  }
+}
 
 export default Header;

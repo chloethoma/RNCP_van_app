@@ -33,18 +33,22 @@ function SpotEdit() {
       await updateSpot(updatedSpot);
 
       navigate(`/spots/${updatedSpot.id}`, {
-        state: { spot: updatedSpot, successMessage: messages.success_spot_update },
+        state: {
+          spot: updatedSpot,
+          successMessage: messages.success_spot_update,
+        },
       });
     } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : messages.error_default);
+      setErrorMessage(
+        error instanceof Error ? error.message : messages.error_default,
+      );
     }
   };
 
   return (
     <>
-        <Header text={"MODIFICATION DU SPOT"} />
-        <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
-
+      <Header text={"MODIFICATION DU SPOT"} />
+      <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}

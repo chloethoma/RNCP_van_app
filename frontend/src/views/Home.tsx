@@ -48,7 +48,7 @@ function Home() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    location.state?.successMessage || null
+    location.state?.successMessage || null,
   );
   const [userLocation, setUserLocation] = useState<LngLatLike>();
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>();
@@ -88,7 +88,7 @@ function Home() {
       } catch (error) {
         console.error(
           "Erreur lors de la récupération de l'utilisateur :",
-          error
+          error,
         );
       }
     };
@@ -110,7 +110,7 @@ function Home() {
       (error) => {
         setErrorMessage(messages.error_geolocation_fail);
         console.error(error);
-      }
+      },
     );
   }, []);
 
@@ -128,11 +128,11 @@ function Home() {
         setSelectedSpot(fetchedSpot);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : messages.error_default
+          error instanceof Error ? error.message : messages.error_default,
         );
       }
     },
-    [viewOwnSpots]
+    [viewOwnSpots],
   );
 
   // Fetch and display spots
@@ -167,7 +167,7 @@ function Home() {
         });
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : messages.error_default
+          error instanceof Error ? error.message : messages.error_default,
         );
       }
     };

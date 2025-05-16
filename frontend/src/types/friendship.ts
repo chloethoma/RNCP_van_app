@@ -1,17 +1,16 @@
 import { FriendshipUser } from "./user";
 
 export interface Friendship {
-    requester: FriendshipUser;
-    receiver: FriendshipUser;
-    isConfirmed: boolean;
+  requester: FriendshipUser;
+  receiver: FriendshipUser;
+  isConfirmed: boolean;
 }
 
 export interface PartialFriendship {
-    friend: FriendshipUser;
-    isConfirmed: boolean;
+  friend: FriendshipUser;
+  isConfirmed: boolean;
 }
 
 export type ReceivedFriendshipNumber = {
-    count: number
-  };
-  
+  count: number;
+};
