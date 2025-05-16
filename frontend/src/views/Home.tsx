@@ -187,30 +187,29 @@ function Home() {
   };
 
   return (
-    <div className="h-full w-full flex flex-col lg:flex-row relative">
-      <div className="absolute top-6 w-full flex justify-center z-10">
-        <Toggle
-          options={[
-            { label: "Mes spots", defaultValue: true },
-            { label: "Spots de la commu", defaultValue: false },
-          ]}
-          selectedValue={viewOwnSpots}
-          onChange={setViewOwnSpots}
-        />
-      </div>
+    <>
+      <div ref={mapContainerRef} className="h-full w-full" />
 
-      <div className="absolute bottom-26 right-4 flex flex-col items-end space-y-3 z-10 lg:left-4">
-        <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
-        <IconButton
-          onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
-          icon={<Locate size={22} />}
-        />
-      </div>
+      <div className="h-full w-full relative">
+        <div className="fixed top-6 w-full flex justify-center z-10">
+          <Toggle
+            options={[
+              { label: "Mes spots", defaultValue: true },
+              { label: "Spots de la commu", defaultValue: false },
+            ]}
+            selectedValue={viewOwnSpots}
+            onChange={setViewOwnSpots}
+          />
+        </div>
 
-      <div
-        ref={mapContainerRef}
-        className="relative flex items-center justify-center h-full w-full bg-light-grey "
-      >
+        <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10 lg:left-6">
+          <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
+          <IconButton
+            onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
+            icon={<Locate size={22} />}
+          />
+        </div>
+
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
@@ -225,7 +224,7 @@ function Home() {
         <div
           className="fixed bottom-26 mx-4 left-0 right-0 
            bg-white shadow-lg rounded-xl z-10 transition-transform duration-300 ease-in-out transform 
-           lg:static lg:mx-0 lg:w-2/5 lg:h-full"
+           md:w-1/3"
         >
           <SpotPreview
             selectedSpot={selectedSpot}
@@ -233,7 +232,7 @@ function Home() {
           />
         </div>
       )}
-    </div>
+    </>
   );
 }
 
