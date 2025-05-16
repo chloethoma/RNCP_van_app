@@ -1,5 +1,12 @@
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useRef, useEffect, useState, useCallback, useContext } from "react";
+import {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  Fragment,
+} from "react";
 import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
 import {
   fetchSpoFriendsList,
@@ -18,10 +25,17 @@ import SuccessMessage from "../components/messages/SuccessMessage";
 import Toggle from "../components/toggle/Toggle";
 import UserContext from "../hooks/UserContext";
 import { messages } from "../services/helpers/messagesHelper";
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Transition,
+} from "@headlessui/react";
+import ListButton from "../components/buttons/ListButton";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
-const ZOOM: number = 10;
+const SUPER_ZOOM: number = 10;
 const MAPBOX_TOKEN: string = import.meta.env.VITE_MAPBOX_TOKEN;
 
 function Home() {
@@ -178,18 +192,15 @@ function Home() {
     });
   };
 
-  const handleNavigate = () => {
-    if (userLocation) {
-      navigate("/spots/add-location", { state: { userLocation } });
-    } else {
-      setErrorMessage(messages.error_geolocation_fail);
-    }
+  const handleNavigate = (location: LngLatLike, zoom: number) => {
+    navigate("/spots/add-location", { state: { location, zoom } });
   };
 
   return (
     <>
       <div ref={mapContainerRef} className="h-full w-full" />
 
+      {/* Toggle */}
       <div className="h-full w-full relative">
         <div className="fixed top-6 w-full flex justify-center z-10">
           <Toggle
@@ -202,14 +213,51 @@ function Home() {
           />
         </div>
 
-        <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10 lg:left-6">
-          <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
+        {/* Icon geolocation and add location */}
+        <div className="fixed bottom-26 right-4 flex flex-col space-y-3 z-10">
+          <Popover className="relative">
+            <PopoverButton>
+              <IconButton icon={<Plus size={22} />} />
+            </PopoverButton>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <PopoverPanel
+                anchor="top"
+                className="flex flex-col space-y-2 [--anchor-gap:8px] ml-[-0.5rem]"
+              >
+                <ListButton
+                  onClick={() => {
+                    if (userLocation) {
+                      handleNavigate(userLocation, SUPER_ZOOM);
+                    }
+                  }}
+                  label="Sur ma position"
+                  color="darkGreen"
+                  disabled={!userLocation}
+                />
+                <ListButton
+                  onClick={() => handleNavigate(DEFAULT_CENTER, DEFAULT_ZOOM)}
+                  label="Ailleurs"
+                  color="darkGreen"
+                />
+              </PopoverPanel>
+            </Transition>
+          </Popover>
           <IconButton
-            onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
+            onClick={() => getCurrentPositionAndFlyTo(SUPER_ZOOM)}
             icon={<Locate size={22} />}
+            disabled={!userLocation}
           />
         </div>
 
+        {/* Messages */}
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
@@ -220,6 +268,7 @@ function Home() {
         />
       </div>
 
+      {/* Spot Preview */}
       {selectedSpot && (
         <div
           className="fixed bottom-26 mx-4 left-0 right-0 

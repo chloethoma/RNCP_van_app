@@ -43,13 +43,14 @@ function SpotAddLocation() {
       return;
     }
 
-    const userLocation = location.state?.userLocation || DEFAULT_CENTER;
+    const userLocation = location.state?.location || DEFAULT_CENTER;
+    const zoom = location.state?.zoom || ZOOM;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       center: userLocation,
-      zoom: ZOOM,
+      zoom: zoom,
     });
 
     mapRef.current = map;
