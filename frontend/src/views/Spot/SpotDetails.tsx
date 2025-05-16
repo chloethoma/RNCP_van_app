@@ -21,7 +21,14 @@ function SpotDetails() {
   const { spotId } = useParams<{ spotId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useContext(UserContext);
+  const context = useContext(UserContext);
+
+  if (!context) {
+    // Gérer le cas où le contexte n’est pas défini, ou afficher une erreur
+    throw new Error("UserContext must be used within a UserProvider");
+  }
+
+  const { user } = context;
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
@@ -100,7 +107,7 @@ function SpotDetails() {
             </div>
 
             {/* Action buttons section */}
-            {user.id === spot.owner.id && (
+            {user && user.id === spot.owner.id && (
               <div className="flex justify-between items-center p-2 my-2">
                 <div className="flex flex-col items-center gap-2">
                   <IconButton
