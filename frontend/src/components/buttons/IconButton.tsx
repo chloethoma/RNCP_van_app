@@ -40,7 +40,7 @@ function IconButton({
         COLORS[color],
         SIZES[size],
         className,
-        disabled && "cursor-not-allowed opacity-60"
+        disabled && "cursor-not-allowed opacity-60",
       )}
     >
       {icon

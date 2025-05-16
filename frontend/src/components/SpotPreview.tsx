@@ -32,7 +32,7 @@ function SpotPreview({ selectedSpot, setSelectedSpot }: SpotPreviewProps) {
             onClick={handleNavigate}
             size="small"
             color="white"
-            icon={<Eye size={26} strokeWidth={2} color="#000000"/>}
+            icon={<Eye size={26} strokeWidth={2} color="#000000" />}
           />
           <IconButton
             onClick={(e) => {
@@ -41,7 +41,7 @@ function SpotPreview({ selectedSpot, setSelectedSpot }: SpotPreviewProps) {
             }}
             size="small"
             color="white"
-            icon={<X size={26} strokeWidth={2} color="#000000"/>}
+            icon={<X size={26} strokeWidth={2} color="#000000" />}
           />
         </div>
       </div>

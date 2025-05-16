@@ -10,7 +10,14 @@ interface MessageProps {
   buttonColor: string;
 }
 
-function ErrorMessage({ message, setMessage, borderColor, bgColor, textColor, buttonColor }: MessageProps) {
+function ErrorMessage({
+  message,
+  setMessage,
+  borderColor,
+  bgColor,
+  textColor,
+  buttonColor,
+}: MessageProps) {
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -33,6 +40,7 @@ function ErrorMessage({ message, setMessage, borderColor, bgColor, textColor, bu
         <X size={20} color={buttonColor} />
       </button>
     </div>
-  );  }
+  );
+}
 
 export default ErrorMessage;

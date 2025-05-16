@@ -1,6 +1,9 @@
 import Message from "./Message";
 
-export default function SuccessMessage({ successMessage, setSuccessMessage }: {
+export default function SuccessMessage({
+  successMessage,
+  setSuccessMessage,
+}: {
   successMessage: string | null;
   setSuccessMessage: (value: string | null) => void;
 }) {

@@ -59,14 +59,14 @@ function Profile() {
       setSuccessMessage(messages.success_update);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
 
   const handleEditPassword = async (
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ) => {
     try {
       const requestBody = { currentPassword, newPassword };
@@ -75,7 +75,7 @@ function Profile() {
       setIsPasswordModalOpen(false);
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
@@ -91,7 +91,7 @@ function Profile() {
       navigate("/login");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };

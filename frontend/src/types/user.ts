@@ -11,4 +11,3 @@ export interface User {
 }
 
 export type FriendshipUser = Pick<User, "id" | "pseudo" | "picture">;
-

@@ -6,7 +6,7 @@ interface Props {
   onCancel: () => void;
 }
 
-function PasswordChangeModal ({ onConfirm, onCancel }: Props) {
+function PasswordChangeModal({ onConfirm, onCancel }: Props) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -16,8 +16,8 @@ function PasswordChangeModal ({ onConfirm, onCancel }: Props) {
     if (!currentPassword || !newPassword || !confirmNewPassword) {
       setError("Tous les champs doivent être remplis.");
       return;
-    }    
-    
+    }
+
     if (newPassword !== confirmNewPassword) {
       setError("Les nouveaux mots de passe ne correspondent pas.");
       return;
@@ -78,6 +78,6 @@ function PasswordChangeModal ({ onConfirm, onCancel }: Props) {
       </motion.div>
     </div>
   );
-};
+}
 
 export default PasswordChangeModal;

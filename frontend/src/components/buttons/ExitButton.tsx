@@ -6,7 +6,13 @@ interface ExitButtonProps {
 }
 
 function ExitButton({ onClick }: ExitButtonProps) {
-  return <IconButton onClick={onClick} size={"small"} icon={<X size={26} strokeWidth={3}/>} />;
+  return (
+    <IconButton
+      onClick={onClick}
+      size={"small"}
+      icon={<X size={26} strokeWidth={3} />}
+    />
+  );
 }
 
 export default ExitButton;
