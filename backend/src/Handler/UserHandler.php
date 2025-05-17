@@ -104,6 +104,9 @@ class UserHandler
         return $this->userListTransformer->mapEntityListToDTOList();
     }
 
+    /**
+     * Get User summary : friends number and spots number.
+     */
     public function handleGetUserSummary(): UserSummaryDTO
     {
         $user = $this->manager->getAuthenticatedUser();

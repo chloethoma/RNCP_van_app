@@ -16,7 +16,7 @@ class FriendshipRepository extends ServiceEntityRepository
         parent::__construct($registry, Friendship::class);
     }
 
-    public function isfriendshipExist(int $requesterId, int $receiverId): bool
+    public function isFriendshipExist(int $requesterId, int $receiverId): bool
     {
         return (bool) $this->createQueryBuilder('f')
             ->select('COUNT(f.id)')
@@ -28,6 +28,11 @@ class FriendshipRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @param 'received'|'sent' $type
+     *
+     * @return Friendship[]
+     */
     public function findPendingFriendshipsByUserIdAndType(int $userId, string $type): array
     {
         $field = 'received' === $type ? 'f.receiver' : 'f.requester';
@@ -43,6 +48,9 @@ class FriendshipRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return Friendship[]
+     */
     public function findConfirmFriendships(int $userId): array
     {
         return $this->createQueryBuilder('f')

@@ -54,7 +54,7 @@ class FriendshipManager
      */
     public function checkIfFriendshipAlreadyExists(Friendship $friendship): void
     {
-        if ($this->repository->isfriendshipExist($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
+        if ($this->repository->isFriendshipExist($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
             throw new FriendshipConflictException();
         }
     }
