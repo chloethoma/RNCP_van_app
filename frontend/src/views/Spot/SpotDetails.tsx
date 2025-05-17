@@ -16,12 +16,14 @@ import { deleteSpot, fetchSpotById } from "../../services/api/apiRequests";
 import SuccessMessage from "../../components/messages/SuccessMessage";
 import UserContext from "../../hooks/UserContext";
 import { messages } from "../../services/helpers/messagesHelper";
+import ConfirmationModal from "../../components/modal/ConfirmationModal";
 
 function SpotDetails() {
   const { spotId } = useParams<{ spotId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const context = useContext(UserContext);
+  const [isDeleteSpotModalOpen, setIsDeleteSpotModalOpen] = useState(false);
 
   if (!context) {
     // Gérer le cas où le contexte n’est pas défini, ou afficher une erreur
@@ -101,7 +103,7 @@ function SpotDetails() {
 
         {/* Pictures section */}
         {spot && (
-          <div className="w-full max-w-lg bg-white shadow-lg rounded-xl px-6 py-3 relative h-[calc(100vh-4rem-6rem)]">
+          <div className="w-full max-w-lg bg-white shadow-lg rounded-xl px-6 py-3 relative">
             <div className="h-40 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm rounded-lg mb-4">
               <p>Zone d'affichage des images (à implémenter)</p>
             </div>
@@ -143,13 +145,24 @@ function SpotDetails() {
 
                 <div className="flex flex-col items-center gap-2">
                   <IconButton
-                    onClick={handleDelete}
+                    onClick={() => setIsDeleteSpotModalOpen(true)}
                     icon={<Trash size={24} />}
                     color="red"
                   />
                   <span className="mt-1 text-xs text-grey">Supprimer</span>
                 </div>
               </div>
+            )}
+
+            {/* Modal for confirmation delete account */}
+            {isDeleteSpotModalOpen && (
+              <ConfirmationModal
+                title="Êtes-vous sûr de vouloir supprimer ce spot ?"
+                onConfirm={handleDelete}
+                onCancel={() => setIsDeleteSpotModalOpen(false)}
+                confirmText="Oui, supprimer"
+                cancelText="Annuler"
+              />
             )}
 
             {/* Details section */}
