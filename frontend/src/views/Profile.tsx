@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { LogOut, Pencil } from "lucide-react";
 import Header from "../components/headers/Header";
-import { User } from "../types/user";
+import { User, UserSummary } from "../types/user";
 import {
   deleteUser,
+  getUserSummary,
   updateUser,
   updateUserPassword,
 } from "../services/api/apiRequests";
@@ -38,12 +39,35 @@ function Profile() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const userContext = useContext(UserContext);
+  const [userSummary, setUserSummary] = useState<UserSummary | null>();
   const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
     useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!userContext) return;
+
+    const fetchUserSummary = async () => {
+      setLoading(true);
+
+      try {
+        const summary = await getUserSummary();
+        setUserSummary(summary);
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : messages.error_default,
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserSummary();
+  }, [userContext]);
 
   if (!userContext) {
-    return <div>Chargement...</div>; // ou rediriger
+    return <div>Chargement...</div>;
   }
 
   const { user, setUser } = userContext;
@@ -113,7 +137,7 @@ function Profile() {
           setSuccessMessage={setSuccessMessage}
         />
 
-        {user && (
+        {user && !loading && (
           <div className="relative w-full flex flex-col items-center max-w-lg rounded-xl h-[calc(100vh-4rem-6rem)] md:p-4">
             {/* Profil section */}
             <div className="w-full bg-white p-4 flex flex-row items-center justify-between shadow-md rounded-xl">
@@ -135,14 +159,18 @@ function Profile() {
               </div>
               {/* Extra informations */}
               <div className="flex-1 text-center">
-                <p className="text-md font-semibold">10</p>
+                <p className="text-md font-semibold">
+                  {userSummary?.spotsNumber}
+                </p>
                 <p className="text-xs text-grey">
                   <span className="block md:inline">spots</span>{" "}
                   <span className="block md:inline">enregistrés</span>
                 </p>
               </div>
               <div className="flex-1 text-center">
-                <p className="text-md font-semibold">20</p>
+                <p className="text-md font-semibold">
+                  {userSummary?.friendsNumber}
+                </p>
                 <p className="text-xs text-grey">
                   <span className="block md:inline">amis dans</span>{" "}
                   <span className="block md:inline">ma commu</span>
