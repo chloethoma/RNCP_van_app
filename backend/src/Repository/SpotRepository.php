@@ -18,6 +18,11 @@ class SpotRepository extends ServiceEntityRepository
         parent::__construct($registry, Spot::class);
     }
 
+    /**
+     * Get list of spots for a user.
+     *
+     * @return Spot[]
+     */
     public function findCollection(int $userId): array
     {
         return $this->findBy(['owner' => $userId]);
@@ -28,6 +33,11 @@ class SpotRepository extends ServiceEntityRepository
         return $this->find($spotId);
     }
 
+    /**
+     * Get list of friend's spots (confirmed friendships only) for a user.
+     *
+     * @return Spot[]
+     */
     public function findFriendsSpots(int $userId): array
     {
         return $this->createQueryBuilder('s')

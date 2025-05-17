@@ -59,7 +59,7 @@ class SpotManager
         $spotOwnerId = $spot->getOwner()->getId();
         $userId = $this->userManager->getAuthenticatedUserId();
 
-        if (!$this->friendshipRepository->isfriendshipExist($spotOwnerId, $userId)) {
+        if (!$this->friendshipRepository->isFriendshipExist($spotOwnerId, $userId)) {
             throw new SpotAccessDeniedException();
         }
     }

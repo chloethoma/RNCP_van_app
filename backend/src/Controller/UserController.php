@@ -29,7 +29,8 @@ class UserController extends ApiController
         path: '/register',
         name: 'create_user',
         methods: ['POST'],
-        format: 'json')]
+        format: 'json'
+    )]
     public function createUser(
         #[MapRequestPayload(validationGroups: ['create'], serializationContext: ['groups' => ['create']])] UserDTO $dto,
     ): JsonResponse {
@@ -50,7 +51,8 @@ class UserController extends ApiController
         path: '/api/users',
         name: 'read_user',
         methods: ['GET'],
-        format: 'json')]
+        format: 'json'
+    )]
     public function getUserIdentity(): JsonResponse
     {
         try {
@@ -72,7 +74,8 @@ class UserController extends ApiController
         path: '/api/users',
         name: 'edit_user',
         methods: ['PUT'],
-        format: 'json')]
+        format: 'json'
+    )]
     public function updateUser(
         #[MapRequestPayload(validationGroups: ['update'], serializationContext: ['groups' => ['update']])] UserDTO $dto,
     ): JsonResponse {
@@ -97,7 +100,8 @@ class UserController extends ApiController
         path: '/api/users',
         name: 'edit_user_password',
         methods: ['PATCH'],
-        format: 'json')]
+        format: 'json'
+    )]
     public function updateUserPassword(
         #[MapRequestPayload(validationGroups: ['update'], serializationContext: ['groups' => ['update']])] UserPasswordDTO $dto,
     ): JsonResponse {
@@ -122,13 +126,37 @@ class UserController extends ApiController
         path: '/api/users',
         name: 'delete_user',
         methods: ['DELETE'],
-        format: 'json')]
+        format: 'json'
+    )]
     public function deleteUser(): JsonResponse
     {
         try {
             $this->handler->handleDelete();
 
             $response = $this->serveNoContentResponse();
+        } catch (UnauthenticatedUserException $e) {
+            $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
+        } catch (UserNotFoundException $e) {
+            $response = $this->serveNotFoundResponse($e->getMessage(), self::TARGET);
+        } catch (\Throwable $e) {
+            $response = $this->handleException($e, self::TARGET);
+        }
+
+        return $response;
+    }
+
+    #[Route(
+        path: '/api/users/summary',
+        name: 'user_extra_infos',
+        methods: ['GET'],
+        format: 'json'
+    )]
+    public function getUserSummary(): JsonResponse
+    {
+        try {
+            $userSummary = $this->handler->handleGetUserSummary();
+
+            $response = $this->serveOkResponse($userSummary, groups: ['read']);
         } catch (UnauthenticatedUserException $e) {
             $response = $this->serveUnauthorizedResponse($e->getMessage(), self::TARGET);
         } catch (UserNotFoundException $e) {

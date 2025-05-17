@@ -2,11 +2,16 @@
 
 namespace App\Handler;
 
+use App\DataTransformer\PartialFriendshipListDataTransformer;
+use App\DataTransformer\SpotListDataTransformer;
 use App\DataTransformer\UserDataTransformer;
 use App\DataTransformer\UserListDataTransformer;
 use App\DTO\User\UserDTO;
 use App\DTO\User\UserPasswordDTO;
+use App\DTO\User\UserSummaryDTO;
 use App\Manager\UserManager;
+use App\Repository\FriendshipRepository;
+use App\Repository\SpotRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -16,7 +21,11 @@ class UserHandler
         protected UserDataTransformer $userTransformer,
         protected UserListDataTransformer $userListTransformer,
         protected UserManager $manager,
-        protected UserRepository $repository,
+        protected UserRepository $userRepository,
+        protected SpotRepository $spotRepository,
+        protected FriendshipRepository $friendshipRepository,
+        protected PartialFriendshipListDataTransformer $friendshipListTransformer,
+        protected SpotListDataTransformer $spotListTransformer,
         protected EntityManagerInterface $em,
     ) {
     }
@@ -87,11 +96,27 @@ class UserHandler
     {
         $user = $this->manager->getAuthenticatedUser();
 
-        $userList = $this->repository->searchUsersNotFriendsWithCurrentUser($pseudo, $user->getId());
+        $userList = $this->userRepository->searchUsersNotFriendsWithCurrentUser($pseudo, $user->getId());
 
         $userCollection = $this->userListTransformer->transformArrayToObjectList($userList);
         $this->userListTransformer->setEntityList($userCollection);
 
         return $this->userListTransformer->mapEntityListToDTOList();
+    }
+
+    /**
+     * Get User summary : friends number and spots number.
+     */
+    public function handleGetUserSummary(): UserSummaryDTO
+    {
+        $user = $this->manager->getAuthenticatedUser();
+
+        $friendshipList = $this->friendshipRepository->findConfirmFriendships($user->getId());
+        $spotList = $this->spotRepository->findCollection($user->getId());
+
+        return new UserSummaryDTO(
+            friendsNumber: count($friendshipList),
+            spotsNumber: count($spotList)
+        );
     }
 }

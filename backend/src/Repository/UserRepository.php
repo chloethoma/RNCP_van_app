@@ -33,21 +33,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Get User by Id.
+     */
     public function findByUserIdentifier(int $userId): ?User
     {
         return $this->findOneBy(['id' => $userId]);
     }
 
+    /**
+     * Get User by email.
+     */
     public function findByEmail(string $email): ?User
     {
         return $this->findOneBy(['email' => $email]);
     }
 
+    /**
+     * Get User by pseudo.
+     */
     public function findByPseudo(string $pseudo): ?User
     {
         return $this->findOneBy(['pseudo' => $pseudo]);
     }
 
+    /**
+     * Get list of user which are not already friends with the authenticated one.
+     *
+     * @return User[]
+     */
     public function searchUsersNotFriendsWithCurrentUser(string $pseudo, int $currentUserId): array
     {
         return $this->createQueryBuilder('u')
