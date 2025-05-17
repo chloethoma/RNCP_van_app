@@ -13,6 +13,7 @@ import FriendshipUserRow from "../components/FriendshipUserRow";
 import ListButton from "../components/buttons/ListButton";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import { messages } from "../services/helpers/messagesHelper";
+import ConfirmationModal from "../components/modal/ConfirmationModal";
 
 const Friendships = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const Friendships = () => {
   const [receivedFriendshipNumber, setReceivedFriendshipNumber] =
     useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [isDeleteFriendModalOpen, setIsDeleteFriendModalOpen] = useState(false);
+  const [friendIdToDelete, setFriendIdToDelete] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchFriendships = async () => {
@@ -128,7 +131,10 @@ const Friendships = () => {
                     return (
                       <FriendshipUserRow key={friend.id} user={friend}>
                         <ListButton
-                          onClick={() => handleDeleteFriend(friend.id)}
+                          onClick={() => {
+                            setIsDeleteFriendModalOpen(true);
+                            setFriendIdToDelete(friend.id);
+                          }}
                           label="Supprimer"
                           color="red"
                         />
@@ -141,6 +147,21 @@ const Friendships = () => {
             </ul>
           )}
         </div>
+
+        {/* Modal for confirmation delete account */}
+        {isDeleteFriendModalOpen && (
+          <ConfirmationModal
+            title="Êtes-vous sûr de vouloir supprimer cet ami ?"
+            onConfirm={() => {
+              handleDeleteFriend(friendIdToDelete!);
+              setIsDeleteFriendModalOpen(false);
+              setFriendIdToDelete(null);
+            }}
+            onCancel={() => setIsDeleteFriendModalOpen(false)}
+            confirmText="Oui, supprimer"
+            cancelText="Annuler"
+          />
+        )}
       </div>
     </>
   );

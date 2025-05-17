@@ -139,7 +139,6 @@ function Home() {
   useEffect(() => {
     const loadSpots = async () => {
       if (!mapRef.current) return;
-
       try {
         let spotList;
 
@@ -200,6 +199,18 @@ function Home() {
     <>
       <div ref={mapContainerRef} className="h-full w-full" />
 
+      {/* Messages */}
+      <div className="fixed top-4 w-full flex justify-center z-20">
+        <ErrorMessage
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
+        />
+        <SuccessMessage
+          successMessage={successMessage}
+          setSuccessMessage={setSuccessMessage}
+        />
+      </div>
+
       {/* Toggle */}
       <div className="h-full w-full relative">
         <div className="fixed top-6 w-full flex justify-center z-10">
@@ -256,16 +267,6 @@ function Home() {
             disabled={!userLocation}
           />
         </div>
-
-        {/* Messages */}
-        <ErrorMessage
-          errorMessage={errorMessage}
-          setErrorMessage={setErrorMessage}
-        />
-        <SuccessMessage
-          successMessage={successMessage}
-          setSuccessMessage={setSuccessMessage}
-        />
       </div>
 
       {/* Spot Preview */}
