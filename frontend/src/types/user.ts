@@ -10,4 +10,9 @@ export interface User {
   password?: string;
 }
 
+export interface UserSummary {
+  friendsNumber: number;
+  spotsNumber: number;
+}
+
 export type FriendshipUser = Pick<User, "id" | "pseudo" | "picture">;

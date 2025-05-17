@@ -1,6 +1,6 @@
 import fetchRequest from "./apiClient";
 import { SpoGeoJsonCollection, Spot, SpotGeoJson } from "../../types/spot";
-import { FriendshipUser, User } from "../../types/user";
+import { FriendshipUser, User, UserSummary } from "../../types/user";
 import {
   Friendship,
   PartialFriendship,
@@ -141,6 +141,13 @@ export const deleteUser = async (): Promise<void> => {
   });
 
   localStorage.removeItem("access_token");
+};
+
+export const getUserSummary = async (): Promise<UserSummary> => {
+  return await fetchRequest<UserSummary>({
+    method: "get",
+    url: "api/users/summary",
+  });
 };
 
 // =====================================
