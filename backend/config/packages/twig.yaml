@@ -1,4 +1,7 @@
 twig:
+    globals:
+        frontend_url: '%app.frontend_url%'
+
     file_name_pattern: '*.twig'
 
 when@test:

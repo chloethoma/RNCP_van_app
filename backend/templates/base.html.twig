@@ -4,7 +4,48 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        
         {% block stylesheets %}
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background-color: #f9f9f9;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .container {
+                    max-width: 600px;
+                    margin: 80px auto;
+                    padding: 40px;
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                    text-align: center;
+                }
+
+                .container h1 {
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                    color: #333;
+                }
+
+                .container p {
+                    font-size: 16px;
+                    line-height: 1.6;
+                    color: #555;
+                }
+
+                .container a {
+                    color: #007bff;
+                    text-decoration: none;
+                    font-weight: bold;
+                }
+
+                .container a:hover {
+                    text-decoration: underline;
+                }
+            </style>
         {% endblock %}
 
         {% block javascripts %}
@@ -14,3 +55,4 @@
         {% block body %}{% endblock %}
     </body>
 </html>
+

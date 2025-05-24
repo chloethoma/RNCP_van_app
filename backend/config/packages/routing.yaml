@@ -8,3 +8,5 @@ when@prod:
     framework:
         router:
             strict_requirements: null
+            # https://github.com/symfonycasts/reset-password-bundle?tab=readme-ov-file
+            default_uri: 'https://vanscape.duckdns.org'
