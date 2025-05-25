@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Search, UserPlus } from "lucide-react";
-import Header from "../components/headers/Header";
 import IconButton from "../components/buttons/IconButton";
 import { Link, useNavigate } from "react-router";
 import { PartialFriendship } from "../types/friendship";
@@ -9,11 +8,12 @@ import {
   getConfirmedFriendshipList,
   getReceivedFrienshipSummary,
 } from "../services/api/apiRequests";
-import FriendshipUserRow from "../components/FriendshipUserRow";
+import FriendshipUserRow from "../components/friendships/FriendshipUserRow";
 import ListButton from "../components/buttons/ListButton";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import { messages } from "../services/helpers/messagesHelper";
 import ConfirmationModal from "../components/modal/ConfirmationModal";
+import ViewWithHeader from "../components/headers/ViewWithHeader";
 
 const Friendships = () => {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ const Friendships = () => {
   const [isDeleteFriendModalOpen, setIsDeleteFriendModalOpen] = useState(false);
   const [friendIdToDelete, setFriendIdToDelete] = useState<number | null>(null);
 
+  // Get friends list of authenticated user
   useEffect(() => {
     const fetchFriendships = async () => {
       setLoading(true);
@@ -45,6 +46,7 @@ const Friendships = () => {
     fetchFriendships();
   }, []);
 
+  // Get number of received friends request waiting for approval
   useEffect(() => {
     const fetchReceivedFriendshipsSummary = async () => {
       try {
@@ -77,8 +79,8 @@ const Friendships = () => {
   };
 
   return (
-    <>
-      <Header text="MA COMMU" />
+      <ViewWithHeader text="MA COMMU">
+
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -93,7 +95,7 @@ const Friendships = () => {
             </Link>
           </div>
 
-          {/* Search friends */}
+          {/* SearchBar friends */}
           <div className="w-full flex items-center justify-between p-4 bg-white mt-4 shadow-md rounded-xl">
             <div className="flex items-center border rounded-md w-4/5">
               <Search size={20} color="gray" className="ml-3" />
@@ -115,7 +117,7 @@ const Friendships = () => {
             />
           </div>
 
-          {/* Friend list */}
+          {/* Friends list */}
           {!loading && (
             <ul className="w-full mt-4 space-y-2">
               {friendshipList.length > 0 ? (
@@ -148,7 +150,7 @@ const Friendships = () => {
           )}
         </div>
 
-        {/* Modal for confirmation delete account */}
+        {/* Modal for confirmation delete friend */}
         {isDeleteFriendModalOpen && (
           <ConfirmationModal
             title="Êtes-vous sûr de vouloir supprimer cet ami ?"
@@ -163,7 +165,7 @@ const Friendships = () => {
           />
         )}
       </div>
-    </>
+      </ViewWithHeader>
   );
 };
 

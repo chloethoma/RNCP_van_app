@@ -3,20 +3,13 @@ import { Spot } from "../../types/spot";
 import { useContext, useEffect, useState } from "react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import IconButton from "../../components/buttons/IconButton";
-import {
-  Heart,
-  MapPin,
-  Navigation,
-  PencilLine,
-  Share2,
-  Trash,
-} from "lucide-react";
-import Header from "../../components/headers/Header";
+import { MapPin, PencilLine, Trash } from "lucide-react";
 import { deleteSpot, fetchSpotById } from "../../services/api/apiRequests";
 import SuccessMessage from "../../components/messages/SuccessMessage";
 import UserContext from "../../hooks/UserContext";
 import { messages } from "../../services/helpers/messagesHelper";
 import ConfirmationModal from "../../components/modal/ConfirmationModal";
+import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function SpotDetails() {
   const { spotId } = useParams<{ spotId: string }>();
@@ -34,10 +27,11 @@ function SpotDetails() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    location.state?.successMessage || null,
+    location.state?.successMessage || null
   );
   const [spot, setSpot] = useState<Spot | null>(location.state?.spot || null);
 
+  // Get all informations about a spot
   useEffect(() => {
     if (!spot) {
       const fetchSpot = async () => {
@@ -76,21 +70,12 @@ function SpotDetails() {
     }
   };
 
-  const handleFavorite = () => {
-    console.log("Ajout aux favoris", spot?.id);
-  };
-
-  const handleShare = () => {
-    console.log("Partage du spot", spot?.id);
-  };
-
-  const handleItinerary = () => {
-    console.log("Itinéraire vers", spot?.id);
-  };
+  // const handleFavorite = () => {
+  //   console.log("Ajout aux favoris", spot?.id);
+  // };
 
   return (
-    <>
-      <Header text={"FICHE SPOT"} />
+    <ViewWithHeader text={"FICHE SPOT"}>
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -101,39 +86,37 @@ function SpotDetails() {
           setSuccessMessage={setSuccessMessage}
         />
 
-        {/* Pictures section */}
         {spot && (
           <div className="w-full max-w-lg bg-white shadow-lg rounded-xl px-6 py-3 relative">
+            {/* Pictures section */}
             <div className="h-40 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm rounded-lg mb-4">
               <p>Zone d'affichage des images (à implémenter)</p>
             </div>
 
+            {/* Details section */}
+            <div className="p-2 space-y-3">
+              <h2 className="text-xl font-semibold text-dark">Description</h2>
+              <p className="text-grey text-sm mt-2">{spot.description}</p>
+            </div>
+
+            {/* Coordinates section */}
+            <div className="flex flex-row gap-2 my-4">
+              <MapPin size={24} className="text-red drop-shadow-lg" />
+              <p className="text-xs text-grey mt-2">
+                Latitude: {spot.latitude} | Longitude: {spot.longitude}
+              </p>
+            </div>
+
             {/* Action buttons section */}
             {user && user.id === spot.owner.id && (
-              <div className="flex justify-between items-center p-2 my-2">
-                <div className="flex flex-col items-center gap-2">
-                  <IconButton
-                    onClick={handleItinerary}
-                    icon={<Navigation size={24} />}
-                  />
-                  <span className="mt-1 text-xs text-grey">Itinéraire</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
+              <div className="flex justify-around px-6 py-3">
+                {/* <div className="flex flex-col items-center gap-2">
                   <IconButton
                     onClick={handleFavorite}
                     icon={<Heart size={24} />}
                   />
                   <span className="mt-1 text-xs text-grey">Favoris</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                  <IconButton
-                    onClick={handleShare}
-                    icon={<Share2 size={24} />}
-                  />
-                  <span className="mt-1 text-xs text-grey">Partager</span>
-                </div>
+                </div> */}
 
                 <div className="flex flex-col items-center gap-2">
                   <IconButton
@@ -164,24 +147,10 @@ function SpotDetails() {
                 cancelText="Annuler"
               />
             )}
-
-            {/* Details section */}
-            <div className="p-2 space-y-3">
-              <h1 className="text-2xl font-bold text-dark">Description</h1>
-              <p className="text-grey text-sm mt-2">{spot.description}</p>
-            </div>
-
-            {/* Coordinates section */}
-            <div className="flex flex-row gap-2 my-4">
-              <MapPin size={24} className="text-red drop-shadow-lg" />
-              <p className="text-xs text-grey mt-2">
-                Latitude: {spot.latitude} | Longitude: {spot.longitude}
-              </p>
-            </div>
           </div>
         )}
       </div>
-    </>
+    </ViewWithHeader>
   );
 }
 

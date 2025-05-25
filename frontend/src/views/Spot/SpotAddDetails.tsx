@@ -1,11 +1,11 @@
 import { MapPin } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { useId, useState } from "react";
-import Header from "../../components/headers/Header";
-import FormButton from "../../components/buttons/FormButton";
+import FormSubmitButton from "../../components/buttons/FormSubmitButton";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { createSpot } from "../../services/api/apiRequests";
 import { messages } from "../../services/helpers/messagesHelper";
+import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function SpotAddDetails() {
   const location = useLocation();
@@ -41,8 +41,7 @@ function SpotAddDetails() {
   };
 
   return (
-    <>
-      <Header text={"AJOUTER UN SPOT"} />
+      <ViewWithHeader text={"AJOUTER UN SPOT"}>
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -78,11 +77,11 @@ function SpotAddDetails() {
               />
             </div>
 
-            <FormButton>Enregistrer</FormButton>
+            <FormSubmitButton>Enregistrer</FormSubmitButton>
           </form>
         </div>
       </div>
-    </>
+      </ViewWithHeader>
   );
 }
 

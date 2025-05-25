@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from "react-router";
 import { Spot } from "../../types/spot";
-import Header from "../../components/headers/Header";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { MapPin } from "lucide-react";
-import FormButton from "../../components/buttons/FormButton";
+import FormSubmitButton from "../../components/buttons/FormSubmitButton";
 import { useId, useState } from "react";
 import { updateSpot } from "../../services/api/apiRequests";
 import { messages } from "../../services/helpers/messagesHelper";
+import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function SpotEdit() {
   const location = useLocation();
@@ -46,15 +46,14 @@ function SpotEdit() {
   };
 
   return (
-    <>
-      <Header text={"MODIFICATION DU SPOT"} />
+      <ViewWithHeader text={"MODIFICATION DU SPOT"}>
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
         />
 
-        <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative h-[calc(100vh-4rem-5rem)]">
+        <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-6 relative">
           <div className="h-36 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-sm rounded-lg mb-4">
             <p>Zone d'upload d'images (à implémenter)</p>
           </div>
@@ -77,18 +76,18 @@ function SpotEdit() {
               </label>
               <textarea
                 id={id}
-                className="w-full h-50 md:h-32 p-2 border text-sm border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-dark-green placeholder-top placeholder-left resize-none"
+                className="w-full h-40 md:h-32 p-2 border text-sm border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-dark-green placeholder-top placeholder-left resize-none"
                 placeholder="Ajoutez une description..."
                 value={updatedSpot.description}
                 onChange={handleChange}
               />
             </div>
 
-            <FormButton>Enregistrer</FormButton>
+            <FormSubmitButton>Enregistrer</FormSubmitButton>
           </form>
         </div>
       </div>
-    </>
+      </ViewWithHeader>
   );
 }
 

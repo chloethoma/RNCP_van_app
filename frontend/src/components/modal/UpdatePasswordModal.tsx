@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { messages } from "../../services/helpers/messagesHelper";
 
 interface Props {
   onConfirm: (currentPassword: string, newPassword: string) => void;
@@ -14,12 +15,12 @@ function PasswordChangeModal({ onConfirm, onCancel }: Props) {
 
   const handleSubmit = () => {
     if (!currentPassword || !newPassword || !confirmNewPassword) {
-      setError("Tous les champs doivent être remplis.");
+      setError(messages.error_fields_missing);
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      setError("Les nouveaux mots de passe ne correspondent pas.");
+      setError(messages.error_password_not_identical);
       return;
     }
     setError(null);

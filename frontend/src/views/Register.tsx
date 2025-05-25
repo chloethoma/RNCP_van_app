@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { registerUser } from "../services/api/apiRequests";
-import FormButton from "../components/buttons/FormButton";
+import FormSubmitButton from "../components/buttons/FormSubmitButton";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import { messages } from "../services/helpers/messagesHelper";
@@ -21,7 +21,7 @@ function Register() {
     e.preventDefault();
 
     if (password !== confirmedPassword) {
-      setPasswordError(messages.password_not_identical);
+      setPasswordError(messages.error_password_not_identical);
       return;
     } else {
       setPasswordError("");
@@ -33,7 +33,7 @@ function Register() {
       navigate("/");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_register,
+        error instanceof Error ? error.message : messages.error_register
       );
     }
   }
@@ -45,6 +45,7 @@ function Register() {
         setErrorMessage={setErrorMessage}
       />
 
+      {/* Header */}
       <div className="w-full max-w-sm p-8 pt-0 rounded-2xl border-2 border-border-grey shadow-lg">
         <div className="flex flex-col items-center">
           <img src={Logo} alt="Logo" className="w-8/12" />
@@ -64,6 +65,7 @@ function Register() {
           </p>
         </div>
 
+        {/* Form */}
         <form onSubmit={handleRegistration}>
           <FormInput
             label={"Email"}
@@ -96,7 +98,7 @@ function Register() {
           {passwordError && (
             <p className="text-red text-xs mt-1">{passwordError}</p>
           )}
-          <FormButton>S'inscrire</FormButton>
+          <FormSubmitButton>S'inscrire</FormSubmitButton>
         </form>
       </div>
     </div>
