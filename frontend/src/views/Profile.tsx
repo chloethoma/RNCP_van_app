@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { LogOut, Pencil } from "lucide-react";
-import Header from "../components/headers/Header";
 import { User, UserSummary } from "../types/user";
 import {
   deleteUser,
@@ -17,21 +16,9 @@ import UpdatePasswordModal from "../components/modal/UpdatePasswordModal";
 import UserContext from "../hooks/UserContext";
 import { messages } from "../services/helpers/messagesHelper";
 import Avatar from "../assets/avatar_cat.png";
-import EditButton from "../components/buttons/EditButton";
-import SaveButton from "../components/buttons/SaveButton";
-
-interface InfoRowProps {
-  label: string;
-  value: string;
-  onSave: (value: string) => void;
-  type?: string;
-}
-
-interface InfoPasswordRowProps {
-  label: string;
-  value: string;
-  onEditPassword: () => void;
-}
+import ViewWithHeader from "../components/headers/ViewWithHeader";
+import InfoRow from "../components/profile/InfoRow";
+import InfoPasswordRow from "../components/profile/InfoPasswordRow";
 
 function Profile() {
   const navigate = useNavigate();
@@ -125,8 +112,7 @@ function Profile() {
   };
 
   return (
-    <>
-      <Header text="MON PROFIL" />
+      <ViewWithHeader text="MON PROFIL">
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -139,8 +125,10 @@ function Profile() {
 
         {user && !loading && (
           <div className="relative w-full flex flex-col items-center max-w-lg rounded-xl h-[calc(100vh-4rem-6rem)] md:p-4">
+            
             {/* Profil section */}
             <div className="w-full bg-white p-4 flex flex-row items-center justify-between shadow-md rounded-xl">
+              
               {/* Picture and edit button*/}
               <div className="relative">
                 <img
@@ -157,6 +145,7 @@ function Profile() {
                   />
                 </div>
               </div>
+              
               {/* Extra informations */}
               <div className="flex-1 text-center">
                 <p className="text-md font-semibold">
@@ -236,62 +225,7 @@ function Profile() {
           </div>
         )}
       </div>
-    </>
-  );
-}
-
-function InfoRow({ label, value, onSave }: InfoRowProps) {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>(value);
-
-  useEffect(() => {
-    if (!isEditing) {
-      setInputValue(value);
-    }
-  }, [value, isEditing]);
-
-  const handleSave = () => {
-    onSave(inputValue);
-    setIsEditing(false);
-  };
-
-  return (
-    <div className="flex justify-between items-center py-2 border-b border-light-grey gap-4">
-      <div className="flex-1">
-        <p className="text-sm text-grey">{label}</p>
-        {isEditing ? (
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            className="text-sm font-semibold border border-gray-300 px-2 py-1 rounded-md w-full"
-          />
-        ) : (
-          <p className="text-sm font-semibold">{value}</p>
-        )}
-      </div>
-      {isEditing ? (
-        <SaveButton onClick={handleSave} />
-      ) : (
-        <EditButton onClick={() => setIsEditing(true)} />
-      )}
-    </div>
-  );
-}
-
-function InfoPasswordRow({
-  label,
-  value,
-  onEditPassword,
-}: InfoPasswordRowProps) {
-  return (
-    <div className="flex justify-between items-center py-2 border-b border-light-grey">
-      <div className="flex-1">
-        <p className="text-sm text-grey">{label}</p>
-        <p className="text-sm font-semibold">{value}</p>
-      </div>
-      <EditButton onClick={onEditPassword} />
-    </div>
+      </ViewWithHeader>
   );
 }
 

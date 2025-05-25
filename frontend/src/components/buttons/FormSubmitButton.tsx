@@ -1,8 +1,8 @@
-interface FormButtonProps {
+interface FormSubmitButtonProps {
   children: React.ReactNode;
 }
 
-function FormButton({ children }: FormButtonProps) {
+function FormSubmitButton({ children }: FormSubmitButtonProps) {
   return (
     <button
       type="submit"
@@ -13,4 +13,4 @@ function FormButton({ children }: FormButtonProps) {
   );
 }
 
-export default FormButton;
+export default FormSubmitButton;

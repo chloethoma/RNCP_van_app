@@ -1,5 +1,5 @@
-import { FriendshipUser } from "../types/user";
-import Avatar from "../assets/avatar_cat.png";
+import { FriendshipUser } from "../../types/user";
+import Avatar from "../../assets/avatar_cat.png";
 
 interface FriendshipUserRowProps {
   user: FriendshipUser;

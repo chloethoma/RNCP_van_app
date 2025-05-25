@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { loginUser } from "../services/api/apiRequests";
-import FormButton from "../components/buttons/FormButton";
+import FormSubmitButton from "../components/buttons/FormSubmitButton";
 import Logo from "../assets/logo_transparent.svg";
 import ErrorMessage from "../components/messages/ErrorMessage";
 import { messages } from "../services/helpers/messagesHelper";
@@ -72,20 +72,23 @@ function Login() {
             value={password}
             onChange={setPassword}
           />
-          <FormButton>Se connecter</FormButton>
+          <FormSubmitButton>Se connecter</FormSubmitButton>
         </form>
 
-        <p className="text-xs text-dark-grey mt-1 px-4 pt-2">
-          Vous avez oublié votre mot de passe ?{" "}
-          <a
-            href={`${API_URL}/reset-password`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-center text-light/90 font-medium hover:underline hover:text-light transition-colors duration-200"
-          >
-            Cliquez ici
-          </a>
-        </p>
+        {/* Reset password */}
+        <div className="flex flex-col items-center mb-2">
+          <p className="text-xs text-dark-grey mt-1 px-4 pt-2">
+            Mot de passe oublié ?{" "}
+            <a
+              href={`${API_URL}/reset-password`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-center text-light/90 font-medium hover:underline hover:text-light transition-colors duration-200"
+            >
+              Cliquez ici
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

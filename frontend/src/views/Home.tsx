@@ -16,7 +16,7 @@ import {
   fetchUserByToken,
 } from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
-import SpotPreview from "../components/SpotPreview";
+import SpotPreview from "../components/spots/SpotPreview";
 import { Locate, Plus } from "lucide-react";
 import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
@@ -35,7 +35,7 @@ import ListButton from "../components/buttons/ListButton";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
-const SUPER_ZOOM: number = 10;
+const SUPER_ZOOM: number = 15;
 const MAPBOX_TOKEN: string = import.meta.env.VITE_MAPBOX_TOKEN;
 
 function Home() {
@@ -114,6 +114,7 @@ function Home() {
     );
   }, []);
 
+  // Action when user click on marker
   const handleMarkerClick = useCallback(
     async (spot: SpotGeoJson) => {
       try {
@@ -196,7 +197,7 @@ function Home() {
   };
 
   return (
-    <>
+    <div className="h-screen w-screen overflow-hidden relative">
       <div ref={mapContainerRef} className="h-full w-full" />
 
       {/* Messages */}
@@ -224,7 +225,7 @@ function Home() {
           />
         </div>
 
-        {/* Icon geolocation and add location */}
+        {/* Icons geolocation and add location */}
         <div className="fixed bottom-26 right-4 flex flex-col space-y-3 z-10">
           <Popover className="relative">
             <PopoverButton>
@@ -282,7 +283,7 @@ function Home() {
           />
         </div>
       )}
-    </>
+    </div>
   );
 }
 

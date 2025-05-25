@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/headers/Header";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { PartialFriendship } from "../../types/friendship";
 import {
@@ -9,9 +8,10 @@ import {
 } from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
 import ListButton from "../../components/buttons/ListButton";
-import FriendshipUserRow from "../../components/FriendshipUserRow";
+import FriendshipUserRow from "../../components/friendships/FriendshipUserRow";
 import Toggle from "../../components/toggle/Toggle";
 import { messages } from "../../services/helpers/messagesHelper";
+import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function PendingFriendships() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -73,8 +73,8 @@ function PendingFriendships() {
   };
 
   return (
-    <>
-      <Header text="DEMANDES EN ATTENTE" />
+      <ViewWithHeader text="DEMANDES EN ATTENTE">
+
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -137,7 +137,7 @@ function PendingFriendships() {
           </ul>
         )}
       </div>
-    </>
+      </ViewWithHeader>
   );
 }
 

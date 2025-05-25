@@ -5,12 +5,12 @@ import {
   searchUserByPseudo,
 } from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
-import Header from "../../components/headers/Header";
 import { Search } from "lucide-react";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import ListButton from "../../components/buttons/ListButton";
-import FriendshipUserRow from "../../components/FriendshipUserRow";
+import FriendshipUserRow from "../../components/friendships/FriendshipUserRow";
 import { messages } from "../../services/helpers/messagesHelper";
+import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function SearchUser() {
   const [query, setQuery] = useState("");
@@ -75,8 +75,7 @@ function SearchUser() {
   };
 
   return (
-    <>
-      <Header text="RECHERCHE" />
+      <ViewWithHeader text="RECHERCHE">
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -133,7 +132,7 @@ function SearchUser() {
           )}
         </div>
       </div>
-    </>
+      </ViewWithHeader>
   );
 }
 

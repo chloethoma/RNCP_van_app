@@ -1,7 +1,7 @@
-import { Spot } from "../types/spot";
+import { Spot } from "../../types/spot";
 import { useNavigate } from "react-router";
-import Picture from "../assets/picture_default.jpg";
-import IconButton from "./buttons/IconButton";
+import Picture from "../../assets/picture_default.jpg";
+import IconButton from "./../buttons/IconButton";
 import { Eye, X } from "lucide-react";
 
 interface SpotPreviewProps {
