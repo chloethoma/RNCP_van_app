@@ -8,6 +8,8 @@ import { messages } from "../services/helpers/messagesHelper";
 import FormInput from "../components/form/FormInput";
 
 function Login() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -22,7 +24,7 @@ function Login() {
       navigate("/");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default,
+        error instanceof Error ? error.message : messages.error_default
       );
     }
   }
@@ -72,6 +74,18 @@ function Login() {
           />
           <FormButton>Se connecter</FormButton>
         </form>
+
+        <p className="text-xs text-dark-grey mt-1 px-4 pt-2">
+          Vous avez oublié votre mot de passe ?{" "}
+          <a
+            href={`${API_URL}/reset-password`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-center text-light/90 font-medium hover:underline hover:text-light transition-colors duration-200"
+          >
+            Cliquez ici
+          </a>
+        </p>
       </div>
     </div>
   );
