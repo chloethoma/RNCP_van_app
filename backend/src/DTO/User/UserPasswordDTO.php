@@ -15,19 +15,19 @@ class UserPasswordDTO
 {
     public function __construct(
         #[OA\Property(
-            description: 'Plain current password',
+            description: 'Current password',
         )]
         #[Groups(['update'])]
         #[Assert\NotBlank(groups: ['update'])]
-        #[Assert\Length(min: 8, groups: ['update'])]
         public readonly string $currentPassword,
 
         #[OA\Property(
-            description: 'Plain new password',
+            description: 'New password',
         )]
         #[Groups(['update'])]
         #[Assert\NotBlank(groups: ['update'])]
-        #[Assert\Length(min: 8, groups: ['update'])]
+        #[Assert\PasswordStrength(groups: ['update'])]
+        #[Assert\NotCompromisedPassword(groups: ['update'])]
         #[CustomAssert\NotIdenticalPassword(groups: ['update'])]
         public readonly string $newPassword,
     ) {
