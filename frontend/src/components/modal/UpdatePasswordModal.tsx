@@ -19,7 +19,7 @@ function PasswordChangeModal({ onConfirm, onCancel }: Props) {
       setError(messages.error_fields_missing);
       return;
     }
-    
+
     // Validate password strength
     const entropy = getEntropy(newPassword);
 
@@ -32,7 +32,7 @@ function PasswordChangeModal({ onConfirm, onCancel }: Props) {
       setError(messages.error_password_not_identical);
       return;
     }
-    
+
     setError(null);
     onConfirm(currentPassword, newPassword);
   };

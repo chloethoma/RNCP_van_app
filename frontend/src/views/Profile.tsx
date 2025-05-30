@@ -112,7 +112,7 @@ function Profile() {
   };
 
   return (
-      <ViewWithHeader text="MON PROFIL">
+    <ViewWithHeader text="MON PROFIL">
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -125,10 +125,8 @@ function Profile() {
 
         {user && !loading && (
           <div className="relative w-full flex flex-col items-center max-w-lg rounded-xl h-[calc(100vh-4rem-6rem)] md:p-4">
-            
             {/* Profil section */}
             <div className="w-full bg-white p-4 flex flex-row items-center justify-between shadow-md rounded-xl">
-              
               {/* Picture and edit button*/}
               <div className="relative">
                 <img
@@ -145,7 +143,7 @@ function Profile() {
                   />
                 </div>
               </div>
-              
+
               {/* Extra informations */}
               <div className="flex-1 text-center">
                 <p className="text-md font-semibold">
@@ -225,7 +223,7 @@ function Profile() {
           </div>
         )}
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 }
 

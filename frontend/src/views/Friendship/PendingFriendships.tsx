@@ -73,8 +73,7 @@ function PendingFriendships() {
   };
 
   return (
-      <ViewWithHeader text="DEMANDES EN ATTENTE">
-
+    <ViewWithHeader text="DEMANDES EN ATTENTE">
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -137,7 +136,7 @@ function PendingFriendships() {
           </ul>
         )}
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 }
 

@@ -27,7 +27,7 @@ function SpotDetails() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    location.state?.successMessage || null
+    location.state?.successMessage || null,
   );
   const [spot, setSpot] = useState<Spot | null>(location.state?.spot || null);
 

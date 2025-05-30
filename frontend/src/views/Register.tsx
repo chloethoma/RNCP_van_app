@@ -45,7 +45,7 @@ function Register() {
       navigate("/");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_register
+        error instanceof Error ? error.message : messages.error_register,
       );
     }
   }

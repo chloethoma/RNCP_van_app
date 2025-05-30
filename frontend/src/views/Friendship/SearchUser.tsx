@@ -75,7 +75,7 @@ function SearchUser() {
   };
 
   return (
-      <ViewWithHeader text="RECHERCHE">
+    <ViewWithHeader text="RECHERCHE">
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -132,7 +132,7 @@ function SearchUser() {
           )}
         </div>
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 }
 

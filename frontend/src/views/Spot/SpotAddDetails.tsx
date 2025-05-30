@@ -41,7 +41,7 @@ function SpotAddDetails() {
   };
 
   return (
-      <ViewWithHeader text={"AJOUTER UN SPOT"}>
+    <ViewWithHeader text={"AJOUTER UN SPOT"}>
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -81,7 +81,7 @@ function SpotAddDetails() {
           </form>
         </div>
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 }
 

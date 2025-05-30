@@ -6,7 +6,7 @@ export const messages = {
   error_container: "La carte n'est pas encore prête.",
   error_map_init: "Erreur lors de l'initialisation de la carte.",
   error_geolocation_unsupported:
-  "La géolocalisation n'est pas supportée par votre navigateur.",
+    "La géolocalisation n'est pas supportée par votre navigateur.",
   error_geolocation_fail: "Impossible de récupérer votre position.",
   error_spots_load: "Erreur lors du chargement des spots.",
   error_spot_load: "Erreur lors de la récupération du spot.",

@@ -5,7 +5,7 @@ interface FormInputProps {
   type: "email" | "password" | "text";
   placeholder: string;
   value: string;
-  required?: boolean
+  required?: boolean;
   onChange: (value: string) => void;
 }
 

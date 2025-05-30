@@ -79,8 +79,7 @@ const Friendships = () => {
   };
 
   return (
-      <ViewWithHeader text="MA COMMU">
-
+    <ViewWithHeader text="MA COMMU">
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -165,7 +164,7 @@ const Friendships = () => {
           />
         )}
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 };
 
