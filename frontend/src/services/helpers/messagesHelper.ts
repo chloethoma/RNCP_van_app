@@ -6,7 +6,7 @@ export const messages = {
   error_container: "La carte n'est pas encore prête.",
   error_map_init: "Erreur lors de l'initialisation de la carte.",
   error_geolocation_unsupported:
-  "La géolocalisation n'est pas supportée par votre navigateur.",
+    "La géolocalisation n'est pas supportée par votre navigateur.",
   error_geolocation_fail: "Impossible de récupérer votre position.",
   error_spots_load: "Erreur lors du chargement des spots.",
   error_spot_load: "Erreur lors de la récupération du spot.",
@@ -14,6 +14,7 @@ export const messages = {
   error_spot_create: "Erreur lors de la création du spot",
   error_description_missing: "Veuillez entrer une description",
   error_password_not_identical: "Les mots de passe ne sont pas identiques.",
+  error_password_not_strong: "Le mot de passe est trop faible.",
   error_fields_missing: "Tous les champs doivent être remplis.",
 
   // success messages

@@ -18,7 +18,11 @@ function InfoPasswordRow({
         <p className="text-sm text-grey">{label}</p>
         <p className="text-sm font-semibold">{value}</p>
       </div>
-      <IconButton onClick={onEditPassword} color="white" icon={<Pencil size={16} color="black" />}/>
+      <IconButton
+        onClick={onEditPassword}
+        color="white"
+        icon={<Pencil size={16} color="black" />}
+      />
     </div>
   );
 }

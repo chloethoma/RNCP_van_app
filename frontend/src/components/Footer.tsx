@@ -1,4 +1,4 @@
-function Footer () {
+function Footer() {
   return (
     <footer className="fixed bottom-0 text-center text-xs text-grey p-2 w-full z-30">
       <p>
@@ -13,6 +13,6 @@ function Footer () {
       </p>
     </footer>
   );
-};
+}
 
 export default Footer;

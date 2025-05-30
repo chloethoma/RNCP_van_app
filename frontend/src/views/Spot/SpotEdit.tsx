@@ -46,7 +46,7 @@ function SpotEdit() {
   };
 
   return (
-      <ViewWithHeader text={"MODIFICATION DU SPOT"}>
+    <ViewWithHeader text={"MODIFICATION DU SPOT"}>
       <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
         <ErrorMessage
           errorMessage={errorMessage}
@@ -87,7 +87,7 @@ function SpotEdit() {
           </form>
         </div>
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 }
 

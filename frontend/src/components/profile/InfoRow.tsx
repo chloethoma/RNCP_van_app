@@ -40,9 +40,17 @@ function InfoRow({ label, value, onSave }: InfoRowProps) {
         )}
       </div>
       {isEditing ? (
-        <IconButton onClick={handleSave} color="white" icon={<Check size={16} color="green" strokeWidth={3} />}/>
+        <IconButton
+          onClick={handleSave}
+          color="white"
+          icon={<Check size={16} color="green" strokeWidth={3} />}
+        />
       ) : (
-        <IconButton onClick={() => setIsEditing(true)} color="white" icon={<Pencil size={16} color="black" />}/>
+        <IconButton
+          onClick={() => setIsEditing(true)}
+          color="white"
+          icon={<Pencil size={16} color="black" />}
+        />
       )}
     </div>
   );

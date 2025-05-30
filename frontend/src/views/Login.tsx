@@ -24,7 +24,7 @@ function Login() {
       navigate("/");
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : messages.error_default
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   }
@@ -64,6 +64,7 @@ function Login() {
             placeholder={"Entrez votre email"}
             value={email}
             onChange={setEmail}
+            required
           />
           <FormInput
             label={"Password"}
@@ -71,6 +72,7 @@ function Login() {
             placeholder={"Entrez votre mot de passe"}
             value={password}
             onChange={setPassword}
+            required
           />
           <FormSubmitButton>Se connecter</FormSubmitButton>
         </form>

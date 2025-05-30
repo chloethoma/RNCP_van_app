@@ -2,20 +2,20 @@ import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function LegalNotice() {
   return (
-      <ViewWithHeader text="Mentions légales">
+    <ViewWithHeader text="Mentions légales">
       <div className="px-6 pt-2 pb-12 text-sm bg-light-grey font-default">
-            <h2 className="text-lg font-medium mt-6">Éditeur du site</h2>
-            <p>
-              Nom de l’application : <strong>VanScape</strong>
-            </p>
-            <p>Responsable de la publication : Chloé</p>
-            <p>
-              Email :{" "}
-              <a href="mailto:vanscape.contact@gmail.com" className="underline">
-                vanscape.contact@gmail.com
-              </a>
-            </p>
-            <p>Adresse : disponible sur demande</p>
+        <h2 className="text-lg font-medium mt-6">Éditeur du site</h2>
+        <p>
+          Nom de l’application : <strong>VanScape</strong>
+        </p>
+        <p>Responsable de la publication : Chloé</p>
+        <p>
+          Email :{" "}
+          <a href="mailto:vanscape.contact@gmail.com" className="underline">
+            vanscape.contact@gmail.com
+          </a>
+        </p>
+        <p>Adresse : disponible sur demande</p>
 
         <h2 className="text-lg font-medium mt-6">Hébergement</h2>
         <p>
@@ -58,7 +58,7 @@ function LegalNotice() {
           Dernière mise à jour : mai 2025
         </p>
       </div>
-      </ViewWithHeader>
+    </ViewWithHeader>
   );
 }
 
