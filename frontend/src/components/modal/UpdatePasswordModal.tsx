@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { messages } from "../../services/helpers/messagesHelper";
+import getEntropy from "fast-password-entropy";
 
 interface Props {
   onConfirm: (currentPassword: string, newPassword: string) => void;
@@ -18,11 +19,20 @@ function PasswordChangeModal({ onConfirm, onCancel }: Props) {
       setError(messages.error_fields_missing);
       return;
     }
+    
+    // Validate password strength
+    const entropy = getEntropy(newPassword);
+
+    if (entropy < 80) {
+      setError(messages.error_password_not_strong);
+      return;
+    }
 
     if (newPassword !== confirmNewPassword) {
       setError(messages.error_password_not_identical);
       return;
     }
+    
     setError(null);
     onConfirm(currentPassword, newPassword);
   };

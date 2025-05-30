@@ -14,6 +14,7 @@ export const messages = {
   error_spot_create: "Erreur lors de la création du spot",
   error_description_missing: "Veuillez entrer une description",
   error_password_not_identical: "Les mots de passe ne sont pas identiques.",
+  error_password_not_strong: "Le mot de passe est trop faible.",
   error_fields_missing: "Tous les champs doivent être remplis.",
 
   // success messages
