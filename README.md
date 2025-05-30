@@ -15,13 +15,10 @@ Vanscape is a web application with an interactive map that lets users **save and
 - [Endpoints](#endpoints)
 - [Contributing](#contributing)
 
----
-
 ## Stack
 
 - Backend : Symfony 7.1 (PHP 8.3)
 - Frontend : React 18.3
----
 
 ## Local development
 
@@ -128,19 +125,14 @@ After logging, you can add your database to pgAdmin.
 - Username: $POSTGRES_USER (see .env.local)
 - Password: $POSTGRES_PASSWORD (see .env.local)
 
----
-
 ## Endpoints
 
-TODO doc openApi
-<!-- All endpoint are described on an openapi format [here] -->
- 
----
+- All endpoint are described on an openapi format [here](/backend/docs/api/openapi.yaml).
+- You can also use swagger UI interface [here](https://localhost/openapi) — only available in local development when the container is running.
 
 ## Contributing
 
-- Backend : to contribute to the project, please follow the [contributing guide](/backend/CONTRIBUTING.md). This document references code architecture, and guidelines for the project.
-
+- Backend : to contribute to the project, please follow the [contributing guide](/backend/docs/CONTRIBUTING.md). This document references code architecture, and guidelines for the project.
 - Frontend : TODO
 
 --- 

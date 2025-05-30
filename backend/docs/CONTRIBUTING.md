@@ -31,7 +31,6 @@ For more informations : [Docker base setup for Symfony (dunglas)](https://github
 
 This document outlines best practices and guidelines for structuring the code in this project to ensure a clean, maintainable, and scalable architecture. These guidelines leverage patterns like DTOs, Mappers, and Handlers to achieve separation of concerns.
 
----
 
 ### Architecture
 This structure follows a layered architecture, inspired by Clean Architecture and Hexagonal principles.  
