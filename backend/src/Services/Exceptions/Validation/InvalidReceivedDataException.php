@@ -6,7 +6,7 @@ class InvalidReceivedDataException extends \Exception
 {
     protected $message = 'Errors found in received data in %s';
     protected $details = [];
-    public static $staticCode = 1001;
+    public static $staticCode = 1000;
 
     public function __construct(string $class)
     {

@@ -1,0 +1,929 @@
+openapi: 3.0.0
+info:
+  title: 'VanScape API'
+  description: 'Vanscape API endpoints'
+  version: 1.0.0
+servers:
+  -
+    url: 'https://api-vanscape.duckdns.org'
+    description: 'API over HTTPS'
+paths:
+  '/api/friendships/{friendId}':
+    post:
+      tags:
+        - Friendship
+      summary: 'Creates a new friendship between the authenticated user and the user with the given friendId.'
+      operationId: post_create_friendship
+      parameters:
+        -
+          name: friendId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      responses:
+        '201':
+          description: 'Returns data for the created friendship'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendshipDTO'
+        '400':
+          description: 'Errors found in received data in %s'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Friendship not found'
+        '409':
+          description: 'Friendship already exists'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    delete:
+      tags:
+        - Friendship
+      summary: 'Deletes a friendship between the authenticated user and the specified friend.'
+      operationId: delete_delete_friendship
+      parameters:
+        -
+          name: friendId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      responses:
+        '204':
+          description: 'Successfully deleted the friendship'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Friendship not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  '/api/friendships/pending/{type}':
+    get:
+      tags:
+        - Friendship
+      summary: 'Retrieves a list of pending friendship requests (received or sent) for the authenticated user.'
+      operationId: get_read_pending_friendships
+      parameters:
+        -
+          name: type
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: received|sent
+            enum:
+              - received
+              - sent
+      responses:
+        '200':
+          description: 'Returns a list of pending friendship requests (received or sent)'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PartialFriendshipDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/friendships/pending/received/summary:
+    get:
+      tags:
+        - Friendship
+      summary: 'Retrieves the number of pending friendship requests received by the authenticated user.'
+      operationId: get_read_pending_friendships_summary
+      responses:
+        '200':
+          description: 'Returns the number of pending friendship requests received'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendshipReceivedSummaryDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/friendships/confirmed:
+    get:
+      tags:
+        - Friendship
+      summary: 'Retrieves the list of confirmed friendships for the authenticated user.'
+      operationId: get_read_confirmed_friendships
+      responses:
+        '200':
+          description: 'Returns a list of confirmed friendship'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PartialFriendshipDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  '/api/friendships/{requesterId}/confirm':
+    patch:
+      tags:
+        - Friendship
+      summary: 'Confirms a friendship request by setting its `isConfirmed` status to true.'
+      operationId: patch_update_confirm_friendship
+      parameters:
+        -
+          name: requesterId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      responses:
+        '200':
+          description: 'Return data for the updated friendship'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FriendshipDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Friendship not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/search/users:
+    get:
+      tags:
+        - 'Search users'
+      summary: 'Search user in database.'
+      operationId: get_search_users
+      parameters:
+        -
+          name: pseudo
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Users list matching with the search query'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO3'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/spots:
+    get:
+      tags:
+        - Spot
+      summary: 'Retrieves the list of spots for the authenticated user.'
+      operationId: get_read_all_spots
+      responses:
+        '200':
+          description: 'Returns a list of spots'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpotCollectionDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    post:
+      tags:
+        - Spot
+      summary: 'Create new spot.'
+      operationId: post_create_spot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpotDTO'
+      responses:
+        '201':
+          description: 'Returns data for the created spot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotDTO3'
+        '400':
+          description: 'Errors found in received data in %s'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  '/api/spots/{spotId}':
+    get:
+      tags:
+        - Spot
+      summary: 'Retrieves a spot informations.'
+      operationId: get_read_spot
+      parameters:
+        -
+          name: spotId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      responses:
+        '200':
+          description: 'Return data for a spot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotDTO3'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Spot not found'
+        '403':
+          description: 'You are not authorized to perform this action (spot)'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    put:
+      tags:
+        - Spot
+      summary: 'Update spot informations of the given spotId.'
+      operationId: put_edit_spot
+      parameters:
+        -
+          name: spotId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpotDTO2'
+      responses:
+        '200':
+          description: 'Return data for the updated spot'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotDTO3'
+        '400':
+          description: 'Errors found in received data in %s'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Spot not found'
+        '403':
+          description: 'You are not authorized to perform this action (spot)'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    delete:
+      tags:
+        - Spot
+      summary: 'Deletes a spot.'
+      operationId: delete_delete_spot
+      parameters:
+        -
+          name: spotId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      responses:
+        '204':
+          description: 'Successfully deleted the spot'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Spot not found'
+        '403':
+          description: 'You are not authorized to perform this action (spot)'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/spots/friends:
+    get:
+      tags:
+        - 'Spot of friends'
+      summary: 'Retrieves the list of spots shared by the friends of the authenticated user.'
+      operationId: get_read_all_spots_friends
+      responses:
+        '200':
+          description: 'Returns a list of spots shared by the friends of the authenticated user'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SpotCollectionDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  '/api/spots/{spotId}/friends':
+    get:
+      tags:
+        - 'Spot of friends'
+      summary: 'Retrieves a spot informations share by a friend.'
+      operationId: get_read_spot_friend
+      parameters:
+        -
+          name: spotId
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '[0-9]+'
+      responses:
+        '200':
+          description: 'Return data for a spot share by a friend'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpotDTO3'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'Spot not found'
+        '403':
+          description: 'You are not authorized to perform this action (spot)'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /register:
+    post:
+      tags:
+        - User
+      summary: 'Create new user.'
+      operationId: post_create_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        '201':
+          description: 'Returns data for the created user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO4'
+        '400':
+          description: 'Errors found in received data in %s'
+        '409':
+          description: 'User already exists'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/users:
+    get:
+      tags:
+        - User
+      summary: 'Retrieves the authenticated user informations.'
+      operationId: get_read_user
+      responses:
+        '200':
+          description: 'Returns data for a user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO4'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    put:
+      tags:
+        - User
+      summary: 'Update authenticated user informations.'
+      operationId: put_edit_user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO2'
+      responses:
+        '200':
+          description: 'Returns updated data for the authenticated user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO4'
+        '400':
+          description: 'Errors found in received data in %s'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '409':
+          description: 'User already exists'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    delete:
+      tags:
+        - User
+      summary: 'Deletes the authenticated user account.'
+      operationId: delete_delete_user
+      responses:
+        '204':
+          description: 'Successfully deleted the user'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+    patch:
+      tags:
+        - User
+      summary: 'Update authenticated user password.'
+      operationId: patch_edit_user_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPasswordDTO'
+      responses:
+        '204':
+          description: 'Successfully updated the password'
+        '400':
+          description: 'Errors found in received data in %s'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '403':
+          description: 'You are not authorized to perform this action (user)'
+        '500':
+          description: 'Oops ! Something went wrong.'
+  /api/users/summary:
+    get:
+      tags:
+        - User
+      summary: 'Retrieves user extra infos summary (number of spots and friends).'
+      operationId: get_user_extra_infos
+      responses:
+        '200':
+          description: 'Returns extra informations data for the authenticated user'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummaryDTO'
+        '401':
+          description: 'No authenticated user found in JWT'
+        '404':
+          description: 'User not found'
+        '500':
+          description: 'Oops ! Something went wrong.'
+components:
+  schemas:
+    SpotDTO:
+      title: Spot
+      description: 'Details of a spot'
+      required:
+        - latitude
+        - longitude
+        - description
+        - isFavorite
+      properties:
+        latitude:
+          description: Latitude
+          type: number
+          format: float
+          maximum: 90
+          minimum: -90
+          example: 48.8896087
+        longitude:
+          description: Longitude
+          type: number
+          format: float
+          maximum: 180
+          minimum: -180
+          example: 2.2003227
+        description:
+          description: 'Spot description'
+          type: string
+          example: 'Un super spot en bord de mer'
+        isFavorite:
+          description: 'Spot is in favorite list or not'
+          type: boolean
+      type: object
+    SpotDTO2:
+      title: Spot
+      description: 'Details of a spot'
+      required:
+        - latitude
+        - longitude
+        - description
+        - isFavorite
+      properties:
+        latitude:
+          description: Latitude
+          type: number
+          format: float
+          maximum: 90
+          minimum: -90
+          example: 48.8896087
+        longitude:
+          description: Longitude
+          type: number
+          format: float
+          maximum: 180
+          minimum: -180
+          example: 2.2003227
+        description:
+          description: 'Spot description'
+          type: string
+          example: 'Un super spot en bord de mer'
+        isFavorite:
+          description: 'Spot is in favorite list or not'
+          type: boolean
+      type: object
+    UserDTO:
+      title: User
+      description: 'User identity'
+      required:
+        - email
+        - pseudo
+      properties:
+        email:
+          description: 'Email of the user'
+          type: string
+          example: jane.doe@gmail.com
+        pseudo:
+          description: 'Pseudo of the user'
+          type: string
+          maxLength: 50
+          minLength: 3
+          pattern: '[a-zA-Z0-9_]+'
+          example: jane_doe
+        emailVerified:
+          description: 'Not implemented yet'
+          type: boolean
+          default: false
+          nullable: true
+        password:
+          description: 'Hashed password'
+          type: string
+          default: null
+          minLength: 8
+          nullable: true
+      type: object
+    UserDTO2:
+      title: User
+      description: 'User identity'
+      required:
+        - email
+        - pseudo
+      properties:
+        email:
+          description: 'Email of the user'
+          type: string
+          example: jane.doe@gmail.com
+        pseudo:
+          description: 'Pseudo of the user'
+          type: string
+          maxLength: 50
+          minLength: 3
+          pattern: '[a-zA-Z0-9_]+'
+          example: jane_doe
+        picture:
+          description: 'Choosen avatar for profil picture'
+          type: string
+          nullable: true
+        emailVerified:
+          description: 'Not implemented yet'
+          type: boolean
+          default: false
+          nullable: true
+      type: object
+    UserPasswordDTO:
+      title: 'User password'
+      description: 'Update password DTO'
+      required:
+        - currentPassword
+        - newPassword
+      properties:
+        currentPassword:
+          description: 'Plain current password'
+          type: string
+          minLength: 8
+        newPassword:
+          description: 'Plain new password'
+          type: string
+          minLength: 8
+      type: object
+    FriendshipDTO:
+      title: Friendship
+      description: 'Details of a friendship'
+      required:
+        - requester
+        - receiver
+        - isConfirmed
+      properties:
+        requester:
+          description: 'Requester identity'
+          oneOf:
+            -
+              $ref: '#/components/schemas/FriendshipUserDTO'
+        receiver:
+          $ref: '#/components/schemas/FriendshipUserDTO'
+        isConfirmed:
+          description: 'Friendship is confirmed or not'
+          type: boolean
+      type: object
+    PartialFriendshipDTO:
+      title: 'Partial Friendship'
+      description: 'Details of a friendship without details of requester/receiver'
+      required:
+        - friend
+        - isConfirmed
+      properties:
+        friend:
+          $ref: '#/components/schemas/FriendshipUserDTO'
+        isConfirmed:
+          description: 'Friendship is confirmed or not'
+          type: boolean
+      type: object
+    FriendshipReceivedSummaryDTO:
+      title: 'Friendship received summary'
+      description: 'Number of received friendship request'
+      required:
+        - count
+      properties:
+        count:
+          description: 'Number of received friendship request'
+          type: integer
+          example: 3
+      type: object
+    UserDTO3:
+      title: User
+      description: 'User identity'
+      required:
+        - id
+        - pseudo
+      properties:
+        id:
+          description: 'User id'
+          type: integer
+          example: 12
+        pseudo:
+          description: 'Pseudo of the user'
+          type: string
+          maxLength: 50
+          minLength: 3
+          pattern: '[a-zA-Z0-9_]+'
+          example: jane_doe
+        picture:
+          description: 'Choosen avatar for profil picture'
+          type: string
+          nullable: true
+      type: object
+    SpotCollectionDTO:
+      title: 'GeoJSON spot collection'
+      description: 'GeoJSON schema for a list of spot'
+      properties:
+        type:
+          description: 'GeoJSON type (const FeatureCollection)'
+          type: string
+          default: FeatureCollection
+          nullable: true
+        features:
+          description: 'List of GeoJSON spots'
+          type: array
+          items:
+            $ref: '#/components/schemas/SpotDTO4'
+          default: []
+      type: object
+    SpotDTO3:
+      title: Spot
+      description: 'Details of a spot'
+      required:
+        - latitude
+        - longitude
+        - description
+        - owner
+        - isFavorite
+      properties:
+        latitude:
+          description: Latitude
+          type: number
+          format: float
+          maximum: 90
+          minimum: -90
+          example: 48.8896087
+        longitude:
+          description: Longitude
+          type: number
+          format: float
+          maximum: 180
+          minimum: -180
+          example: 2.2003227
+        description:
+          description: 'Spot description'
+          type: string
+          example: 'Un super spot en bord de mer'
+        owner:
+          description: 'Spot owner identity'
+          oneOf:
+            -
+              $ref: '#/components/schemas/SpotOwnerDTO'
+        isFavorite:
+          description: 'Spot is in favorite list or not'
+          type: boolean
+        id:
+          description: 'Spot id'
+          type: integer
+          default: null
+          example: 12
+          nullable: true
+      type: object
+    UserDTO4:
+      title: User
+      description: 'User identity'
+      required:
+        - id
+        - email
+        - pseudo
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          description: 'User id'
+          type: integer
+          example: 12
+        email:
+          description: 'Email of the user'
+          type: string
+          example: jane.doe@gmail.com
+        pseudo:
+          description: 'Pseudo of the user'
+          type: string
+          maxLength: 50
+          minLength: 3
+          pattern: '[a-zA-Z0-9_]+'
+          example: jane_doe
+        createdAt:
+          description: 'Creation date of the account'
+          type: string
+          format: date-time
+        updatedAt:
+          description: 'Updated date of the account'
+          type: string
+          format: date-time
+        picture:
+          description: 'Choosen avatar for profil picture'
+          type: string
+          nullable: true
+        token:
+          description: 'JWT token for a session'
+          type: string
+          nullable: true
+        emailVerified:
+          description: 'Not implemented yet'
+          type: boolean
+          default: false
+          nullable: true
+      type: object
+    UserSummaryDTO:
+      title: 'User summary'
+      description: 'Extra infos about user'
+      required:
+        - friendsNumber
+        - spotsNumber
+      properties:
+        friendsNumber:
+          description: 'Number of friends'
+          type: integer
+        spotsNumber:
+          description: 'Number of spots'
+          type: integer
+      type: object
+    FriendshipUserDTO:
+      title: 'Friendship user identity'
+      description: 'Identity of a friend'
+      required:
+        - id
+        - pseudo
+      properties:
+        id:
+          description: 'User id'
+          type: integer
+          example: 2
+        pseudo:
+          description: 'User pseudo'
+          type: string
+          example: 'Jane Doe'
+        picture:
+          description: 'Choosen avatar for profil picture'
+          type: string
+          nullable: true
+      type: object
+    SpotDTO4:
+      title: 'GeoJSON spot'
+      description: 'GeoJSON schema for a spot'
+      required:
+        - geometry
+        - properties
+      properties:
+        geometry:
+          $ref: '#/components/schemas/SpotGeometryDTO'
+        properties:
+          $ref: '#/components/schemas/SpotPropertiesDTO'
+        type:
+          description: 'GeoJSON type (const Feature)'
+          type: string
+          default: Feature
+          nullable: true
+      type: object
+    SpotOwnerDTO:
+      title: 'Spot Owner'
+      description: 'Spot owner identity'
+      required:
+        - id
+        - pseudo
+      properties:
+        id:
+          description: 'User id'
+          type: integer
+          example: 2
+        pseudo:
+          description: 'User pseudo'
+          type: string
+          example: 'Jane Doe'
+        picture:
+          description: 'Choosen avatar for profil picture'
+          type: string
+          nullable: true
+      type: object
+    SpotGeometryDTO:
+      title: 'GeoJSON geometry'
+      description: 'GeoJSON geometry for a spot'
+      required:
+        - coordinates
+      properties:
+        coordinates:
+          description: 'Coordinates [longitude, latitude]'
+          type: array
+          items: {  }
+          example:
+            - 2.2003227
+            - 48.8896087
+        type:
+          description: 'The type of the geometry'
+          type: string
+          default: Point
+          nullable: true
+      type: object
+    SpotPropertiesDTO:
+      title: 'GeoJSON properties'
+      description: 'Informations about a spot'
+      required:
+        - spotId
+        - ownerId
+      properties:
+        spotId:
+          description: 'Spot id'
+          type: integer
+        ownerId:
+          description: 'Owner id of a spot'
+          type: integer
+      type: object
+  securitySchemes:
+    Bearer:
+      type: http
+      bearerFormat: JWT
+      scheme: bearer
+security:
+  -
+    Bearer: []
+tags:
+  -
+    name: Friendship
+  -
+    name: 'Search users'
+  -
+    name: Spot
+  -
+    name: 'Spot of friends'
+  -
+    name: User
+

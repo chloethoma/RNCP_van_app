@@ -1,0 +1,26 @@
+nelmio_api_doc:
+    use_validation_groups: true
+    documentation:
+        servers:
+          - url: https://api-vanscape.duckdns.org
+            description: API over HTTPS
+
+        info:
+            title: VanScape API
+            description: Vanscape API endpoints
+            version: 1.0.0
+
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+
+        security:
+            - Bearer: []
+            
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/(?!_|healthcheck[a-z]?|doc)
+        disable_default_routes: true # disable untagged routes (e.g. reset-password endpoints)
