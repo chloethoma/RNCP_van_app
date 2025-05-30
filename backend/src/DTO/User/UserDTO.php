@@ -80,11 +80,12 @@ class UserDTO
         public readonly ?bool $emailVerified = false,
 
         #[OA\Property(
-            description: 'Hashed password'
+            description: 'Password'
         )]
         #[Groups(['create'])]
         #[Assert\NotBlank(allowNull: true, groups: ['create'])]
-        #[Assert\Length(min: 8, groups: ['create'])]
+        #[Assert\PasswordStrength(groups: ['create'])]
+        #[Assert\NotCompromisedPassword(groups: ['create'])]
         public readonly ?string $password = null,
     ) {
     }
