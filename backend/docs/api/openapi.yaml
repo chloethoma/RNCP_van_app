@@ -581,10 +581,9 @@ components:
           default: false
           nullable: true
         password:
-          description: 'Hashed password'
+          description: Password
           type: string
           default: null
-          minLength: 8
           nullable: true
       type: object
     UserDTO2:
@@ -623,13 +622,11 @@ components:
         - newPassword
       properties:
         currentPassword:
-          description: 'Plain current password'
+          description: 'Current password'
           type: string
-          minLength: 8
         newPassword:
-          description: 'Plain new password'
+          description: 'New password'
           type: string
-          minLength: 8
       type: object
     FriendshipDTO:
       title: Friendship

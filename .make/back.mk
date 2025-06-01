@@ -22,8 +22,8 @@ openapi: ## Generates OpenAPI documentation
 	mkdir -p backend/docs/api
 	${SYMFONY} nelmio:apidoc:dump --format=yaml > backend/docs/api/openapi.yaml
 
-logs: ## Display logs
-	${PHP_CONT} tail -f /app/var/log/dev.log
+# logs: ## Display backend logs
+# 	${PHP_CONT} tail -f /app/var/log/dev.log
 
 # —— Composer
 composer: ## Run composer, pass the parameter "c=" to run a given command, example: make composer c='req symfony/orm-pack'

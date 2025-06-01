@@ -1,23 +1,21 @@
 # Production environment override
 services:
-  database:
-    env_file: .env.prod
-
   php:
     build:
       context: backend/
       target: frankenphp_prod
       args:
         DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
-    env_file: .env.prod
+        FRONTEND_URL: ${FRONTEND_URL}
     environment:
       APP_SECRET: ${APP_SECRET}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET}
+      SERVER_NAME_FRONT: ${SERVER_NAME_FRONT}
+      FRONT_PORT: ${FRONT_PORT}
 
   frontend:
     image: frontend-nginx
     build:
       context: frontend/
       target: prod
-    env_file: .env.prod
