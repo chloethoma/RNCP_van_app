@@ -18,3 +18,6 @@ stop: ## Stop Dockers containers
 
 down: ## Stop ans remove the docker containers
 	@$(DOCKER_COMP) down --remove-orphans
+
+config: ## Parse, resolve and render compose file in canonical format
+	@$(DOCKER_COMP) config

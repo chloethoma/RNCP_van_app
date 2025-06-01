@@ -1,8 +1,5 @@
 # Development environment override
 services:
-  database:
-    env_file: .env.local
-
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
@@ -20,7 +17,6 @@ services:
     build:
       context: backend/
       target: frankenphp_dev
-    env_file: .env.local
     volumes:
       - ./backend:/app
       - ./backend/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -40,7 +36,6 @@ services:
     build: 
       context: frontend/
       target: dev
-    env_file: .env.local
     ports:
       - ${FRONT_PORT:-5173}:5173
     volumes: 
