@@ -19,8 +19,6 @@ services:
 
   php:
     container_name: php
-    build: 
-      context: backend/
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
     environment:
@@ -63,6 +61,7 @@ services:
   
   frontend:
     container_name: frontend
+    image: ${IMAGES_PREFIX:-}app-frontend
     restart: unless-stopped
     environment: 
       VITE_MAPBOX_TOKEN: ${VITE_MAPBOX_TOKEN}
