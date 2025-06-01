@@ -77,6 +77,25 @@ jobs:
   backend_tests:
     name: Backend Tests
     runs-on: ubuntu-latest
+    env:
+      # DATABASE environment variables
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      PGADMIN_MAIL: ${{ secrets.PGADMIN_MAIL }}
+      PGADMIN_PASSWORD: ${{ secrets.PGADMIN_PASSWORD }}
+      # BACKEND environment variables
+      CADDY_MERCURE_JWT_SECRET: ${{ secrets.CADDY_MERCURE_JWT_SECRET }}
+      CORS_ALLOW_ORIGIN: ${{ secrets.CORS_ALLOW_ORIGIN }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
+      JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
+      MAILER_DSN: ${{ secrets.MAILER_DSN }}
+      MAILER_FROM_ADDRESS: ${{ secrets.MAILER_FROM_ADDRESS }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL_DEV }}
+      # FRONTEND environment variables
+      VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL_DEV }}
     steps:
       -
         name: Checkout
