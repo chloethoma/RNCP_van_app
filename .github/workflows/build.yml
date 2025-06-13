@@ -1,9 +1,6 @@
 name: 📦 CI Build
 
 on:
-  push:
-    branches:
-      - main
   pull_request: ~
   workflow_dispatch: ~
 
@@ -13,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build (production mode)
+    name: Build and Push Docker Image (production)
     runs-on: ubuntu-latest
     env:
       # Base environment variables
@@ -27,23 +24,26 @@ jobs:
       # BACKEND environment variables
       CADDY_MERCURE_JWT_SECRET: ${{ secrets.CADDY_MERCURE_JWT_SECRET }}
       CORS_ALLOW_ORIGIN: ${{ secrets.CORS_ALLOW_ORIGIN }}
-      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-      JWT_PUBLIC_KEY: ${{ secrets.JWT_PUBLIC_KEY }}
+      JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
+      JWT_PUBLIC_KEY: ${{ vars.JWT_PUBLIC_KEY }}
       JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
       MAILER_DSN: ${{ secrets.MAILER_DSN_PROD }}
       MAILER_FROM_ADDRESS: ${{ secrets.MAILER_FROM_ADDRESS }}
-      FRONTEND_URL: ${{ secrets.FRONTEND_URL_PROD }}
-      SERVER_NAME: ${{ secrets.SERVER_NAME_PROD }}
-      SERVER_NAME_FRONT: ${{ secrets.SERVER_NAME_FRONT_PROD }}
-      FRONT_PORT: ${{ secrets.FRONT_PORT_PROD }}
+      FRONTEND_URL: ${{ vars.FRONTEND_URL_PROD }}
+      SERVER_NAME: ${{ vars.SERVER_NAME }}
+      SERVER_NAME_FRONT: ${{ vars.SERVER_NAME_FRONT }}
+      FRONT_PORT: ${{ vars.FRONT_PORT }}
       # FRONTEND environment variables
       VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
-      VITE_API_URL: ${{ secrets.VITE_API_URL_PROD }}
+      VITE_API_URL: ${{ vars.VITE_API_URL }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+
       - name: Build Docker images
         uses: docker/bake-action@v6
         with:
@@ -53,6 +53,6 @@ jobs:
             compose.yaml
             compose.prod.yaml
           set: |
-            *.cache-from=type=gha,scope=${{github.ref}}
+            *.cache-from=type=gha,scope=${{ github.ref }}
             *.cache-from=type=gha,scope=refs/heads/main
-            *.cache-to=type=gha,scope=${{github.ref}},mode=max
+            *.cache-to=type=gha,scope=${{ github.ref }},mode=max
