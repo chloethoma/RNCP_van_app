@@ -70,6 +70,7 @@ jobs:
           set: |
             php.tags=ghcr.io/${{ env.REPOSITORY }}/php:prod
             frontend.tags=ghcr.io/${{ env.REPOSITORY }}/frontend:prod
+            *.platform=linux/arm64
             *.cache-from=type=gha,scope=${{ github.ref }}
             *.cache-from=type=gha,scope=refs/heads/main
             *.cache-to=type=gha,scope=${{ github.ref }},mode=max
