@@ -80,10 +80,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+    
+      - name: Set BRANCH variable
+        run: echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
 
       - name: Connect & deploy on Raspberry Pi
         uses: appleboy/ssh-action@v1.0.3
         with:
+          envs: BRANCH
           host: ${{ secrets.RASPBERRY_HOST }}
           username: ${{ secrets.RASPBERRY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -98,7 +102,8 @@ jobs:
             echo "🔁 Updating repo..."
             cd RNCP_van_app
             git fetch origin
-            git rebase origin/main
+            git checkout $BRANCH
+            git rebase origin/$BRANCH
 
             echo "🧪 Setting up env vars..."
             cat > .env.prod <<EOF
