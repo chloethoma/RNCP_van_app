@@ -67,8 +67,13 @@ jobs:
             EOF
 
             echo "🔧 Rebuilding containers..."
-# docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml 
-# echo "🚀 Restarting services..."
-# # docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml 
-# echo "🔐 Regenerating JWT keys if needed..."
-# docker exec -i php php bin/console lexik:jwt:generate-keypair --skip-if-exists
+            sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml build
+
+            echo "🚀 Restarting services..."
+            sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
+
+            echo "🔐 Regenerating JWT keys if needed..."
+            sudo docker exec -i php php bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+            echo "🐳 Currently running containers:"
+            sudo docker ps
