@@ -1,4 +1,4 @@
-name: 🚀 Build & Deploy to Raspberry Pi (Self-hosted)
+name: 🚀 Build & Deploy to Raspberry Pi
 
 on:
   push:
@@ -36,32 +36,36 @@ jobs:
 
       - name: Set up .env.prod
         run: |
-          cat > .env.prod <<EOF
-          APP_ENV=prod
-          APP_SECRET=${{ secrets.APP_SECRET_PROD }}
-
-          ### DATABASE environment variables ###
-          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-
-          ### BACKEND environment variables ###
-          CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}
-          CADDY_MERCURE_JWT_SECRET=${{ secrets.CADDY_MERCURE_JWT_SECRET }}
-          JWT_SECRET_KEY=${{ vars.JWT_SECRET_KEY }}
-          JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
-          JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}
-          MAILER_DSN=${{ secrets.MAILER_DSN_PROD }}
-          MAILER_FROM_ADDRESS=${{ secrets.MAILER_FROM_ADDRESS }}
-          SERVER_NAME=${{ vars.SERVER_NAME }}
-          SERVER_NAME_FRONT=${{ vars.SERVER_NAME_FRONT }}
-          FRONT_PORT=${{ vars.FRONT_PORT }}
-          FRONTEND_URL=${{ vars.FRONTEND_URL }}
-
-          ### FRONTEND environment variables ###
-          VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
-          VITE_API_URL=${{ vars.VITE_API_URL }}
-          EOF
+          echo "APP_ENV=prod" > .env.prod
+          echo "APP_SECRET=${{ secrets.APP_SECRET_PROD }}" >> .env.prod
+      
+          echo "" >> .env.prod
+          echo "# DATABASE environment variables" >> .env.prod
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.prod
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.prod
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.prod
+      
+          echo "" >> .env.prod
+          echo "# BACKEND environment variables" >> .env.prod
+          echo "CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}" >> .env.prod
+          echo "CADDY_MERCURE_JWT_SECRET=${{ secrets.CADDY_MERCURE_JWT_SECRET }}" >> .env.prod
+          echo "JWT_SECRET_KEY=${{ vars.JWT_SECRET_KEY }}" >> .env.prod
+          echo "JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}" >> .env.prod
+          echo "JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}" >> .env.prod
+          echo "MAILER_DSN=${{ secrets.MAILER_DSN_PROD }}" >> .env.prod
+          echo "MAILER_FROM_ADDRESS=${{ secrets.MAILER_FROM_ADDRESS }}" >> .env.prod
+          echo "SERVER_NAME=${{ vars.SERVER_NAME }}" >> .env.prod
+          echo "SERVER_NAME_FRONT=${{ vars.SERVER_NAME_FRONT }}" >> .env.prod
+          echo "FRONT_PORT=${{ vars.FRONT_PORT }}" >> .env.prod
+          echo "FRONTEND_URL=${{ vars.FRONTEND_URL }}" >> .env.prod
+      
+          echo "" >> .env.prod
+          echo "# FRONTEND environment variables" >> .env.prod
+          echo "VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}" >> .env.prod
+          echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> .env.prod
+      
+      - name: Debug .env.prod
+        run: cat .env.prod
 
       - name: Set up frontend env
         run: |
@@ -70,7 +74,7 @@ jobs:
           VITE_API_URL=${{ vars.VITE_API_URL }}
           EOF
 
-      - name: Pull latest Docker images
+      - name: Build Docker images
         run: sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml build
 
       - name: Restart Docker services
