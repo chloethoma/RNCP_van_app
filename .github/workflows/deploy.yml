@@ -26,6 +26,10 @@ jobs:
           script: |
             set -e
 
+            echo "🧑‍💻 Configuring Git identity..."
+            git config --global user.name "${{ secrets.GIT_USERNAME }}"
+            git config --global user.email "${{ secrets.GIT_EMAIL }}"
+
             echo "🔁 Updating repo..."
             cd RNCP_van_app
             git fetch origin
