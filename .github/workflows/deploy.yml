@@ -20,31 +20,22 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set BRANCH variable
-        run: |
-          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
-          echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
-          else
-          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-          fi
-
       - name: Update repository
         run: |
           git fetch origin
-          git checkout $BRANCH
-          git reset --hard origin/$BRANCH
+          git reset --hard origin/main
 
       - name: Set up .env.prod
         run: |
           echo "APP_ENV=prod" > .env.prod
           echo "APP_SECRET=${{ secrets.APP_SECRET_PROD }}" >> .env.prod
-      
+
           echo "" >> .env.prod
           echo "# DATABASE environment variables" >> .env.prod
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env.prod
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env.prod
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env.prod
-      
+
           echo "" >> .env.prod
           echo "# BACKEND environment variables" >> .env.prod
           echo "CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}" >> .env.prod
@@ -58,15 +49,12 @@ jobs:
           echo "SERVER_NAME_FRONT=${{ vars.SERVER_NAME_FRONT }}" >> .env.prod
           echo "FRONT_PORT=${{ vars.FRONT_PORT }}" >> .env.prod
           echo "FRONTEND_URL=${{ vars.FRONTEND_URL }}" >> .env.prod
-      
+
           echo "" >> .env.prod
           echo "# FRONTEND environment variables" >> .env.prod
           echo "VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}" >> .env.prod
           echo "VITE_API_URL=${{ vars.VITE_API_URL }}" >> .env.prod
       
-      - name: Debug .env.prod
-        run: cat .env.prod
-
       - name: Set up frontend env
         run: |
           cat > frontend/.env <<EOF
@@ -82,6 +70,3 @@ jobs:
 
       - name: Generate JWT keys if needed
         run: sudo docker exec -i php php bin/console lexik:jwt:generate-keypair --skip-if-exists
-
-      - name: Show running containers
-        run: sudo docker ps
