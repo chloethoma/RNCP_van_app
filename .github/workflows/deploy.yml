@@ -39,6 +39,8 @@ jobs:
       # FRONTEND environment variables
       VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
       VITE_API_URL: ${{ vars.VITE_API_URL }}
+      # For Docker tag
+      REPOSITORY: chloethoma/rncp_van_app
 
     steps:
       - name: Checkout
@@ -64,8 +66,8 @@ jobs:
             compose.yaml
             compose.prod.yaml
           set: |
-            php.tags=ghcr.io/${{ github.repository }}/php:prod
-            frontend.tags=ghcr.io/${{ github.repository }}/frontend:prod
+            php.tags=ghcr.io/${{ env.REPOSITORY }}/php:prod
+            frontend.tags=ghcr.io/${{ env.REPOSITORY }}/frontend:prod
             *.cache-from=type=gha,scope=${{ github.ref }}
             *.cache-from=type=gha,scope=refs/heads/main
             *.cache-to=type=gha,scope=${{ github.ref }},mode=max
