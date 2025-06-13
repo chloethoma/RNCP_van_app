@@ -1,0 +1,66 @@
+name: 🚀 Deploy to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: ~
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to Raspberry Pi
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Connect & deploy on Raspberry Pi
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.RASPBERRY_HOST }}
+          username: ${{ secrets.RASPBERRY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.RASPBERRY_PORT }}
+          script: |
+            set -e
+
+            echo "🔁 Updating repo..."
+            cd RNCP_van_app
+            git fetch origin
+            git rebase origin/main
+
+            echo "🧪 Setting up env vars..."
+            cat > .env.prod <<EOF
+            APP_ENV=prod
+            APP_SECRET=${{ secrets.APP_SECRET_PROD }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+            SERVER_NAME=${{ secrets.SERVER_NAME_PROD }}
+            CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}
+            CADDY_MERCURE_JWT_SECRET=${{ secrets.CADDY_MERCURE_JWT_SECRET }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            JWT_PUBLIC_KEY=${{ secrets.JWT_PUBLIC_KEY }}
+            JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}
+            MAILER_DSN=${{ secrets.MAILER_DSN_PROD }}
+            MAILER_FROM_ADDRESS=${{ secrets.MAILER_FROM_ADDRESS }}
+            SERVER_NAME_FRONT=${{ secrets.SERVER_NAME_FRONT_PROD }}
+            VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
+            VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}
+            FRONT_PORT=${{ secrets.FRONT_PORT_PROD }}
+            FRONTEND_URL=${{ secrets.FRONTEND_URL_PROD }}
+            EOF
+
+            echo "🌍 Setting frontend env..."
+            cat > frontend/.env <<EOF
+            VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
+            VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}
+            EOF
+
+            echo "🔧 Rebuilding containers..."
+# docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml 
+# echo "🚀 Restarting services..."
+# # docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml 
+# echo "🔐 Regenerating JWT keys if needed..."
+# docker exec -i php php bin/console lexik:jwt:generate-keypair --skip-if-exists
