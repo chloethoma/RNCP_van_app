@@ -1,7 +1,6 @@
 # Production environment override
 services:
   php:
-    image: ghcr.io/chloethoma/rncp_van_app/php:prod
     build:
       context: backend/
       target: frankenphp_prod
@@ -16,7 +15,7 @@ services:
       FRONT_PORT: ${FRONT_PORT}
 
   frontend:
-    image: ghcr.io/chloethoma/rncp_van_app/frontend:prod
+    image: frontend-nginx
     build:
       context: frontend/
       target: prod

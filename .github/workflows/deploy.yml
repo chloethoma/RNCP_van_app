@@ -1,152 +1,83 @@
-name: 🚀 Deploy to Raspberry Pi
+name: 🚀 Build & Deploy to Raspberry Pi (Self-hosted)
 
 on:
   push:
     branches:
       - main
-  pull_request: ~
   workflow_dispatch: ~
+  pull_request: ~
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
-    env:
-      # Base environment variables
-      APP_ENV: prod
-      APP_SECRET: ${{ secrets.APP_SECRET_PROD }}
-      APP_DEBUG: 0
-      # DATABASE environment variables
-      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      # BACKEND environment variables
-      CADDY_MERCURE_JWT_SECRET: ${{ secrets.CADDY_MERCURE_JWT_SECRET }}
-      CORS_ALLOW_ORIGIN: ${{ secrets.CORS_ALLOW_ORIGIN }}
-      JWT_SECRET_KEY: ${{ vars.JWT_SECRET_KEY }}
-      JWT_PUBLIC_KEY: ${{ vars.JWT_PUBLIC_KEY }}
-      JWT_PASSPHRASE: ${{ secrets.JWT_PASSPHRASE }}
-      MAILER_DSN: ${{ secrets.MAILER_DSN_PROD }}
-      MAILER_FROM_ADDRESS: ${{ secrets.MAILER_FROM_ADDRESS }}
-      FRONTEND_URL: ${{ vars.FRONTEND_URL_PROD }}
-      SERVER_NAME: ${{ vars.SERVER_NAME }}
-      SERVER_NAME_FRONT: ${{ vars.SERVER_NAME_FRONT }}
-      FRONT_PORT: ${{ vars.FRONT_PORT }}
-      # FRONTEND environment variables
-      VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN }}
-      VITE_API_URL: ${{ vars.VITE_API_URL }}
-      # For Docker tag
-      REPOSITORY: chloethoma/rncp_van_app
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          platform: linux/arm64
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push image
-        uses: docker/bake-action@v6
-        with:
-          pull: true
-          push: true
-          load: false
-          files: |
-            compose.yaml
-            compose.prod.yaml
-          set: |
-            php.tags=ghcr.io/${{ env.REPOSITORY }}/php:prod
-            frontend.tags=ghcr.io/${{ env.REPOSITORY }}/frontend:prod
-            *.platform=linux/arm64
-            *.cache-from=type=gha,scope=${{ github.ref }}
-            *.cache-from=type=gha,scope=refs/heads/main
-            *.cache-to=type=gha,scope=${{ github.ref }},mode=max
-
-  deploy:
-    name: 🚀 Deploy to Raspberry Pi
-    runs-on: ubuntu-latest
-    needs: build
+  build-and-deploy:
+    name: Build & Deploy on Raspberry Pi
+    runs-on: [self-hosted]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-    
+
       - name: Set BRANCH variable
-        run: echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+        run: |
+          if [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+          echo "BRANCH=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+          else
+          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+          fi
 
-      - name: Connect & deploy on Raspberry Pi
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          envs: BRANCH
-          host: ${{ secrets.RASPBERRY_HOST }}
-          username: ${{ secrets.RASPBERRY_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.RASPBERRY_PORT }}
-          script: |
-            set -e
+      - name: Update repository
+        run: |
+          git fetch origin
+          git checkout $BRANCH
+          git reset --hard origin/$BRANCH
 
-            echo "🧑‍💻 Configuring Git identity..."
-            git config --global user.name "${{ secrets.GIT_USERNAME }}"
-            git config --global user.email "${{ secrets.GIT_EMAIL }}"
+      - name: Set up .env.prod
+        run: |
+          cat > .env.prod <<EOF
+          APP_ENV=prod
+          APP_SECRET=${{ secrets.APP_SECRET_PROD }}
 
-            echo "🔁 Updating repo..."
-            cd RNCP_van_app
-            git fetch origin
-            git checkout $BRANCH
-            git rebase origin/$BRANCH
+          ### DATABASE environment variables ###
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
 
-            echo "🧪 Setting up env vars..."
-            cat > .env.prod <<EOF
-            APP_ENV=prod
-            APP_SECRET=${{ secrets.APP_SECRET_PROD }}
-            # DATABASE environment variables
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-            # BACKEND environment variables
-            CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}
-            CADDY_MERCURE_JWT_SECRET=${{ secrets.CADDY_MERCURE_JWT_SECRET }}
-            JWT_SECRET_KEY=${{ vars.JWT_SECRET_KEY }}
-            JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
-            JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}
-            MAILER_DSN=${{ secrets.MAILER_DSN_PROD }}
-            MAILER_FROM_ADDRESS=${{ secrets.MAILER_FROM_ADDRESS }}
-            SERVER_NAME=${{ vars.SERVER_NAME }}
-            SERVER_NAME_FRONT=${{ vars.SERVER_NAME_FRONT }}
-            FRONT_PORT=${{ vars.FRONT_PORT }}
-            FRONTEND_URL=${{ vars.FRONTEND_URL }}
-            # FRONTEND environment variables
-            VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
-            VITE_API_URL=${{ vars.VITE_API_URL }}
-            EOF
+          ### BACKEND environment variables ###
+          CORS_ALLOW_ORIGIN=${{ secrets.CORS_ALLOW_ORIGIN }}
+          CADDY_MERCURE_JWT_SECRET=${{ secrets.CADDY_MERCURE_JWT_SECRET }}
+          JWT_SECRET_KEY=${{ vars.JWT_SECRET_KEY }}
+          JWT_PUBLIC_KEY=${{ vars.JWT_PUBLIC_KEY }}
+          JWT_PASSPHRASE=${{ secrets.JWT_PASSPHRASE }}
+          MAILER_DSN=${{ secrets.MAILER_DSN_PROD }}
+          MAILER_FROM_ADDRESS=${{ secrets.MAILER_FROM_ADDRESS }}
+          SERVER_NAME=${{ vars.SERVER_NAME }}
+          SERVER_NAME_FRONT=${{ vars.SERVER_NAME_FRONT }}
+          FRONT_PORT=${{ vars.FRONT_PORT }}
+          FRONTEND_URL=${{ vars.FRONTEND_URL }}
 
-            echo "🌍 Setting frontend env..."
-            cat > frontend/.env <<EOF
-            VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
-            VITE_API_URL=${{ vars.VITE_API_URL }}
-            EOF
+          ### FRONTEND environment variables ###
+          VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
+          VITE_API_URL=${{ vars.VITE_API_URL }}
+          EOF
 
-            echo "📦 Pulling latest Docker image..."
-            sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml pull
+      - name: Set up frontend env
+        run: |
+          cat > frontend/.env <<EOF
+          VITE_MAPBOX_TOKEN=${{ secrets.VITE_MAPBOX_TOKEN }}
+          VITE_API_URL=${{ vars.VITE_API_URL }}
+          EOF
 
-            echo "🚀 Restarting services..."
-            sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
+      - name: Pull latest Docker images
+        run: sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml build
 
-            echo "🔐 Regenerating JWT keys if needed..."
-            sudo docker exec -i php php bin/console lexik:jwt:generate-keypair --skip-if-exists
+      - name: Restart Docker services
+        run: sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
 
-            echo "🐳 Currently running containers:"
-            sudo docker ps
+      - name: Generate JWT keys if needed
+        run: sudo docker exec -i php php bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+      - name: Show running containers
+        run: sudo docker ps
