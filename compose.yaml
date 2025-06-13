@@ -3,6 +3,10 @@ services:
     container_name: database
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "${POSTGRES_DB}", "-U", "${POSTGRES_USER}"]
       timeout: 5s
@@ -15,8 +19,6 @@ services:
 
   php:
     container_name: php
-    build: 
-      context: backend/
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
     environment:
@@ -31,6 +33,13 @@ services:
       # The two next lines can be removed after initial installation
       SYMFONY_VERSION: ${SYMFONY_VERSION:-}
       STABILITY: ${STABILITY:-stable}
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
+      MAILER_DSN: ${MAILER_DSN}
+      MAILER_FROM_ADDRESS: ${MAILER_FROM_ADDRESS}
+      FRONTEND_URL: ${FRONTEND_URL}
     depends_on:
       - database
     volumes:
@@ -52,7 +61,11 @@ services:
   
   frontend:
     container_name: frontend
+    image: ${IMAGES_PREFIX:-}app-frontend
     restart: unless-stopped
+    environment: 
+      VITE_MAPBOX_TOKEN: ${VITE_MAPBOX_TOKEN}
+      VITE_API_URL: ${VITE_API_URL}
     depends_on:
       - php
   
