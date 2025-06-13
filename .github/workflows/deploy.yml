@@ -66,8 +66,8 @@ jobs:
             VITE_API_URL=${{ vars.VITE_API_URL }}
             EOF
 
-            echo "🔧 Rebuilding containers..."
-            sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml build
+            echo "📦 Pulling latest Docker image..."
+            sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml pull
 
             echo "🚀 Restarting services..."
             sudo docker compose --env-file .env.prod -f compose.yaml -f compose.prod.yaml up -d
