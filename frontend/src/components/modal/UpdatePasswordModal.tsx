@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { messages } from "../../services/helpers/messagesHelper";
+import getEntropy from "fast-password-entropy";
 
 interface Props {
   onConfirm: (currentPassword: string, newPassword: string) => void;
   onCancel: () => void;
 }
 
-function PasswordChangeModal ({ onConfirm, onCancel }: Props) {
+function PasswordChangeModal({ onConfirm, onCancel }: Props) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -14,14 +16,23 @@ function PasswordChangeModal ({ onConfirm, onCancel }: Props) {
 
   const handleSubmit = () => {
     if (!currentPassword || !newPassword || !confirmNewPassword) {
-      setError("Tous les champs doivent être remplis.");
-      return;
-    }    
-    
-    if (newPassword !== confirmNewPassword) {
-      setError("Les nouveaux mots de passe ne correspondent pas.");
+      setError(messages.error_fields_missing);
       return;
     }
+
+    // Validate password strength
+    const entropy = getEntropy(newPassword);
+
+    if (entropy < 80) {
+      setError(messages.error_password_not_strong);
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      setError(messages.error_password_not_identical);
+      return;
+    }
+
     setError(null);
     onConfirm(currentPassword, newPassword);
   };
@@ -78,6 +89,6 @@ function PasswordChangeModal ({ onConfirm, onCancel }: Props) {
       </motion.div>
     </div>
   );
-};
+}
 
 export default PasswordChangeModal;

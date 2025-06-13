@@ -5,9 +5,9 @@ namespace App\Manager;
 use App\Entity\Friendship;
 use App\Entity\User;
 use App\Repository\FriendshipRepository;
+use App\Services\Exceptions\Friendship\FriendshipConflictException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FriendshipManager
 {
@@ -49,20 +49,26 @@ class FriendshipManager
         return $userId !== $receiverId;
     }
 
+    /**
+     * @throws FriendshipConflictException
+     */
     public function checkIfFriendshipAlreadyExists(Friendship $friendship): void
     {
-        if ($this->repository->isfriendshipExist($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
-            throw new ConflictHttpException();
+        if ($this->repository->isFriendshipExist($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
+            throw new FriendshipConflictException();
         }
     }
 
+    /**
+     * @throws UserNotFoundException
+     */
     private function findUserById(int $id): User
     {
         $userRepository = $this->em->getRepository(User::class);
         $user = $userRepository->find($id);
 
         if (!$user) {
-            throw new NotFoundHttpException();
+            throw new UserNotFoundException();
         }
 
         return $user;

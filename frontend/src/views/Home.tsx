@@ -1,5 +1,12 @@
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useRef, useEffect, useState, useCallback, useContext } from "react";
+import {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  useContext,
+  Fragment,
+} from "react";
 import mapboxgl, { Map, LngLatLike } from "mapbox-gl";
 import {
   fetchSpoFriendsList,
@@ -9,7 +16,7 @@ import {
   fetchUserByToken,
 } from "../services/api/apiRequests";
 import { Spot, SpotGeoJson } from "../types/spot";
-import SpotPreview from "../components/SpotPreview";
+import SpotPreview from "../components/spots/SpotPreview";
 import { Locate, Plus } from "lucide-react";
 import IconButton from "../components/buttons/IconButton";
 import { useLocation, useNavigate } from "react-router";
@@ -17,30 +24,19 @@ import ErrorMessage from "../components/messages/ErrorMessage";
 import SuccessMessage from "../components/messages/SuccessMessage";
 import Toggle from "../components/toggle/Toggle";
 import UserContext from "../hooks/UserContext";
+import { messages } from "../services/helpers/messagesHelper";
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Transition,
+} from "@headlessui/react";
+import ListButton from "../components/buttons/ListButton";
 
 const DEFAULT_CENTER: LngLatLike = [2.20966, 46.2323];
 const DEFAULT_ZOOM: number = 4.5;
-const ZOOM: number = 10;
+const SUPER_ZOOM: number = 15;
 const MAPBOX_TOKEN: string = import.meta.env.VITE_MAPBOX_TOKEN;
-
-const ERROR_MESSAGES = {
-  DEFAULT: "Une erreur inconnue est survenue",
-  CONTAINER: "La carte n'est pas encore prête.",
-  MAP_INIT: "Erreur lors de l'initialisation de la carte.",
-  GEOLOCATION_UNSUPPORTED:
-    "La géolocalisation n'est pas supportée par votre navigateur.",
-  GEOLOCATION_FAIL: "Impossible de récupérer votre position.",
-  SPOTS_LOAD: "Erreur lors du chargement des spots.",
-  SPOT_LOAD: "Erreur lors de la récupération du spot.",
-};
-
-const ERROR_CONSOLE = {
-  DEFAULT: "Unkown error",
-  MAP_INIT: "Map init error",
-  GEOLOCATION_FAIL: "Failed to geolocate",
-  SPOTS_LOAD: "Failed to load spots",
-  SPOT_LOAD: "Failed to load spot details",
-};
 
 function Home() {
   const mapRef = useRef<Map | null>(null);
@@ -52,7 +48,7 @@ function Home() {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(
-    location.state?.successMessage || null
+    location.state?.successMessage || null,
   );
   const [userLocation, setUserLocation] = useState<LngLatLike>();
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>();
@@ -62,7 +58,7 @@ function Home() {
   // Initialize the map
   useEffect(() => {
     if (!mapContainerRef.current) {
-      console.error(ERROR_MESSAGES.CONTAINER);
+      console.error(messages.error_container);
       return;
     }
 
@@ -92,7 +88,7 @@ function Home() {
       } catch (error) {
         console.error(
           "Erreur lors de la récupération de l'utilisateur :",
-          error
+          error,
         );
       }
     };
@@ -103,7 +99,7 @@ function Home() {
   // Ask user to get his location with first rendering
   useEffect(() => {
     if (!navigator.geolocation) {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_UNSUPPORTED);
+      setErrorMessage(messages.error_geolocation_unsupported);
       return;
     }
 
@@ -112,12 +108,13 @@ function Home() {
         setUserLocation([position.coords.longitude, position.coords.latitude]);
       },
       (error) => {
-        setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
-        console.error(ERROR_CONSOLE.GEOLOCATION_FAIL, error);
-      }
+        setErrorMessage(messages.error_geolocation_fail);
+        console.error(error);
+      },
     );
   }, []);
 
+  // Action when user click on marker
   const handleMarkerClick = useCallback(
     async (spot: SpotGeoJson) => {
       try {
@@ -132,18 +129,17 @@ function Home() {
         setSelectedSpot(fetchedSpot);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
+          error instanceof Error ? error.message : messages.error_default,
         );
       }
     },
-    [viewOwnSpots]
+    [viewOwnSpots],
   );
 
   // Fetch and display spots
   useEffect(() => {
     const loadSpots = async () => {
       if (!mapRef.current) return;
-
       try {
         let spotList;
 
@@ -171,7 +167,7 @@ function Home() {
         });
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : ERROR_MESSAGES.DEFAULT
+          error instanceof Error ? error.message : messages.error_default,
         );
       }
     };
@@ -181,12 +177,12 @@ function Home() {
 
   const getCurrentPositionAndFlyTo = (zoom: number) => {
     if (!mapRef.current) {
-      console.warn(ERROR_MESSAGES.CONTAINER);
+      console.warn(messages.error_container);
       return;
     }
 
     if (!userLocation) {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
+      setErrorMessage(messages.error_geolocation_fail);
       return;
     }
 
@@ -196,19 +192,16 @@ function Home() {
     });
   };
 
-  const handleNavigate = () => {
-    if (userLocation) {
-      navigate("/spots/add-location", { state: { userLocation } });
-    } else {
-      setErrorMessage(ERROR_MESSAGES.GEOLOCATION_FAIL);
-    }
+  const handleNavigate = (location: LngLatLike, zoom: number) => {
+    navigate("/spots/add-location", { state: { location, zoom } });
   };
 
   return (
-    <>
-      <div ref={mapContainerRef} className="h-full w-full bg-light-grey" />
+    <div className="h-screen w-screen overflow-hidden relative">
+      <div ref={mapContainerRef} className="h-full w-full" />
 
-      <div className="fixed top-6 w-full flex justify-center z-50">
+      {/* Messages */}
+      <div className="fixed top-4 w-full flex justify-center z-20">
         <ErrorMessage
           errorMessage={errorMessage}
           setErrorMessage={setErrorMessage}
@@ -219,38 +212,78 @@ function Home() {
         />
       </div>
 
-      <div className="fixed top-6 w-full flex justify-center">
-        <Toggle
-          options={[
-            { label: "Mes spots", defaultValue: true },
-            { label: "Spots de la commu", defaultValue: false },
-          ]}
-          selectedValue={viewOwnSpots}
-          onChange={setViewOwnSpots}
-        />
+      {/* Toggle */}
+      <div className="h-full w-full relative">
+        <div className="fixed top-6 w-full flex justify-center z-10">
+          <Toggle
+            options={[
+              { label: "Mes spots", defaultValue: true },
+              { label: "Spots de la commu", defaultValue: false },
+            ]}
+            selectedValue={viewOwnSpots}
+            onChange={setViewOwnSpots}
+          />
+        </div>
+
+        {/* Icons geolocation and add location */}
+        <div className="fixed bottom-26 right-4 flex flex-col space-y-3 z-10">
+          <Popover className="relative">
+            <PopoverButton>
+              <IconButton icon={<Plus size={22} />} />
+            </PopoverButton>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <PopoverPanel
+                anchor="top"
+                className="flex flex-col space-y-2 [--anchor-gap:8px] ml-[-0.5rem]"
+              >
+                <ListButton
+                  onClick={() => {
+                    if (userLocation) {
+                      handleNavigate(userLocation, SUPER_ZOOM);
+                    }
+                  }}
+                  label="Sur ma position"
+                  color="darkGreen"
+                  disabled={!userLocation}
+                />
+                <ListButton
+                  onClick={() => handleNavigate(DEFAULT_CENTER, DEFAULT_ZOOM)}
+                  label="Ailleurs"
+                  color="darkGreen"
+                />
+              </PopoverPanel>
+            </Transition>
+          </Popover>
+          <IconButton
+            onClick={() => getCurrentPositionAndFlyTo(SUPER_ZOOM)}
+            icon={<Locate size={22} />}
+            disabled={!userLocation}
+          />
+        </div>
       </div>
 
+      {/* Spot Preview */}
       {selectedSpot && (
-        <SpotPreview
-          selectedSpot={selectedSpot}
-          setSelectedSpot={setSelectedSpot}
-        />
+        <div
+          className="fixed bottom-26 mx-4 left-0 right-0 
+           bg-white shadow-lg rounded-xl z-10 transition-transform duration-300 ease-in-out transform 
+           md:w-1/3"
+        >
+          <SpotPreview
+            selectedSpot={selectedSpot}
+            setSelectedSpot={setSelectedSpot}
+          />
+        </div>
       )}
-
-      {!selectedSpot && (
-        <>
-          <div className="fixed bottom-26 right-4 flex flex-col items-end space-y-3 z-10">
-            <IconButton onClick={handleNavigate} icon={<Plus size={22} />} />
-          </div>
-          <div className="fixed bottom-40 right-4 flex flex-col items-end space-y-3 z-10">
-            <IconButton
-              onClick={() => getCurrentPositionAndFlyTo(ZOOM)}
-              icon={<Locate size={22} />}
-            />
-          </div>
-        </>
-      )}
-    </>
+    </div>
   );
 }
 

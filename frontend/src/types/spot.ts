@@ -31,4 +31,5 @@ export interface Spot {
   description: string;
   isFavorite: boolean;
   owner: Owner;
+  picture?: string | null;
 }

@@ -1,9 +1,11 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import { translateErrorMessage } from "../helpers/errorApiHelper";
+import { messages } from "../helpers/messagesHelper";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 interface FetchRequest extends AxiosRequestConfig {
-  method: "get" | "post" | "put" | "patch" |"delete";
+  method: "get" | "post" | "put" | "patch" | "delete";
   url: string;
 }
 
@@ -49,10 +51,10 @@ const fetchRequest = async <T>({
 
     return response.data;
   } catch (error) {
-    let errorMessage = "Une erreur s'est produite";
+    let errorMessage = messages.error_default;
 
-    if (error instanceof AxiosError) {
-      errorMessage = error.response?.data?.error?.message || errorMessage;
+    if (error instanceof AxiosError && error.response?.data?.error) {
+      errorMessage = translateErrorMessage(error.response.data.error);
     }
 
     throw new Error(errorMessage);

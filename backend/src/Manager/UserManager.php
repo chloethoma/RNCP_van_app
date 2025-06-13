@@ -4,11 +4,12 @@ namespace App\Manager;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
+use App\Services\Exceptions\User\UserAccessDeniedException;
+use App\Services\Exceptions\User\UserConflictException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -25,17 +26,41 @@ class UserManager
         $this->tokenStorageInterface = $tokenStorageInterface;
     }
 
+    /**
+     * Get user identity (userId) from token.
+     *
+     * @return int UserIdentifier from token (userId)
+     *
+     * @throws UnauthenticatedUserException
+     */
     public function getAuthenticatedUserId(): int
     {
-        return (int) $this->security->getUser()->getUserIdentifier();
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            throw new UnauthenticatedUserException();
+        }
+
+        return (int) $user->getUserIdentifier();
     }
 
+    /**
+     * Get User entity associated with the authenticated user's identifier.
+     *
+     * This method first ensures the user is authenticated (via getAuthenticatedUserId),
+     * then fetches the corresponding User entity from the database.
+     *
+     * @return User User entity from database
+     *
+     * @throws UserNotFoundException
+     * @throws UnauthenticatedUserException
+     */
     public function getAuthenticatedUser(): User
     {
         $user = $this->userRepository->findByUserIdentifier($this->getAuthenticatedUserId());
 
         if (!$user) {
-            throw new NotFoundHttpException();
+            throw new UserNotFoundException();
         }
 
         return $user;
@@ -50,27 +75,33 @@ class UserManager
         return $user;
     }
 
+    /**
+     * @throws UserConflictException
+     */
     public function checkEmailOrPseudoAlreadyTaken(User $user): void
     {
         $errors = [];
 
         if ($this->isEmailAlreadyTaken($user)) {
-            $errors[] = 'User already exists with this email';
+            $errors[] = 'email';
         }
 
         if ($this->isPseudoAlreadyTaken($user)) {
-            $errors[] = 'User already exists with this pseudo';
+            $errors[] = 'pseudo';
         }
 
         if (!empty($errors)) {
-            throw new ConflictHttpException(implode(' | ', $errors));
+            throw new UserConflictException($errors);
         }
     }
 
+    /**
+     * @throws UserAccessDeniedException Current password is incorrect
+     */
     public function checkCurrentPasswordValidity(User $user, string $currentPassword): void
     {
         if (!$this->passwordHasher->isPasswordValid($user, $currentPassword)) {
-            throw new AccessDeniedHttpException();
+            throw new UserAccessDeniedException('Current password is incorrect');
         }
     }
 
@@ -84,7 +115,7 @@ class UserManager
 
     private function isEmailAlreadyTaken(User $user): bool
     {
-        $existingUser = $this->userRepository->findByEmail($user->getUserIdentifier());
+        $existingUser = $this->userRepository->findByEmail($user->getEmail());
 
         return null !== $existingUser && $existingUser->getId() !== $user->getId();
     }

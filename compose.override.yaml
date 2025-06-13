@@ -1,8 +1,5 @@
 # Development environment override
 services:
-  database:
-    env_file: .env.local
-
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
@@ -20,7 +17,6 @@ services:
     build:
       context: backend/
       target: frankenphp_dev
-    env_file: .env.local
     volumes:
       - ./backend:/app
       - ./backend/frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -37,7 +33,11 @@ services:
     tty: true
 
   frontend:
-    env_file: .env.local
+    build: 
+      context: frontend/
+      target: dev
+    ports:
+      - ${FRONT_PORT:-5173}:5173
     volumes: 
       - ./frontend:/app
     command: sh -c "npm install && npm run dev"

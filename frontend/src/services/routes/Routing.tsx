@@ -5,7 +5,6 @@ import Login from "../../views/Login";
 import Register from "../../views/Register";
 import AppLayout from "../../components/AppLayout";
 import Profile from "../../views/Profile";
-import Settings from "../../views/Settings";
 import SpotAddDetails from "../../views/Spot/SpotAddDetails";
 import Spot from "../../views/Spot/SpotDetails";
 import SpotAddLocation from "../../views/Spot/SpotAddLocation";
@@ -13,6 +12,8 @@ import SpotEdit from "../../views/Spot/SpotEdit";
 import SearchUser from "../../views/Friendship/SearchUser";
 import PendingFriendships from "../../views/Friendship/PendingFriendships";
 import Friendships from "../../views/Friendships";
+import LegalNotice from "../../views/Legal/LegalNotice";
+import PrivacyPolicy from "../../views/Legal/PrivacyPolicy";
 
 function Routing() {
   return (
@@ -38,7 +39,8 @@ function Routing() {
         <Route path="/search/users" element={<SearchUser />} />
         <Route path="/friendships/pending" element={<PendingFriendships />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/mentions-legales" element={<LegalNotice />} />
+        <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
       </Route>
 
       {/* Route 404 */}

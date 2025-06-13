@@ -5,6 +5,7 @@ interface ButtonProps {
   label: string;
   color: keyof typeof COLORS;
   className?: string;
+  disabled?: boolean;
 }
 
 const COLORS = {
@@ -13,13 +14,25 @@ const COLORS = {
   grey: "bg-light-grey, hover:bg-light-grey-hover text-grey",
 } as const;
 
-function ListButton({ onClick, label, color, className }: ButtonProps) {
+function ListButton({
+  onClick,
+  label,
+  color,
+  className,
+  disabled = false,
+}: ButtonProps) {
   return (
     <button
       onClick={onClick}
-      className={clsx("px-3 py-1 rounded-full", COLORS[color], className)}
+      disabled={disabled}
+      className={clsx(
+        "px-3 py-1 rounded-full cursor-pointer whitespace-nowrap",
+        COLORS[color],
+        className,
+        disabled && "cursor-not-allowed opacity-60",
+      )}
     >
-      <span className="">{label}</span>
+      <span className="text-sm">{label}</span>
     </button>
   );
 }

@@ -45,3 +45,9 @@
 
 	php_server
 }
+
+# Caddy is used as reverse proxy for frontend for prod env.
+# Dummy variable for dev env
+{$SERVER_NAME_FRONT:frontend.local} {
+	reverse_proxy frontend:{$FRONT_PORT:80}
+}

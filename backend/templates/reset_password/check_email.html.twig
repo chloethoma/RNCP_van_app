@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email de réinitialisation envoyé{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <p>
+            Si un compte correspondant à votre adresse e-mail existe, un message contenant un lien de réinitialisation de mot de passe vient de vous être envoyé.
+            Ce lien expirera dans 
+            {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+        </p>
+        <p>Si vous ne recevez pas d'e-mail, veuillez vérifier votre dossier de courriers indésirables ou
+            <a href="{{ path('app_forgot_password_request') }}">réessayez</a>.
+        </p>
+    </div>
+{% endblock %}

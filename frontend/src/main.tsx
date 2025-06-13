@@ -12,5 +12,5 @@ createRoot(document.getElementById("root")!).render(
         <Routing />
       </BrowserRouter>
     </UserProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -7,13 +7,21 @@
   --color-dark-green-hover: oklch(28.59% 0.0597 190.09);
   --color-black: oklch(20% 0.0142 272.6);
   --color-white: oklch(98.81% 0 0); /* or ffffff ? */
-  --color-white-hover: oklch(88.81% 0 0);
+  --color-white-hover: oklch(95% 0 0);
   --color-light-grey: oklch(96.12% 0 0);
   --color-light-grey-hover: oklch(86.12% 0 0);
   --color-grey: oklch(48.19% 0 0);
   --color-grey-hover: oklch(38.19% 0 0);
   --color-red: oklch(64.41% 0.2262 26.35);
   --color-red-hover: oklch(54.41% 0.2262 26.35);
+
+  --color-error-bg: oklch(95.8% 0.037 20.27);
+  --color-error-border: oklch(89.9% 0.071 19.59);
+  --color-error-text: oklch(50.1% 0.274 17.68);
+  --color-success-bg: oklch(0.96 0.036 142.9);
+  --color-success-border: oklch(0.89 0.062 144.3);
+  --color-success-text: oklch(0.48 0.174 144.6);
+  --color-border-grey: oklch(0.85 0 0.5);
 
   --font-default: "Montserrat", "sans-serif";
 }

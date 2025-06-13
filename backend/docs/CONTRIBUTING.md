@@ -1,18 +1,13 @@
-# VANSCAPE BACK API
+# VANSCAPE API GUIDELINES
 
-## Introduction
+## Table of Contents
 
-This API is configure with Docker-based installer and runtime for the Symfony framework with FrankenPHP and Caddy inside. All informations are [here](docs/symfony-docker.md).
-
-For more informations : [Docker base setup for Symfony (dunglas)](https://github.com/dunglas/symfony-docker)  
-
-
-## Table of contents
+- [Introduction](#introduction)
 - [Guidelines](#guidelines)
   - [Architecture](#architecture)
   - [Principles](#principles)
-    -  [Separation of Concerns](#separation-of-concerns)
-    -  [Single Responsibility](#single-responsibility)
+    - [Separation of Concerns](#separation-of-concerns)
+    - [Single Responsibility](#single-responsibility)
   - [Layers and Responsibilities](#layers-and-responsibilities)
     - [Controllers](#controllers)
     - [Handlers](#handlers)
@@ -22,19 +17,30 @@ For more informations : [Docker base setup for Symfony (dunglas)](https://github
     - [Managers](#managers)
     - [Repositories](#repositories)
   - [Summary](#summary)
-  - [Folder architecture](#folder-architecture)
+  - [Execution Flow Example](#execution-flow-example)
+  - [Folder Architecture](#folder-architecture)
   - [Testing](#testing)
+
+## Introduction
+
+This API is configured using a Docker-based setup for the Symfony framework, powered by FrankenPHP and Caddy.  All setup instructions are available [here](docs/symfony-docker.md).
+
+For more informations : [Docker base setup for Symfony (dunglas)](https://github.com/dunglas/symfony-docker)  
 
 ## Guidelines
 
 This document outlines best practices and guidelines for structuring the code in this project to ensure a clean, maintainable, and scalable architecture. These guidelines leverage patterns like DTOs, Mappers, and Handlers to achieve separation of concerns.
 
+
 ### Architecture
+This structure follows a layered architecture, inspired by Clean Architecture and Hexagonal principles.  
+It aims to keep domain logic isolated from infrastructure concerns while promoting modularity and testability.
 
 Here is a schematic representation of the architecture:
 
 ![Architecture](docs/architecture.jpg)
 
+---
 
 ### Principles
 
@@ -51,10 +57,12 @@ Each layer of the application should focus on a single responsibility:
   * Entities: Represent the core business model and enforce business rules.
   * Managers: Encapsulate business logic for a specific domain.
 - Infrastructure Layer:
-  * Repositories: Handle data persistence and retrieval logic.
+  * Repositories: Handle data persistence and interactions with database (Doctrine).
 
 #### Single Responsibility
 Each component (class, method, or function) should have a single reason to change. Avoid mixing responsibilities like validation, mapping, or persistence in one place.
+
+---
 
 ### Layers and responsibilities
 
@@ -74,8 +82,8 @@ Guidelines :
 Handlers encapsulate use case-specific business logic. They are responsible for:
 
 * Handling the input data.
-* Delegating the logic to the manager.
 * Returning the output data.
+* Handlers SHOULD delegate business logic to managers when complexity justifies it. For simple use cases, logic may remain in the handler.
 
 Guidelines:
 
@@ -91,7 +99,7 @@ DTOs handle structured data for communication between users and application laye
 
 Guidelines:
 
-* Properties MUST be `readonly` and public to ensure immutability.
+* Properties MUST be `readonly` and `public` to ensure immutability.
 * Properties MUST be declared inside of the constructor.
 * DTOs SHOULD NOT contain any business logic or methods.
 * Validation constraints SHOULD be used to enforce data integrity.
@@ -126,6 +134,7 @@ Guidelines :
 * Managers MUST only contain business logic.
 * Managers MUST use Entities to enforce business rules.
 * Managers SHOULD be named after the domain they handle.
+* Managers SHOULD be introduced only when business logic becomes complex or shared across multiple handlers.
 
 #### Repositories
 
@@ -136,7 +145,9 @@ Guidelines:
 * Repositories SHOULD encapsulate all data access logic.
 * Repositories SHOULD use Registry to communicate with database.
 * Repositories SHOULD provide methods for common data operations like `find`, `create`, `update`, and `delete` or more complex operations.
-* Repositories SHOULD handle data mapping and transformation between external records and domain entities.
+* Repositories SHOULD return domain entities (Doctrine entities) ready to be used in the application.
+
+---
 
 ### Summary
 
@@ -151,6 +162,34 @@ Guidelines:
 | Repositories | Handles data access and persistence. |
 
 Adhering to these guidelines ensures a clean, modular, and testable API architecture.
+
+---
+
+### Execution Flow example
+
+Here is a typical flow of data and logic :
+
+```text
+HTTP Request
+     |
+     v
+Controller
+  ├─ Parses input with `MapRequestPayload` or `MapQueryParameter`
+  ├─ Validates with DTO + groups
+  └─ Delegates to Handler
+     |
+     v
+Handler
+  ├─ Transforms DTO to Entity --> DataTransformer
+  ├─ Delegates to Manager for business logic (if needed) --> Manager
+  ├─ Interact / persists with database (via Doctrine) --> Repository
+  └─ Transforms Entity to DTO --> DataTransformer
+     |
+     v
+HTTP Response (JSON)
+```
+
+---
 
 ### Folder Architecture
 
@@ -169,6 +208,10 @@ Adhering to these guidelines ensures a clean, modular, and testable API architec
   |   + Manager
 ```
 
+---
+
 ### Testing
 
-TODO
+Unit and integration tests SHOULD be written for handlers, managers, and critical transformers.  
+A detailed testing strategy will be documented soon.
+

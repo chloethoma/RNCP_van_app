@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Header from "../../components/headers/Header";
 import ErrorMessage from "../../components/messages/ErrorMessage";
 import { PartialFriendship } from "../../types/friendship";
 import {
@@ -9,12 +8,10 @@ import {
 } from "../../services/api/apiRequests";
 import { FriendshipUser } from "../../types/user";
 import ListButton from "../../components/buttons/ListButton";
-import FriendshipUserRow from "../../components/friendshipList/FriendshipUserRow";
+import FriendshipUserRow from "../../components/friendships/FriendshipUserRow";
 import Toggle from "../../components/toggle/Toggle";
-
-const MESSAGES = {
-  ERROR_DEFAULT: "Une erreur est survenue",
-};
+import { messages } from "../../services/helpers/messagesHelper";
+import ViewWithHeader from "../../components/headers/ViewWithHeader";
 
 function PendingFriendships() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -33,7 +30,7 @@ function PendingFriendships() {
         setFriendshipList(data);
       } catch (error) {
         setErrorMessage(
-          error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+          error instanceof Error ? error.message : messages.error_default,
         );
       } finally {
         setLoading(false);
@@ -50,11 +47,11 @@ function PendingFriendships() {
       setFriendshipList((prevFriendships) =>
         prevFriendships.filter((friendship) => {
           return friendship.friend.id !== friendId;
-        })
+        }),
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
@@ -66,80 +63,80 @@ function PendingFriendships() {
       setFriendshipList((prevFriendships) =>
         prevFriendships.filter((friendship) => {
           return friendship.friend.id !== friendId;
-        })
+        }),
       );
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : MESSAGES.ERROR_DEFAULT
+        error instanceof Error ? error.message : messages.error_default,
       );
     }
   };
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-light-grey font-default">
-      <Header text="DEMANDES EN ATTENTE" />
-
-      <ErrorMessage
-        errorMessage={errorMessage}
-        setErrorMessage={setErrorMessage}
-      />
-
-      <div className="w-full flex justify-center pt-3">
-        <Toggle
-          options={[
-            { label: "Demandes reçues", defaultValue: true },
-            { label: "Demandes envoyées", defaultValue: false },
-          ]}
-          selectedValue={viewFriendshipsReceived}
-          onChange={setViewFriendshipsReceived}
+    <ViewWithHeader text="DEMANDES EN ATTENTE">
+      <div className="flex flex-col items-center p-2 min-h-screen bg-light-grey font-default">
+        <ErrorMessage
+          errorMessage={errorMessage}
+          setErrorMessage={setErrorMessage}
         />
-      </div>
 
-      {/* Loader */}
-      {loading && <p className="mt-4 text-grey">Chargement...</p>}
+        <div className="w-full flex justify-center pt-3 text-sm">
+          <Toggle
+            options={[
+              { label: "Demandes reçues", defaultValue: true },
+              { label: "Demandes envoyées", defaultValue: false },
+            ]}
+            selectedValue={viewFriendshipsReceived}
+            onChange={setViewFriendshipsReceived}
+          />
+        </div>
 
-      {/* User list */}
-      {!loading && (
-        <ul className="w-full max-w-md mt-4 space-y-2">
-          {friendshipList.length > 0 ? (
-            friendshipList.map((friendship) => {
-              const user: FriendshipUser = friendship.friend;
+        {/* Loader */}
+        {loading && <p className="mt-4 text-grey">Chargement...</p>}
 
-              return (
-                <FriendshipUserRow key={user.id} user={user}>
-                  {viewFriendshipsReceived ? (
-                    <>
-                      <ListButton
-                        onClick={() => handleAcceptFriendship(user.id)}
-                        label="Accepter"
-                        color="darkGreen"
-                      />
+        {/* User list */}
+        {!loading && (
+          <ul className="w-full max-w-md mt-4 space-y-2">
+            {friendshipList.length > 0 ? (
+              friendshipList.map((friendship) => {
+                const user: FriendshipUser = friendship.friend;
+
+                return (
+                  <FriendshipUserRow key={user.id} user={user}>
+                    {viewFriendshipsReceived ? (
+                      <>
+                        <ListButton
+                          onClick={() => handleAcceptFriendship(user.id)}
+                          label="Accepter"
+                          color="darkGreen"
+                        />
+                        <ListButton
+                          onClick={() => handleDeleteFriendship(user.id)}
+                          label="Refuser"
+                          color="red"
+                        />
+                      </>
+                    ) : (
                       <ListButton
                         onClick={() => handleDeleteFriendship(user.id)}
-                        label="Refuser"
+                        label="Annuler"
                         color="red"
                       />
-                    </>
-                  ) : (
-                    <ListButton
-                      onClick={() => handleDeleteFriendship(user.id)}
-                      label="Annuler"
-                      color="red"
-                    />
-                  )}
-                </FriendshipUserRow>
-              );
-            })
-          ) : (
-            <p className="text-grey mt-4">
-              {viewFriendshipsReceived
-                ? "Aucune demande reçue"
-                : "Aucune demande envoyée"}
-            </p>
-          )}
-        </ul>
-      )}
-    </div>
+                    )}
+                  </FriendshipUserRow>
+                );
+              })
+            ) : (
+              <p className="text-grey m-6 text-center">
+                {viewFriendshipsReceived
+                  ? "Aucune demande reçue"
+                  : "Aucune demande envoyée"}
+              </p>
+            )}
+          </ul>
+        )}
+      </div>
+    </ViewWithHeader>
   );
 }
 

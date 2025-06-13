@@ -11,7 +11,7 @@ function FriendshipUserRow({ user, children }: FriendshipUserRowProps) {
     <>
       <li
         key={user.id}
-        className="flex items-center justify-between bg-white p-3 rounded-lg shadow-md"
+        className="flex items-center justify-between bg-white p-2 rounded-lg shadow-sm"
       >
         <div className="flex items-center space-x-3">
           <img
@@ -19,7 +19,7 @@ function FriendshipUserRow({ user, children }: FriendshipUserRowProps) {
             alt={user.pseudo}
             className="w-10 h-10 rounded-full"
           />
-          <div className="text-black font-medium">{user.pseudo}</div>
+          <div className="text-sm font-semibold">{user.pseudo}</div>
         </div>
 
         {/* Buttons */}

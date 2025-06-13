@@ -80,17 +80,21 @@ class ApiController extends AbstractController
         );
     }
 
-    public function serveConflictResponse(string $message, string $target): JsonResponse
+    public function serveConflictResponse(string $message, string $target, ?array $details = null): JsonResponse
     {
-        return $this->json(
-            [
-                'error' => [
-                    'code' => 'Conflict',
-                    'message' => $message,
-                    'target' => $target,
-                ],
+        $responseData = [
+            'error' => [
+                'code' => 'Conflict',
+                'message' => $message,
+                'target' => $target,
             ],
-            Response::HTTP_CONFLICT
+        ];
+
+        if (null !== $details) {
+            $responseData['error']['details'] = $details;
+        }
+
+        return $this->json($responseData, Response::HTTP_CONFLICT
         );
     }
 
@@ -127,7 +131,7 @@ class ApiController extends AbstractController
         return $this->json(
             [
                 'error' => [
-                    'code' => 'Bad Request',
+                    'code' => 'BadRequest',
                     'message' => $message,
                     'target' => $target,
                 ],

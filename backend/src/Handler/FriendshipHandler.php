@@ -11,9 +11,9 @@ use App\Manager\FriendshipManager;
 use App\Manager\UserManager;
 use App\Repository\FriendshipRepository;
 use App\Repository\UserRepository;
+use App\Services\Exceptions\Friendship\FriendshipBadRequestException;
+use App\Services\Exceptions\Friendship\FriendshipNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FriendshipHandler
 {
@@ -36,7 +36,7 @@ class FriendshipHandler
         $friendship = $this->friendshipManager->initFriendUser($friendId, $friendship);
 
         if (!$this->friendshipManager->isReceiverIdDifferentFromCurrentUser($friendship->getRequester()->getId(), $friendship->getReceiver()->getId())) {
-            throw new BadRequestHttpException();
+            throw new FriendshipBadRequestException('The receiver id cannot be the same as the requester id');
         }
 
         $this->friendshipManager->checkIfFriendshipAlreadyExists($friendship);
@@ -95,7 +95,7 @@ class FriendshipHandler
         $friendship = $this->friendshipRepository->findOneFriendshipById($requesterId, $userId);
 
         if (!$friendship) {
-            throw new NotFoundHttpException();
+            throw new FriendshipNotFoundException();
         }
 
         $friendship = $this->friendshipManager->initConfirmFriendship($friendship);
@@ -114,7 +114,7 @@ class FriendshipHandler
         $friendship = $this->friendshipRepository->findOneFriendshipById($friendId, $userId);
 
         if (!$friendship) {
-            throw new NotFoundHttpException();
+            throw new FriendshipNotFoundException();
         }
 
         $this->em->remove($friendship);
