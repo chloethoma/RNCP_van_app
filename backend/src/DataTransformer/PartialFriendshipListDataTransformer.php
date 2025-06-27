@@ -71,8 +71,6 @@ class PartialFriendshipListDataTransformer
             picture: $entity->getPicture()
         );
 
-        $this->validator->validate($dto, FriendshipUserDTO::class);
-
         return $dto;
     }
 }

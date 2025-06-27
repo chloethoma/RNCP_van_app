@@ -1,177 +1,161 @@
 <?php
 
-namespace App\Tests\Unit\Manager;
+namespace App\Tests\Manager;
 
 use App\Entity\Spot;
 use App\Entity\User;
 use App\Manager\SpotManager;
+use App\Manager\UserManager;
+use App\Repository\FriendshipRepository;
+use App\Services\Exceptions\Spot\SpotAccessDeniedException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Persistence\ObjectRepository;
+use PHPUnit\Framework\TestCase;
 
-class SpotManagerTest extends KernelTestCase
+class SpotManagerTest extends TestCase
 {
-    private SpotManager $manager;
-    private $entityManagerMock;
-    private $securityMock;
+    private const AUTH_USER_ID = 42;
+    private const OWNER_ID = 2;
+    private const FRIEND_ID = 1;
+    private const WRONG_USER_ID = 99;
+    private const SAME_USER_ID = 10;
 
-    public function setup(): void 
+    private SpotManager $spotManager;
+    private UserManager $userManager;
+    private FriendshipRepository $friendshipRepository;
+    private EntityManagerInterface $em;
+    private ObjectRepository $userRepository;
+
+    protected function setUp(): void
     {
-        $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
-        $this->securityMock = $this->createMock(Security::class);
+        $this->userManager = $this->createMock(UserManager::class);
+        $this->friendshipRepository = $this->createMock(FriendshipRepository::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->userRepository = $this->createMock(EntityRepository::class);
 
-        $this->manager = new SpotManager(
-            $this->entityManagerMock, 
-            $this->securityMock
+        $this->em
+            ->method('getRepository')
+            ->with(User::class)
+            ->willReturn($this->userRepository);
+
+        $this->spotManager = new SpotManager(
+            $this->em,
+            $this->userManager,
+            $this->friendshipRepository
         );
     }
 
-    public function testInitSpotOwner(): void
+    public function testInitSpotOwnerUserFound(): void
     {
+        $user = $this->createUser(self::AUTH_USER_ID);
         $spot = new Spot();
-        $spot->setLatitude(45.421539);
-        $spot->setLongitude(5.685141);
-        $spot->setDescription('test');
-        $spot->setIsFavorite(false);
-        $spot->setId(1);
-        
-        $userId = $this->createMock(UserInterface::class);
-        $userId
-            ->expects($this->once())
-            ->method('getUserIdentifier')
-            ->willReturn('1');
 
-        $this->securityMock
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($userId);
+        $this->userManager
+            ->method('getAuthenticatedUserId')
+            ->willReturn(self::AUTH_USER_ID);
 
-        $owner = $this->createMock(EntityRepository::class);
-        $owner
-            ->expects($this->once())
+        $this->userRepository
             ->method('find')
-            ->with(1)
-            ->willReturn($this->getUserEntity());
-        
-        $this->entityManagerMock
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($owner);
-        
-        $spotResult = $this->manager->initSpotOwner($spot);
+            ->with(self::AUTH_USER_ID)
+            ->willReturn($user);
 
-        $expectedResult = $this->getSpotEntity();
+        $result = $this->spotManager->initSpotOwner($spot);
 
-        $this->assertEquals($expectedResult, $spotResult);
+        $this->assertSame($user, $result->getOwner());
     }
 
-    public function testInitSpotOwnerNotFoundException(): void
+    public function testInitSpotOwnerUserNotFound(): void
     {
+        $this->expectException(UserNotFoundException::class);
+
         $spot = new Spot();
-        $spot->setLatitude(45.421539);
-        $spot->setLongitude(5.685141);
-        $spot->setDescription('test');
-        $spot->setIsFavorite(false);
-        $spot->setId(1);
-        
-        $userId = $this->createMock(UserInterface::class);
-        $userId
-            ->expects($this->once())
-            ->method('getUserIdentifier')
-            ->willReturn('1');
 
-        $this->securityMock
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($userId);
+        $this->userManager
+            ->method('getAuthenticatedUserId')
+            ->willReturn(self::AUTH_USER_ID);
 
-        $owner = $this->createMock(EntityRepository::class);
-        $owner
-            ->expects($this->once())
+        $this->userRepository
             ->method('find')
-            ->with(1)
+            ->with(self::AUTH_USER_ID)
             ->willReturn(null);
-        
-        $this->entityManagerMock
-            ->expects($this->once())
-            ->method('getRepository')
-            ->willReturn($owner);
 
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->manager->initSpotOwner($spot);
+        $this->spotManager->initSpotOwner($spot);
     }
 
-    public function testCheckAccess(): void
+    public function testCheckAccessWithCorrectUser(): void
     {
-        $spot = $this->getSpotEntity();
+        $user = $this->createUser(self::SAME_USER_ID);
+        $spot = (new Spot())->setOwner($user);
 
-        $userId = $this->createMock(UserInterface::class);
-        $userId
-            ->expects($this->once())
-            ->method('getUserIdentifier')
-            ->willReturn('1');
+        $this->userManager
+            ->method('getAuthenticatedUserId')
+            ->willReturn(self::SAME_USER_ID);
 
-        $this->securityMock
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($userId);
-        
-        $this->manager->checkAccess($spot);
+        $this->spotManager->checkAccess($spot);
 
         $this->assertTrue(true);
     }
 
-    public function testCheckAccessAccessDeniedException(): void
+    public function testCheckAccessWithIncorrectUser(): void
     {
-        $spot = $this->getSpotEntity();
+        $this->expectException(SpotAccessDeniedException::class);
 
-        $userId = $this->createMock(UserInterface::class);
-        $userId
-            ->expects($this->once())
-            ->method('getUserIdentifier')
-            ->willReturn('10');
+        $user = $this->createUser(self::SAME_USER_ID);
+        $spot = (new Spot())->setOwner($user);
 
-        $this->securityMock
-            ->expects($this->once())
-            ->method('getUser')
+        $this->userManager
+            ->method('getAuthenticatedUserId')
+            ->willReturn(self::WRONG_USER_ID);
+
+        $this->spotManager->checkAccess($spot);
+    }
+
+    public function testCheckSpotFriendAccessWithFriendship(): void
+    {
+        $userId = self::FRIEND_ID;
+        $spotOwnerId = self::OWNER_ID;
+        $owner = $this->createUser($spotOwnerId);
+        $spot = (new Spot())->setOwner($owner);
+
+        $this->userManager
+            ->method('getAuthenticatedUserId')
             ->willReturn($userId);
-        
-        $this->expectException(AccessDeniedHttpException::class);
 
-        $this->manager->checkAccess($spot);
+        $this->friendshipRepository
+            ->method('isFriendshipExist')
+            ->with($spotOwnerId, $userId)
+            ->willReturn(true);
+
+        $this->spotManager->checkSpotFriendAccess($spot);
+
+        $this->assertTrue(true);
     }
 
-    private function getUserEntity(): User
+    public function testCheckSpotFriendAccessWithoutFriendship(): void
     {
-        $user = new User();
-        $user->setEmail('test@gmail.com');
-        $user->setEmailVerified(false);
-        $user->setPseudo('test');
-        $user->setPassword('password');
-        $user->setPicture(null);
-        $user->setCreatedAt(new \DateTimeImmutable('2025-02-18T15:51:08+00:00'));
-        $user->setUpdatedAt(new \DateTime('2025-02-18T15:53:42+00:00'));
-        $user->setId(1);
+        $this->expectException(SpotAccessDeniedException::class);
 
-        return $user;
+        $userId = self::FRIEND_ID;
+        $spotOwnerId = self::OWNER_ID;
+        $owner = $this->createUser($spotOwnerId);
+        $spot = (new Spot())->setOwner($owner);
+
+        $this->userManager
+            ->method('getAuthenticatedUserId')
+            ->willReturn($userId);
+
+        $this->friendshipRepository
+            ->method('isFriendshipExist')
+            ->with($spotOwnerId, $userId)
+            ->willReturn(false);
+
+        $this->spotManager->checkSpotFriendAccess($spot);
     }
 
-    private function getSpotEntity(): Spot
+    private function createUser(int $id): User
     {
-        $spot = new Spot();
-        $spot->setLatitude(45.421539);
-        $spot->setLongitude(5.685141);
-        $spot->setDescription('test');
-        $spot->setIsFavorite(false);
-        $spot->setOwner($this->getUserEntity());
-        $spot->setId(1);
-
-        return $spot;
+        return (new User())->setId($id);
     }
-
 }

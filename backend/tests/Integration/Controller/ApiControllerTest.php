@@ -18,11 +18,8 @@ class ApiControllerTest extends KernelTestCase
     public function setUp(): void
     {
         self::bootKernel();
-
         $this->loggerMock = $this->createMock(LoggerInterface::class);
-
         $this->serializer = self::getContainer()->get(SerializerInterface::class);
-
         $this->controller = new ApiController(
             $this->loggerMock,
         );
@@ -68,10 +65,15 @@ class ApiControllerTest extends KernelTestCase
     public function testServeOkResponse(): void
     {
         $content = new UserDTO(
+            id: 1,
             email: 'test@gmail.com',
             pseudo: 'test',
-            password: 'test1234',
+            createdAt: new \DateTime(),
+            updatedAt: new \DateTime(),
+            picture: 'test',
+            token: 'test',
             emailVerified: false,
+            password: 'test1234',
         );
 
         $expectedResponse = $this->serializer->serialize($content, 'json', ['groups' => ['read']]);
@@ -88,10 +90,15 @@ class ApiControllerTest extends KernelTestCase
     public function testServeCreatedResponse(): void
     {
         $content = new UserDTO(
+            id: 1,
             email: 'test@gmail.com',
             pseudo: 'test',
-            password: 'test1234',
+            createdAt: new \DateTime(),
+            updatedAt: new \DateTime(),
+            picture: 'test',
+            token: 'test',
             emailVerified: false,
+            password: 'test1234',
         );
 
         $location = '/users/1';

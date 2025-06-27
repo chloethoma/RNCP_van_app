@@ -42,7 +42,7 @@ jobs:
       - name: Run PHPUnit tests
         working-directory: backend
         run: |
-          php bin/phpunit --testsuite unit
+          php bin/phpunit
 
       - name: Check OpenApi documentation
         working-directory: backend

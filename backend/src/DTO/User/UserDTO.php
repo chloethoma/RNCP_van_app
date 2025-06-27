@@ -41,6 +41,20 @@ class UserDTO
         public readonly string $pseudo,
 
         #[OA\Property(
+            description: 'Choosen avatar for profil picture'
+        )]
+        #[Groups(['read', 'update', 'search_read'])]
+        #[Assert\NotBlank(allowNull: true, groups: ['read', 'update', 'search_read'])]
+        public readonly ?string $picture,
+
+        #[OA\Property(
+            description: 'JWT token for a session'
+        )]
+        #[Groups(['read'])]
+        #[Assert\NotBlank(allowNull: true, groups: ['read'])]
+        public readonly ?string $token,
+
+        #[OA\Property(
             description: 'Creation date of the account'
         )]
         #[Groups(['read'])]
@@ -57,20 +71,6 @@ class UserDTO
         #[Assert\Type(\DateTime::class, groups: ['read'])]
         #[Assert\GreaterThanOrEqual(propertyPath: 'createdAt', groups: ['read'])]
         public readonly ?\DateTimeInterface $updatedAt = null,
-
-        #[OA\Property(
-            description: 'Choosen avatar for profil picture'
-        )]
-        #[Groups(['read', 'update', 'search_read'])]
-        #[Assert\NotBlank(allowNull: true, groups: ['read', 'update', 'search_read'])]
-        public readonly ?string $picture,
-
-        #[OA\Property(
-            description: 'JWT token for a session'
-        )]
-        #[Groups(['read'])]
-        #[Assert\NotBlank(allowNull: true, groups: ['read'])]
-        public readonly ?string $token,
 
         #[OA\Property(
             description: 'Not implemented yet'

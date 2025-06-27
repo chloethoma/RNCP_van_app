@@ -55,10 +55,10 @@ class UserDataTransformer
             emailVerified: $this->entity->isEmailVerified(),
             password: null,
             pseudo: $this->entity->getPseudo(),
+            token: $this->entity->getToken(),
             createdAt: $this->entity->getCreatedAt(),
             updatedAt: $this->entity->getUpdatedAt(),
             picture: $this->entity->getPicture(),
-            token: $this->entity->getToken()
         );
 
         $this->validator->validate($dto, UserDTO::class, ['read']);
