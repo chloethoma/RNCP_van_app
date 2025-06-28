@@ -41,24 +41,6 @@ class UserDTO
         public readonly string $pseudo,
 
         #[OA\Property(
-            description: 'Creation date of the account'
-        )]
-        #[Groups(['read'])]
-        #[Assert\NotNull(groups: ['read'])]
-        #[Assert\Type(\DateTimeInterface::class, groups: ['read'])]
-        #[Assert\LessThanOrEqual('now', groups: ['read'])]
-        public readonly ?\DateTimeInterface $createdAt,
-
-        #[OA\Property(
-            description: 'Updated date of the account'
-        )]
-        #[Groups(['read'])]
-        #[Assert\NotNull(groups: ['read'])]
-        #[Assert\Type(\DateTime::class, groups: ['read'])]
-        #[Assert\GreaterThanOrEqual(propertyPath: 'createdAt', groups: ['read'])]
-        public readonly ?\DateTimeInterface $updatedAt,
-
-        #[OA\Property(
             description: 'Choosen avatar for profil picture'
         )]
         #[Groups(['read', 'update', 'search_read'])]
@@ -71,6 +53,24 @@ class UserDTO
         #[Groups(['read'])]
         #[Assert\NotBlank(allowNull: true, groups: ['read'])]
         public readonly ?string $token,
+
+        #[OA\Property(
+            description: 'Creation date of the account'
+        )]
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
+        #[Assert\Type(\DateTimeInterface::class, groups: ['read'])]
+        #[Assert\LessThanOrEqual('now', groups: ['read'])]
+        public readonly ?\DateTimeInterface $createdAt = null,
+
+        #[OA\Property(
+            description: 'Updated date of the account'
+        )]
+        #[Groups(['read'])]
+        #[Assert\NotNull(groups: ['read'])]
+        #[Assert\Type(\DateTime::class, groups: ['read'])]
+        #[Assert\GreaterThanOrEqual(propertyPath: 'createdAt', groups: ['read'])]
+        public readonly ?\DateTimeInterface $updatedAt = null,
 
         #[OA\Property(
             description: 'Not implemented yet'

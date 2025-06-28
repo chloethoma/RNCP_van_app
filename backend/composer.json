@@ -89,7 +89,8 @@
         }
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^4.0",
+        "dama/doctrine-test-bundle": "^8.2",
+        "doctrine/doctrine-fixtures-bundle": "^4.1",
         "friendsofphp/php-cs-fixer": "^3.66",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.5",

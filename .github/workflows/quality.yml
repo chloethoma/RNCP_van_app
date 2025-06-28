@@ -12,10 +12,28 @@ jobs:
   backend_quality:
     name: Backend quality
     runs-on: ubuntu-latest
+
+    services:
+      postgres: 
+        image: postgres:16
+        env: 
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: vanscape_test
+        ports: 
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      FRONTEND_URL: ${{secrets.FRONTEND_URL}}
-      MAILER_FROM_ADDRESS: ${{secrets.MAILER_FROM_ADDRESS}}
+      APP_ENV: test
+    defaults:
+      run: 
+        working-directory: backend
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,26 +44,27 @@ jobs:
           php-version: "8.3"
 
       - name: Install dependencies
-        working-directory: backend
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run PHP CS Fixer
-        working-directory: backend
         run: |
           vendor/bin/php-cs-fixer fix src --dry-run --diff
           vendor/bin/php-cs-fixer fix tests --dry-run --diff
 
       - name: Run PHPStan
-        working-directory: backend
         run: vendor/bin/phpstan analyse src
 
       - name: Run PHPUnit tests
-        working-directory: backend
         run: |
-          php bin/phpunit --testsuite unit
+          php bin/console lexik:jwt:generate-keypair
+          psql -h localhost -U user -d postgres -c 'CREATE DATABASE "vanscape_test_test";'
+          php bin/console doctrine:migrations:migrate --no-interaction
+          php bin/console doctrine:fixtures:load --no-interaction
+          php bin/phpunit
+        env:
+          PGPASSWORD: password
 
       - name: Check OpenApi documentation
-        working-directory: backend
         run: |
           touch docs/api/openapi_ci.yaml
           bin/console nelmio:apidoc:dump --format=yaml > docs/api/openapi_ci.yaml || echo $?
@@ -62,6 +81,10 @@ jobs:
   frontend_quality:
     name: Frontend quality
     runs-on: ubuntu-latest
+    defaults:
+      run: 
+        working-directory: frontend
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -72,13 +95,10 @@ jobs:
           node-version: 20.x
 
       - name: Install dependencies
-        working-directory: frontend
         run: npm ci
         
       - name: Run ESLint
-        working-directory: frontend
         run: npm run lint
         
       - name: Run TypeCheck
-        working-directory: frontend
         run: npm run type-check
