@@ -34,11 +34,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Get User by Id.
+     * Get User by his token identifier (eg. email).
      */
-    public function findByUserIdentifier(int $userId): ?User
+    public function findByUserIdentifier(string $email): ?User
     {
-        return $this->findOneBy(['id' => $userId]);
+        return $this->findOneBy(['email' => $email]);
     }
 
     /**
