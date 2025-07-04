@@ -8,7 +8,6 @@ use App\Manager\SpotManager;
 use App\Manager\UserManager;
 use App\Repository\FriendshipRepository;
 use App\Services\Exceptions\Spot\SpotAccessDeniedException;
-use App\Services\Exceptions\User\UserNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectRepository;
@@ -53,35 +52,12 @@ class SpotManagerTest extends TestCase
         $spot = new Spot();
 
         $this->userManager
-            ->method('getAuthenticatedUserId')
-            ->willReturn(self::AUTH_USER_ID);
-
-        $this->userRepository
-            ->method('find')
-            ->with(self::AUTH_USER_ID)
+            ->method('getAuthenticatedUser')
             ->willReturn($user);
 
         $result = $this->spotManager->initSpotOwner($spot);
 
         $this->assertSame($user, $result->getOwner());
-    }
-
-    public function testInitSpotOwnerUserNotFound(): void
-    {
-        $this->expectException(UserNotFoundException::class);
-
-        $spot = new Spot();
-
-        $this->userManager
-            ->method('getAuthenticatedUserId')
-            ->willReturn(self::AUTH_USER_ID);
-
-        $this->userRepository
-            ->method('find')
-            ->with(self::AUTH_USER_ID)
-            ->willReturn(null);
-
-        $this->spotManager->initSpotOwner($spot);
     }
 
     public function testCheckAccessWithCorrectUser(): void

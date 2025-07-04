@@ -9,36 +9,47 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture
 {
+    public const TOTAL_USER = 20;
+
     public function __construct(
         private readonly UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
+    private function createUser(ObjectManager $manager, string $email, string $pseudo, string $password, string $reference): void
+    {
+        $user = new User();
+        $user->setEmail($email);
+        $user->setEmailVerified(true);
+        $user->setPseudo($pseudo);
+        $user->setCreatedAt(new \DateTimeImmutable());
+        $user->setUpdatedAt(new \DateTime());
+        $user->setPicture(null);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+
+        $manager->persist($user);
+        $this->addReference($reference, $user);
+    }
+
     public function load(ObjectManager $manager): void
     {
-        $userAlice = new User();
-        $userAlice->setEmail('alice@example.com');
-        $userAlice->setEmailVerified(true);
-        $userAlice->setPseudo('Alice');
-        $userAlice->setCreatedAt(new \DateTimeImmutable());
-        $userAlice->setUpdatedAt(new \DateTime());
-        $userAlice->setPicture(null);
-        $userAlice->setPassword($this->passwordHasher->hashPassword($userAlice, 'password'));
+        for ($i = 1; $i < self::TOTAL_USER / 2; ++$i) {
+            $email = "user{$i}@example.com";
+            $pseudo = "User{$i}";
+            $password = "password{$i}";
+            $reference = "user_{$i}";
 
-        $manager->persist($userAlice);
-        $this->addReference('user_alice', $userAlice);
+            $this->createUser($manager, $email, $pseudo, $password, $reference);
+        }
 
-        $userBob = new User();
-        $userBob->setEmail('bob@example.com');
-        $userBob->setEmailVerified(true);
-        $userBob->setPseudo('Bob');
-        $userBob->setCreatedAt(new \DateTimeImmutable());
-        $userBob->setUpdatedAt(new \DateTime());
-        $userBob->setPicture(null);
-        $userBob->setPassword($this->passwordHasher->hashPassword($userBob, 'password'));
+        for ($i = self::TOTAL_USER / 2; $i <= self::TOTAL_USER; ++$i) {
+            $email = "other_user{$i}@example.com";
+            $pseudo = "OtherUser{$i}";
+            $password = "password{$i}";
+            $reference = "user_{$i}";
 
-        $manager->persist($userBob);
-        $this->addReference('user_bob', $userBob);
+            $this->createUser($manager, $email, $pseudo, $password, $reference);
+        }
 
         $manager->flush();
     }

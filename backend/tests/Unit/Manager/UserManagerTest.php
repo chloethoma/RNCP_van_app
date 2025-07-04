@@ -5,8 +5,10 @@ namespace App\Tests\Manager;
 use App\Entity\User;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
+use App\Services\Exceptions\User\UnauthenticatedUserException;
 use App\Services\Exceptions\User\UserAccessDeniedException;
 use App\Services\Exceptions\User\UserConflictException;
+use App\Services\Exceptions\User\UserNotFoundException;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -24,22 +26,76 @@ class UserManagerTest extends TestCase
     private UserRepository $userRepository;
     private UserPasswordHasherInterface $passwordHasher;
     private UserManager $userManager;
+    private Security $security;
 
     protected function setUp(): void
     {
         $this->userRepository = $this->createMock(UserRepository::class);
         $this->passwordHasher = $this->createMock(UserPasswordHasherInterface::class);
+        $this->security = $this->createMock(Security::class);
+
         $jwtManager = $this->createMock(JWTTokenManagerInterface::class);
         $tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $security = $this->createMock(Security::class);
 
         $this->userManager = new UserManager(
             $jwtManager,
             $tokenStorage,
             $this->passwordHasher,
             $this->userRepository,
-            $security
+            $this->security
         );
+    }
+
+    public function testGetAuthenticatedUserSuccess(): void
+    {
+        $expectedUser = $this->createMock(User::class);
+        $expectedUser
+            ->method('getUserIdentifier')
+            ->willReturn(self::EMAIL);
+
+        $this->security
+            ->method('getUser')
+            ->willReturn($expectedUser);
+
+        $this->userRepository
+            ->method('findByUserIdentifier')
+            ->with(self::EMAIL)
+            ->willReturn($expectedUser);
+
+        $actualUser = $this->userManager->getAuthenticatedUser();
+
+        $this->assertSame($expectedUser, $actualUser);
+    }
+
+    public function testGetAuthenticatedUserExceptionUnauthenticated(): void
+    {
+        $this->security
+            ->method('getUser')
+            ->willReturn(null);
+
+        $this->expectException(UnauthenticatedUserException::class);
+
+        $this->userManager->getAuthenticatedUser();
+    }
+
+    public function testGetAuthenticatedUserThrowsWhenUserNotFound(): void
+    {
+        $user = new User();
+        $user->setEmail(self::EMAIL);
+        $user->setPseudo(self::PSEUDO);
+
+        $this->security
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->userRepository
+            ->method('findByEmail')
+            ->with(self::EMAIL)
+            ->willReturn(null);
+
+        $this->expectException(UserNotFoundException::class);
+
+        $this->userManager->getAuthenticatedUser();
     }
 
     public function testCheckEmailOrPseudoAlreadyTakenNoConflict(): void

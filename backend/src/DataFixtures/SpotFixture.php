@@ -12,24 +12,21 @@ class SpotFixture extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $userAlice = $this->getReference('user_alice', User::class);
-        $userBob = $this->getReference('user_bob', User::class);
+        for ($i = 1; $i <= UserFixture::TOTAL_USER; ++$i) {
+            /** @var User $user */
+            $user = $this->getReference("user_{$i}", User::class);
 
-        $spot1 = new Spot();
-        $spot1->setLatitude(45.0);
-        $spot1->setLongitude(5.0);
-        $spot1->setDescription('Spot de test Alice');
-        $spot1->setOwner($userAlice);
-        $spot1->setIsFavorite(true);
-        $manager->persist($spot1);
-
-        $spot2 = new Spot();
-        $spot2->setLatitude(46.0);
-        $spot2->setLongitude(4.0);
-        $spot2->setDescription('Spot de test Bob');
-        $spot2->setOwner($userBob);
-        $spot2->setIsFavorite(false);
-        $manager->persist($spot2);
+            for ($j = 1; $j <= 5; ++$j) {
+                $spot = new Spot();
+                $coords = $this->getRandomFrenchCoordinates();
+                $spot->setLatitude($coords['lat']);
+                $spot->setLongitude($coords['lng']);
+                $spot->setDescription("Spot {$j} de User{$i}");
+                $spot->setOwner($user);
+                $spot->setIsFavorite(($j % 2) === 0);
+                $manager->persist($spot);
+            }
+        }
 
         $manager->flush();
     }
@@ -37,5 +34,23 @@ class SpotFixture extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [UserFixture::class];
+    }
+
+    /**
+     * Returns random coordinates within a bounding box around France.
+     *
+     * @return array{lat: float, lng: float}
+     */
+    private function getRandomFrenchCoordinates(): array
+    {
+        $minLat = 42.5;
+        $maxLat = 50.8;
+        $minLng = -1.5;
+        $maxLng = 8.2;
+
+        return [
+            'lat' => mt_rand((int) ($minLat * 10000), (int) ($maxLat * 10000)) / 10000,
+            'lng' => mt_rand((int) ($minLng * 10000), (int) ($maxLng * 10000)) / 10000,
+        ];
     }
 }
