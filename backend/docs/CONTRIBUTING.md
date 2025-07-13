@@ -38,7 +38,7 @@ It aims to keep domain logic isolated from infrastructure concerns while promoti
 
 Here is a schematic representation of the architecture:
 
-![Architecture](docs/architecture.jpg)
+![Architecture](architecture.jpg)
 
 ---
 
@@ -138,7 +138,7 @@ Guidelines :
 
 #### Repositories
 
-Repositories handle data access and persistence. They abstract the underlying data storage mechanism, providing a clean API for the rest of the application to interact with the data layer.
+Repositories handle data access and persistence.
 
 Guidelines:
 
@@ -202,10 +202,11 @@ HTTP Response (JSON)
   |   + EventListener
   |   + EventSubscriber
   |   + Handler
-  |   + Repository
-  |   + Exception
-  |   + Validator
   |   + Manager
+  |   + Repository
+  |   + Services
+          |  + Exceptions
+          |  + Validator
 ```
 
 ---

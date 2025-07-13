@@ -3,7 +3,6 @@
 namespace App\Manager;
 
 use App\Entity\Spot;
-use App\Entity\User;
 use App\Repository\FriendshipRepository;
 use App\Services\Exceptions\Spot\SpotAccessDeniedException;
 use App\Services\Exceptions\User\UnauthenticatedUserException;
@@ -25,14 +24,7 @@ class SpotManager
      */
     public function initSpotOwner(Spot $spot): Spot
     {
-        $userId = $this->userManager->getAuthenticatedUserId();
-
-        $userRepository = $this->em->getRepository(User::class);
-        $owner = $userRepository->find($userId);
-
-        if (!$owner) {
-            throw new UserNotFoundException();
-        }
+        $owner = $this->userManager->getAuthenticatedUser();
 
         $spot->setOwner($owner);
 

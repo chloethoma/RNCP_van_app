@@ -12,14 +12,49 @@ class FriendshipFixture extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $userAlice = $this->getReference('user_alice', User::class);
-        $userBob = $this->getReference('user_bob', User::class);
+        $totalUsers = UserFixture::TOTAL_USER;
 
-        $friendship = new Friendship();
-        $friendship->setRequester($userAlice);
-        $friendship->setReceiver($userBob);
-        $friendship->setConfirmed(true);
-        $manager->persist($friendship);
+        for ($userId = 1; $userId <= $totalUsers; ++$userId) {
+            $user = $this->getReference("user_{$userId}", User::class);
+
+            $usedIds = [];
+
+            $friendshipAdded = 0;
+            while ($friendshipAdded < 3) {
+                $randomId = random_int(1, $totalUsers);
+
+                if ($randomId !== $userId && !in_array($randomId, $usedIds)) {
+                    $friend = $this->getReference("user_{$randomId}", User::class);
+
+                    $friendship = new Friendship();
+                    $friendship->setRequester($user);
+                    $friendship->setReceiver($friend);
+                    $friendship->setConfirmed(true);
+                    $manager->persist($friendship);
+
+                    $usedIds[] = $randomId;
+                    ++$friendshipAdded;
+                }
+            }
+
+            $pendingFriendshipAdded = 0;
+            while ($pendingFriendshipAdded < 2) {
+                $randomId = random_int(1, $totalUsers);
+
+                if ($randomId !== $userId && !in_array($randomId, $usedIds)) {
+                    $friend = $this->getReference("user_{$randomId}", User::class);
+
+                    $friendship = new Friendship();
+                    $friendship->setRequester($user);
+                    $friendship->setReceiver($friend);
+                    $friendship->setConfirmed(false);
+                    $manager->persist($friendship);
+
+                    $usedIds[] = $randomId;
+                }
+                ++$pendingFriendshipAdded;
+            }
+        }
 
         $manager->flush();
     }

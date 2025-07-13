@@ -83,7 +83,7 @@ class UserDTO
             description: 'Password'
         )]
         #[Groups(['create'])]
-        #[Assert\NotBlank(allowNull: true, groups: ['create'])]
+        #[Assert\NotNull(groups: ['create'])]
         #[Assert\PasswordStrength(groups: ['create'])]
         #[Assert\NotCompromisedPassword(groups: ['create'])]
         public readonly ?string $password = null,

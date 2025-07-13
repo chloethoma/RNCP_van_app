@@ -9,7 +9,13 @@ php-bash: ## Connect to the FrankenPHP container via bash so up and down arrows 
 
 phpunit: ## Start tests with phpunit, pass the parameter "c=" to add options to phpunit, example: make test c="--testsuite unit --stop-on-failure"
 	@$(eval c ?=)
-	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c) 
+	@$(DOCKER_COMP) exec -e APP_ENV=test php bin/phpunit $(c)
+
+load-fixtures-test: ## Load new fixtures in the test database
+	@$(SYMFONY) --env=test doctrine:fixtures:load
+
+load-fixtures: ## Load new fixtures in the dev database
+	@$(SYMFONY) doctrine:fixtures:load
 
 cs-fix: ## Runs php-cs to fix Symfony Code Standards issues
 	${PHP_CONT} vendor/bin/php-cs-fixer fix src --rules=@Symfony

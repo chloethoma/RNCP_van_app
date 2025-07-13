@@ -17,8 +17,6 @@ class FriendshipManagerTest extends TestCase
 {
     private const USER_ID_1 = 1;
     private const USER_ID_2 = 2;
-    private const USER_ID_10 = 10;
-    private const USER_ID_20 = 20;
     private const USER_ID_NOT_FOUND = 99;
 
     private EntityManagerInterface $em;
@@ -65,15 +63,15 @@ class FriendshipManagerTest extends TestCase
     public function testInitAuthenticatedUser(): void
     {
         $friendship = new Friendship();
-        $user = $this->createUser(self::USER_ID_10);
+        $user = $this->createUser(self::USER_ID_1);
 
         $this->userManager
             ->method('getAuthenticatedUserId')
-            ->willReturn(self::USER_ID_10);
+            ->willReturn(self::USER_ID_1);
 
         $this->userRepository
             ->method('find')
-            ->with(self::USER_ID_10)
+            ->with(self::USER_ID_1)
             ->willReturn($user);
 
         $result = $this->friendshipManager->initAuthenticatedUser($friendship);
@@ -84,14 +82,14 @@ class FriendshipManagerTest extends TestCase
     public function testInitFriendUser(): void
     {
         $friendship = new Friendship();
-        $friendUser = $this->createUser(self::USER_ID_20);
+        $friendUser = $this->createUser(self::USER_ID_2);
 
         $this->userRepository
             ->method('find')
-            ->with(self::USER_ID_20)
+            ->with(self::USER_ID_2)
             ->willReturn($friendUser);
 
-        $result = $this->friendshipManager->initFriendUser(self::USER_ID_20, $friendship);
+        $result = $this->friendshipManager->initFriendUser(self::USER_ID_2, $friendship);
 
         $this->assertSame($friendUser, $result->getReceiver());
     }
