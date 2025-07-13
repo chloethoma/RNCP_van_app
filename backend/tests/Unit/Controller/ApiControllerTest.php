@@ -80,11 +80,8 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveOkResponse(content: $content, groups: ['read']);
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertJsonResponse($response, Response::HTTP_OK, $expectedResponse);
         $this->assertEquals('application/json', $response->headers->get('content-type'));
-        $this->assertEquals($expectedResponse, $response->getContent());
-        $this->assertArrayNotHasKey('password', json_decode($expectedResponse, true));
     }
 
     public function testServeCreatedResponse(): void
@@ -106,20 +103,15 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveCreatedResponse($content, $location, ['read']);
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
+        $this->assertJsonResponse($response, Response::HTTP_CREATED, $expectedResponse);
         $this->assertEquals($location, $response->headers->get('Location'));
-        $this->assertEquals($expectedResponse, $response->getContent());
-        $this->assertArrayNotHasKey('password', json_decode($expectedResponse, true));
     }
 
     public function testServeNoContentResponse()
     {
         $response = $this->controller->serveNoContentResponse();
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-        $this->assertEquals('null', $response->getContent());
+        $this->assertJsonResponse($response, Response::HTTP_NO_CONTENT, 'null');
     }
 
     public function testServeNotFoundResponse()
@@ -134,9 +126,7 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveNotFoundResponse('User not found', 'User controller');
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_NOT_FOUND, $response->getStatusCode());
-        $this->assertEquals(json_encode($expectedResponse), $response->getContent());
+        $this->assertJsonResponse($response, Response::HTTP_NOT_FOUND, json_encode($expectedResponse));
     }
 
     public function testServeServerErrorResponse()
@@ -151,9 +141,7 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveServerErrorResponse('Oops ! Something went wrong.', 'User controller');
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
-        $this->assertEquals(json_encode($expectedResponse), $response->getContent());
+        $this->assertJsonResponse($response, Response::HTTP_INTERNAL_SERVER_ERROR, json_encode($expectedResponse));
     }
 
     public function testServeConflictResponse()
@@ -168,9 +156,7 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveConflictResponse('User already exists with this email', 'User controller');
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_CONFLICT, $response->getStatusCode());
-        $this->assertEquals(json_encode($expectedResponse), $response->getContent());
+        $this->assertJsonResponse($response, Response::HTTP_CONFLICT, json_encode($expectedResponse));
     }
 
     public function testServeUnauthorizedResponse()
@@ -185,9 +171,7 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveUnauthorizedResponse('Bad credentials', 'User controller');
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
-        $this->assertEquals(json_encode($expectedResponse), $response->getContent());
+        $this->assertJsonResponse($response, Response::HTTP_UNAUTHORIZED, json_encode($expectedResponse));
     }
 
     public function testServeAccessDeniedResponse()
@@ -202,8 +186,28 @@ class ApiControllerTest extends KernelTestCase
 
         $response = $this->controller->serveAccessDeniedResponse('Not allowed', 'User controller');
 
+        $this->assertJsonResponse($response, Response::HTTP_FORBIDDEN, json_encode($expectedResponse));
+    }
+
+    public function testServeBadRequestResponse()
+    {
+        $expectedResponse = [
+            'error' => [
+                'code' => 'BadRequest',
+                'message' => 'Bad Request',
+                'target' => 'User controller',
+            ],
+        ];
+
+        $response = $this->controller->serveBadRequestResponse('Bad Request', 'User controller');
+
+        $this->assertJsonResponse($response, Response::HTTP_BAD_REQUEST, json_encode($expectedResponse));
+    }
+
+    private function assertJsonResponse(JsonResponse $response, string $expectedStatusCode, string $expectedJsonResponse): void
+    {
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $response->getStatusCode());
-        $this->assertEquals(json_encode($expectedResponse), $response->getContent());
+        $this->assertEquals($expectedStatusCode, $response->getStatusCode());
+        $this->assertEquals($expectedJsonResponse, $response->getContent());
     }
 }

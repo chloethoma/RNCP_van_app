@@ -41,6 +41,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->tokenStorage = $container->get(TokenStorageInterface::class);
     }
 
+    // ----------------------------------------------------------------------------
+    // Create Spot Tests
+    // ----------------------------------------------------------------------------
     public function testHandleCreateSuccess(): void
     {
         $user = $this->authenticateTestUser(self::USER_EMAIL);
@@ -57,6 +60,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->assertequals(self::SPOT_IS_FAVORITE, $createdSpotDTO->isFavorite);
     }
 
+    // ----------------------------------------------------------------------------
+    // Get Spot By ID Tests
+    // ----------------------------------------------------------------------------
     public function testHandleGetSuccess(): void
     {
         $createdSpot = $this->createSpotForUser(self::USER_EMAIL);
@@ -88,6 +94,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->handler->handleGet($createdSpot->id);
     }
 
+    // ----------------------------------------------------------------------------
+    // Update Spot Tests
+    // ----------------------------------------------------------------------------
     public function testHandleUpdateSuccess(): void
     {
         // Create a spot for a user to get an existing id in database, with an identified user
@@ -149,6 +158,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->handler->handleUpdate($spotDTO, $createdSpot->id);
     }
 
+    // ----------------------------------------------------------------------------
+    // Delete Spot Tests
+    // ----------------------------------------------------------------------------
     public function testHandleDeleteSuccess(): void
     {
         $createdSpot = $this->createSpotForUser(self::USER_EMAIL);
@@ -182,6 +194,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->handler->handleGet($createdSpot->id);
     }
 
+    // ----------------------------------------------------------------------------
+    // Get Spot List Tests
+    // ----------------------------------------------------------------------------
     public function testHandleGetSpotCollectionReturnsSpotList(): void
     {
         $this->authenticateTestUser(self::USER_EMAIL);
@@ -206,6 +221,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->assertEquals(0, count($result->features));
     }
 
+    // ----------------------------------------------------------------------------
+    // Get SpotList of friends Tests
+    // ----------------------------------------------------------------------------
     public function testHandleGetSpotFriendsCollectionReturnsFriendsSpots(): void
     {
         // Create two users with a friendship relation
@@ -231,6 +249,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->assertEquals($createdSpot->id, $friendSpotId);
     }
 
+    // ----------------------------------------------------------------------------
+    // Get Spot by Id of a friend Tests
+    // ----------------------------------------------------------------------------
     public function testHandleGetSpotFriendSuccess(): void
     {
         // Create two users with a friendship relation
@@ -279,6 +300,9 @@ class SpotHandlerTest extends KernelTestCase
         $this->handler->handleGetSpotFriend(9999);
     }
 
+    // ----------------------------------------------------------------------------
+    // Private functions
+    // ----------------------------------------------------------------------------
     private function authenticateTestUser(string $userEmail): User
     {
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $userEmail]);

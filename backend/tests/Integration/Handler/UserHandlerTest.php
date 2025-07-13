@@ -45,16 +45,9 @@ class UserHandlerTest extends KernelTestCase
         $this->passwordHasher = $container->get(UserPasswordHasherInterface::class);
     }
 
-    // Test the unauthenticated use case juste once (with handleGet)
-    public function testUnauthenticatedUserException(): void
-    {
-        $this->tokenStorage->setToken(null);
-
-        $this->expectException(UnauthenticatedUserException::class);
-
-        $this->handler->handleGet();
-    }
-
+    // ----------------------------------------------------------------------------
+    // Create User Tests
+    // ----------------------------------------------------------------------------
     public function testHandleCreateSuccess(): void
     {
         $dto = new UserDTO(
@@ -121,6 +114,9 @@ class UserHandlerTest extends KernelTestCase
         $this->handler->handleCreate($dto);
     }
 
+    // ----------------------------------------------------------------------------
+    // Get User Identity Tests
+    // ----------------------------------------------------------------------------
     public function testHandleGetSuccess(): void
     {
         $user = $this->authenticateTestUser(self::EXISTING_USER_EMAIL);
@@ -131,6 +127,9 @@ class UserHandlerTest extends KernelTestCase
         $this->assertSame($user->getPseudo(), $userDTO->pseudo);
     }
 
+    // ----------------------------------------------------------------------------
+    // Update User Tests
+    // ----------------------------------------------------------------------------
     public function testHandleUpdateSuccess(): void
     {
         $user = $this->authenticateTestUser(self::EXISTING_USER_EMAIL);
@@ -196,6 +195,9 @@ class UserHandlerTest extends KernelTestCase
         $this->handler->handleUpdate($dto);
     }
 
+    // ----------------------------------------------------------------------------
+    // Update User Password Tests
+    // ----------------------------------------------------------------------------
     public function testHandleUpdatePasswordSuccess(): void
     {
         $user = $this->authenticateTestUser(self::EXISTING_USER_EMAIL);
@@ -226,6 +228,9 @@ class UserHandlerTest extends KernelTestCase
         $this->handler->handleUpdatePassword($dto);
     }
 
+    // ----------------------------------------------------------------------------
+    // Delete User Tests
+    // ----------------------------------------------------------------------------
     public function testHandleDeleteSuccess(): void
     {
         $this->authenticateTestUser(self::EXISTING_USER_EMAIL);
@@ -237,6 +242,9 @@ class UserHandlerTest extends KernelTestCase
         $this->assertEquals(null, $deletedUser);
     }
 
+    // ----------------------------------------------------------------------------
+    // Search User Tests
+    // ----------------------------------------------------------------------------
     public function testHandleSearchUserSuccess(): void
     {
         $currentUser = $this->authenticateTestUser(self::EXISTING_USER_EMAIL);
@@ -259,6 +267,9 @@ class UserHandlerTest extends KernelTestCase
         $this->assertCount(0, $result);
     }
 
+    // ----------------------------------------------------------------------------
+    // Get User Summary Tests
+    // ----------------------------------------------------------------------------
     public function testHandleGetUsersSummary(): void
     {
         $user = $this->authenticateTestUser(self::EXISTING_USER_EMAIL);
@@ -268,6 +279,9 @@ class UserHandlerTest extends KernelTestCase
         $this->assertInstanceOf(UserSummaryDTO::class, $result);
     }
 
+    // ----------------------------------------------------------------------------
+    // Exception User Tests
+    // ----------------------------------------------------------------------------
     public function testUserNotFoundException(): void
     {
         $user = new User();
@@ -279,6 +293,15 @@ class UserHandlerTest extends KernelTestCase
         $this->tokenStorage->setToken($token);
 
         $this->expectException(UserNotFoundException::class);
+
+        $this->handler->handleGet();
+    }
+
+    public function testUnauthenticatedUserException(): void
+    {
+        $this->tokenStorage->setToken(null);
+
+        $this->expectException(UnauthenticatedUserException::class);
 
         $this->handler->handleGet();
     }
