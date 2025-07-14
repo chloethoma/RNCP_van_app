@@ -14,8 +14,6 @@ FROM base AS dev
 
 EXPOSE 5173
 
-RUN npx playwright install --with-deps
-
 CMD npm run dev
 
 # 🏗️ Build for prod
