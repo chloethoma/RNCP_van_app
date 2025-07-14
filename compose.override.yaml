@@ -1,6 +1,7 @@
 # Development environment override
 services:
   pgadmin:
+    container_name: pgadmin
     image: dpage/pgadmin4:latest
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
