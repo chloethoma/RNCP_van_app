@@ -1,5 +1,6 @@
 services:  
   database:
+    container_name: database
     image: postgres:${POSTGRES_VERSION:-16}-alpine
     restart: unless-stopped
     environment:
@@ -17,6 +18,7 @@ services:
       # - ./.docker/db/data:/var/lib/postgresql/data:rw
 
   php:
+    container_name: php
     image: ${IMAGES_PREFIX:-}app-php
     restart: unless-stopped
     environment:
@@ -59,6 +61,7 @@ services:
         protocol: udp
   
   frontend:
+    container_name: frontend
     image: ${IMAGES_PREFIX:-}app-frontend
     restart: unless-stopped
     environment: 
