@@ -1,13 +1,10 @@
 import clsx from "clsx";
 
-interface ButtonProps {
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode;
   label?: string;
   color?: keyof typeof COLORS;
   size?: keyof typeof SIZES;
-  className?: string;
-  disabled?: boolean;
 }
 
 const COLORS = {
@@ -23,17 +20,17 @@ const SIZES = {
 } as const;
 
 function IconButton({
-  onClick,
   icon,
   label,
   color = "darkGreen",
   size = "default",
   className,
-  disabled = false,
+  disabled,
+  ...rest
 }: ButtonProps) {
   return (
     <button
-      onClick={onClick}
+      type="button"
       disabled={disabled}
       className={clsx(
         "rounded-full shadow-sm transition flex items-center justify-center cursor-pointer whitespace-nowrap",
@@ -42,10 +39,9 @@ function IconButton({
         className,
         disabled && "cursor-not-allowed opacity-60",
       )}
+      {...rest}
     >
-      {icon
-        ? icon
-        : label && <span className="text-sm font-bold">{label}</span>}
+      {icon ?? (label && <span className="text-sm font-bold">{label}</span>)}
     </button>
   );
 }

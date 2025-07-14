@@ -15,4 +15,3 @@ type-check: ## Run TypeScript Compiler
 
 prettier: ## Start formatting with prettier
 	@$(NPX) prettier . --write
-
