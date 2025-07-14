@@ -1,5 +1,5 @@
 # Base
-FROM node:20.18-alpine AS base
+FROM node:20.18 AS base
 
 WORKDIR /app
 
@@ -13,6 +13,8 @@ COPY . .
 FROM base AS dev
 
 EXPOSE 5173
+
+RUN npx playwright install --with-deps
 
 CMD npm run dev
 

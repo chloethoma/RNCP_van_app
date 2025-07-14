@@ -229,7 +229,7 @@ function Home() {
         <div className="fixed bottom-26 right-4 flex flex-col space-y-3 z-10">
           <Popover className="relative">
             <PopoverButton>
-              <IconButton icon={<Plus size={22} />} />
+              <IconButton icon={<Plus size={22} />} data-testid="add-spot"/>
             </PopoverButton>
             <Transition
               as={Fragment}

@@ -16,3 +16,6 @@ type-check: ## Run TypeScript Compiler
 prettier: ## Start formatting with prettier
 	@$(NPX) prettier . --write
 
+playwright: ## Run Playwright tests
+	@$(NPX) playwright test
+
