@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build and Push Docker Image (production)
+    name: Build (production mode)
     runs-on: ubuntu-latest
     env:
       # Base environment variables

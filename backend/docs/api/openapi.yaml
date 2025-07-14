@@ -760,8 +760,6 @@ components:
         - id
         - email
         - pseudo
-        - createdAt
-        - updatedAt
       properties:
         id:
           description: 'User id'
@@ -778,14 +776,6 @@ components:
           minLength: 3
           pattern: '[a-zA-Z0-9_]+'
           example: jane_doe
-        createdAt:
-          description: 'Creation date of the account'
-          type: string
-          format: date-time
-        updatedAt:
-          description: 'Updated date of the account'
-          type: string
-          format: date-time
         picture:
           description: 'Choosen avatar for profil picture'
           type: string
@@ -793,6 +783,18 @@ components:
         token:
           description: 'JWT token for a session'
           type: string
+          nullable: true
+        createdAt:
+          description: 'Creation date of the account'
+          type: string
+          format: date-time
+          default: null
+          nullable: true
+        updatedAt:
+          description: 'Updated date of the account'
+          type: string
+          format: date-time
+          default: null
           nullable: true
         emailVerified:
           description: 'Not implemented yet'

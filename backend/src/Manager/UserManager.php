@@ -27,27 +27,9 @@ class UserManager
     }
 
     /**
-     * Get user identity (userId) from token.
-     *
-     * @return int UserIdentifier from token (userId)
-     *
-     * @throws UnauthenticatedUserException
-     */
-    public function getAuthenticatedUserId(): int
-    {
-        $user = $this->security->getUser();
-
-        if (!$user) {
-            throw new UnauthenticatedUserException();
-        }
-
-        return (int) $user->getUserIdentifier();
-    }
-
-    /**
      * Get User entity associated with the authenticated user's identifier.
      *
-     * This method first ensures the user is authenticated (via getAuthenticatedUserId),
+     * This method first ensures the user is authenticated (via getUserIdentifierFromToken),
      * then fetches the corresponding User entity from the database.
      *
      * @return User User entity from database
@@ -57,13 +39,26 @@ class UserManager
      */
     public function getAuthenticatedUser(): User
     {
-        $user = $this->userRepository->findByUserIdentifier($this->getAuthenticatedUserId());
+        $user = $this->userRepository->findByUserIdentifier($this->getUserIdentifierFromToken());
 
         if (!$user) {
             throw new UserNotFoundException();
         }
 
         return $user;
+    }
+
+    /**
+     * Get id associated with the authenticated user's identifier.
+     *
+     * @return int User id from database
+     *
+     * @throws UserNotFoundException
+     * @throws UnauthenticatedUserException
+     */
+    public function getAuthenticatedUserId(): int
+    {
+        return $this->getAuthenticatedUser()->getId();
     }
 
     public function hashPassword(User $user, string $plainPassword): User
@@ -111,6 +106,24 @@ class UserManager
         $user->setToken($token);
 
         return $user;
+    }
+
+    /**
+     * Get user identity (userEmail) from token.
+     *
+     * @return string UserIdentifier from token (userEmail)
+     *
+     * @throws UnauthenticatedUserException
+     */
+    private function getUserIdentifierFromToken(): string
+    {
+        $user = $this->security->getUser();
+
+        if (!$user) {
+            throw new UnauthenticatedUserException();
+        }
+
+        return $user->getUserIdentifier();
     }
 
     private function isEmailAlreadyTaken(User $user): bool
